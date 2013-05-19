@@ -1,0 +1,4 @@
+Host media1
+	Hostname media1.local
+	User root
+	Port 2233

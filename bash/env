@@ -1,0 +1,3 @@
+export EDITOR="bbedit -w"
+export PATH=$PATH:~/bin
+export FIGNORE=".o:~:Application Scripts"
