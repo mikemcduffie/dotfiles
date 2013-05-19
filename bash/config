@@ -76,4 +76,6 @@ On_IWhite='\e[0;107m'   # White
 # Note that the git branch is given a special color
 PS1="\[$Black\]\n[\!] \[$Blue\]\u:\w \[$BBlack\]\$(vcprompt)\[$Color_Off\] \n→ "
 
+#unhide Library (Lion/Mountian Lion)
+chflags nohidden ~/Library
 
