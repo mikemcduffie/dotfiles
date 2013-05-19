@@ -33,12 +33,15 @@ alias cls='clear; ls'
 alias h='history'
 alias kp="ps auxwww"
 alias l.='ls -d .[^.]*'
-alias la="ls -A -l -G"
-alias l='ls -lhGt'  # -l long listing, most recent first
-                    # -G color
+alias ll.='ls -ld .[^.]*'
+alias la="ls -AG"
+alias lla="ls -A -l -G"
+alias l='ls -hG'  # -G color
 alias lh="ls -lh"
 alias ll='ls -lhG'  # -l long listing, human readable, no group info
 alias lp="ls -p"
+alias lr='ls -lhGt'  # -l long listing, most recent first
+                    # -G color
 alias lt='ls -lt' # sort with recently modified first
 alias md='mkdir -p'
 alias u='cd ..'   # up one dir
