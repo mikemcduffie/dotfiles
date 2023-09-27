@@ -125,7 +125,6 @@ alias path="echo $PATH | sed 's/:/\n/g'"
 alias swul="softwareupdate -l --include-config-data"
 alias swudl="softwareupdate -d --include-config-data"
 
-
 # https://www.stefanjudis.com/today-i-learned/suffix-aliases-in-zsh/
 # cli file associations
 alias -s {js,json,env,md,html,css,toml,url}=bat
@@ -185,6 +184,9 @@ bnc() {
         echo '================================================================================='
     done
 }
+
+# enable Touch ID authentication for Terminal sudo command
+touchid_sudo() { sudo gawk -i inplace 'NR==2{print "auth       sufficient     pam_tid.so"}1' /etc/pam.d/sudo }
 
 
 # cd to the path of the front Finder window
