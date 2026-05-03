@@ -1,0 +1,22 @@
+# https://mywiki.wooledge.org/BashFAQ/109
+[[ $- != *i* ]] && exit 1  # file not sourced
+
+# ANSI 16 colors :  \033 or \e
+BLACK='\e[30m'
+RED='\e[31m'
+GREEN='\e[32m'
+YELLOW='\e[33m'
+BLUE='\e[34m'
+MAGENTA='\e[35m'
+CYAN='\e[36m'
+WHITE='\e[37m'
+BRIGHT_BLACK='\e[30;1m'
+BRIGHT_RED='\e[31;1m'
+BRIGHT_GREEN='\e[32;1m'
+BRIGHT_YELLOW='\e[33;1m'
+BRIGHT_BLUE='\e[34;1m'
+BRIGHT_MAGENTA='\e[35;1m'
+BRIGHT_CYAN='\e[36;1m'
+BRIGHT_WHITE='\e[37;1m'
+RESET_COLOR='\e[0m'
+

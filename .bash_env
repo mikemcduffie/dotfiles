@@ -1,0 +1,4 @@
+# Make sure zshenv and bash_env are synced
+if [ -f $HOME/.zshenv ]; then
+        source $HOME/.zshenv
+fi

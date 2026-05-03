@@ -1,5 +1,13 @@
 # This is Git's per-user configuration file.
 [user]
 # Please adapt and uncomment the following lines:
-name = mike
-email = michael.mcduffie@me.com
+	name = mikemcduffie
+	email = mikemcduffie@users.noreply.github.com
+[core]
+	excludesFile = ~/.gitignore
+	editor = vim
+[credential]
+	helper = 
+	helper = /usr/local/share/gcm-core/git-credential-manager
+[credential "https://dev.azure.com"]
+	useHttpPath = true

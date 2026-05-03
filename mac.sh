@@ -1,0 +1,144 @@
+# https://mywiki.wooledge.org/BashFAQ/109
+[[ $- != *i* ]] && exit 1  # file not sourced
+
+app-bundleid() { osascript -e "id of app \"$1\"" ;}
+
+# SMB network shares mount
+comics()  { [[ -r /Volumes/media3  ]] || /usr/bin/osascript -e 'mount volume "smb://media@omv.local/media3"';   cd /Volumes/media3/comics ;}
+data()    { [[ -r /Volumes/data    ]] || /usr/bin/osascript -e 'mount volume "smb://media@omv.local/data"';     cd /Volumes/data ;}
+media1()  { [[ -r /Volumes/media1  ]] || /usr/bin/osascript -e 'mount volume "smb://media@omv.local/media1"';   cd /Volumes/media1 ;}
+media2()  { [[ -r /Volumes/media2  ]] || /usr/bin/osascript -e 'mount volume "smb://media@omv.local/media2"';   cd /Volumes/media2 ;}
+media3()  { [[ -r /Volumes/media3  ]] || /usr/bin/osascript -e 'mount volume "smb://media@omv.local/media3"';   cd /Volumes/media3 ;}
+media4()  { [[ -r /Volumes/media4  ]] || /usr/bin/osascript -e 'mount volume "smb://media@omv.local/media4"';   cd /Volumes/media4 ;}
+movies()  { [[ -r /Volumes/media1  ]] || /usr/bin/osascript -e 'mount volume "smb://media@omv.local/media1"';   cd /Volumes/media1/Movies ;}
+music()   { [[ -r /Volumes/media3  ]] || /usr/bin/osascript -e 'mount volume "smb://media@omv.local/media3"';   cd /Volumes/media3/Music ;}
+roms()    { [[ -r /Volumes/media3  ]] || /usr/bin/osascript -e 'mount volume "smb://media@omv.local/media3"';   cd /Volumes/media3/Emulation/roms ;}
+switch()  { [[ -r /Volumes/media3  ]] || /usr/bin/osascript -e 'mount volume "smb://media@omv.local/media3"';   cd /Volumes/media3/Emulation/roms/switch ;}
+tvshows() { [[ -r /Volumes/media2  ]] || /usr/bin/osascript -e 'mount volume "smb://media@omv.local/media2"';   cd /Volumes/media2/TV_Shows ;}
+looney()  { [[ -r /Volumes/media2  ]] || /usr/bin/osascript -e 'mount volume "smb://media@omv.local/media2"';   cd '/Volumes/media2/TV_Shows/Looney Tunes (1930)' ;}
+
+alias hardware='system_profiler SPHardwareDataType'
+
+
+
+paste2nfo() { pbpaste | fold -s > ~/Downloads/"$(pbpaste | pyp 'lines[0]').nfo" ;}
+paste2txt() { pbpaste | fold -s > ~/Downloads/"$(pbpaste | pyp 'lines[0]').txt" ;}
+
+scpt2applescript() {
+    for arg in "$@"; do
+        if [[ "$fullpath:t:e" == "scpt" ]]; then
+            doosadecompile "$arg" > "${arg/.scpt/.applescript}"
+        else
+            echo "FileTypeError: $arg"
+        fi
+    done
+}
+
+# brew find
+bf() { eza -l /opt/homebrew/bin/*"$1"* ;}
+
+dns_configuration(){ scutil --dn ;}
+# DNS query IP address from name
+# alternately:
+# nslookup <host_name> or nslookup <ip_address>
+# dig <hostname> or dig -x <ip_address>
+#  dscacheutil -q host -a name setup.ubnt.com
+resolve() { dscacheutil -q host -a name "$1" ;}
+
+
+# enable Touch ID authentication for Terminal sudo command
+touchid_sudo() { sudo gawk -i inplace 'NR==2{print "auth       sufficient     pam_tid.so"}1' /etc/pam.d/sudo ;}
+
+
+# cd to the path of the front Finder window
+cdf() {
+	local target=`osascript -e 'tell application "Finder" to if (count of Finder windows) > 0 then get POSIX path of (target of front Finder window as text)'`
+	if [ "$target" != "" ]; then
+	    # macOS bug returns POSIX path for some volumes with /Volumes prefix: workaround code follows
+	    root_dirs="$(ls -d /*/)"
+	    target_dir=$(echo $target | awk -F/ '{print $2}')
+	    [[ $target != /Volumes/* && $root_dirs != *"/$target_dir/"* ]] && target=/Volumes"$target"
+		cd "$target" && echo -n "--> " && pwd
+	else
+		echo 'No Finder window found' >&2
+	fi
+}
+
+# Open Get Info window for file(s) in Finder
+getinfo() {
+osascript - "$@" <<- END > /dev/null 2>&1
+on run args
+    tell app "Finder"
+        activate
+        repeat with f in args
+            open information window of (posix file (contents of f) as alias)
+        end
+    end
+end
+END
+}
+
+# robust flatten python script in ~/.local/bin
+flatten-qd() {
+    fd --hidden --fixed-strings '.DS_Store' -x rm
+    fd -tf --min-depth 2 . -x mv -nv "{}" ./
+    fd -td -te -x trash
+}
+
+
+# Reset Touch ID sudo authentification (destroyed by Apple during system updates)
+if [[ -z $(grep 'pam_tid.so' /etc/pam.d/sudo) ]] ; then
+    echo "*** Touch ID sudo reset by system update ***" 
+    touchid_sudo &&
+    bat /etc/pam.d/sudo
+fi
+
+
+# setup command line tool for VSCode/VSCodium
+vscodium() { VSCODE_CWD="$PWD" open -n -b "com.vscodium" --args $* ;}
+# alias code=vscodium
+### causes vscode function to be defined regardless of if statement
+# if [ -f "/Applications/Visual Studio Code.app" ]; then
+#     vscode() { VSCODE_CWD="$PWD" open -n -b "com.microsoft.VSCode" --args $* ;}
+# else
+#     alias vscode=vscodium
+# fi
+
+
+
+alias gdu=gdu-go  # resolve coreutils/gdu conflict
+alias blb='eza /opt/homebrew/bin/'
+
+alias lscomment=' mdls -name kMDItemFinderComment'
+alias nzb_fix="duti -s com.VortexApps.NZBVortex3 dyn.ah62d4rv4ge8068xc all && duti -x .nzb"
+alias quicklook='qlmanage -p'
+alias sed=/opt/homebrew/opt/gnu-sed/libexec/gnubin/sed
+
+# Navigation
+alias dev='cd ${HOME}/Developer'
+
+alias docs='cd ${HOME}/Documents'
+alias cdd='cd ${HOME}/Documents'
+
+alias dl='cd ${HOME}/Downloads'
+alias cddl="cd ${HOME}/Downloads"
+
+alias faves='cd ${HOME}/Documents/Stories/Faves'
+
+alias cduc='cd ${HOME}/Downloads/Usenet\ Completed'
+alias uc='cd ${HOME}/Downloads/Usenet\ Completed'
+
+alias cdud='cd ${HOME}/Downloads/Usenet\ Downloads'
+alias ud='cd ${HOME}/Downloads/Usenet\ Downloads'
+
+alias lib='cd ${HOME}/Library'
+alias cdl='cd ${HOME}/Library'
+
+alias cdm="cd ${HOME}/Music/Music/Media.localized/Music"
+
+alias pics='cd ${HOME}/Pictures'
+alias cdp='cd ${HOME}/Pictures'
+
+alias tc='cd ${HOME}/Downloads/Torrents\ \-\ Completed'
+
+

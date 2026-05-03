@@ -1,0 +1,25 @@
+# zsh-history-substring-search
+bindkey '^[[A' history-substring-search-up
+bindkey '^[[B' history-substring-search-down
+# alternate
+# bindkey "$terminfo[kcuu1]" history-substring-search-up
+# bindkey "$terminfo[kcud1]" history-substring-search-down
+
+
+# https://superuser.com/questions/417627/oh-my-zsh-history-completion/418299#418299
+# map the ↑ and ↓ Keys to history search with partial command (from start)
+# '\e' can be replaced with '\033'
+# bindkey '\e[A' history-beginning-search-backward-end    # ↑ Key
+# bindkey '\e[B' history-beginning-search-forward-end     # ↓ Key
+
+#  Terminal Settings>Profiles>Keyboard: added shift-delete to "forward-delete"
+bindkey 'foward-delete' delete-char
+bindkey "^[^?" backward-kill-word
+bindkey \^S backward-kill-line                          # Ctrl+S
+bindkey '^[[1;5D' backward-word                         # Ctrl+←
+bindkey '^[[1;5C' forward-word                          # Ctrl+→
+# option-delete: requires Settings>Profiles>Keyboard:
+#  "Use Option as Meta key"
+#   else Esc then delete
+
+lsbindkey() { bindkey | grep -v -e '\^\[\[' -e '\^\[O[A-H]' | sed -e 's/^"//g' -e 's/" / /g' -e 's/\^\[/⌥/g' }

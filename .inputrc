@@ -1,0 +1,13 @@
+# .inputrc: 
+#     user configuration file of GNU readline, which provides
+#     customizable command line user interfaces for many important
+#     interactive programs, such as Zsh, Bash and Python
+#     interactive shells, e.g.:
+
+set completion-ignore-case On
+
+### bindkeys
+"\^S" : backward-kill-line
+# map the ↑ and ↓ Keys to history search with patial command
+"\e[A": history-search-backward
+"\e[B": history-search-forward

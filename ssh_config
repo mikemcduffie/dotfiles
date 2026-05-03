@@ -1,0 +1,17 @@
+Host *
+	IdentityAgent /Users/mike/Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh
+
+Host omv
+  HostName omv.local
+  User media
+
+
+Host proxmox
+  HostName proxmox.local
+  User root
+
+Host arvin
+  HostName arvin.local
+  User volumio
+
+
