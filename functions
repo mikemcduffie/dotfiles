@@ -306,7 +306,9 @@ mcd() {
       done
     }
 
-
+oh-my-posh-theme() { 
+	sed -i "s/omp_theme=.*/omp_theme=$1/" ~/.zshrc && exec zsh
+}
 
 fd() {
     if [ "$PWD" = "$HOME" ]; then

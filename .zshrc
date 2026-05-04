@@ -91,8 +91,8 @@ zle -N history-beginning-search-forward-end history-search-end
 # perl
 # By default non-brewed cpan modules are installed to the Cellar. If you wish
 # for your modules to persist across updates we recommend using `local::lib`.
-# Run once on install:  PERL_MM_OPT="INSTALL_BASE=$HOME/perl5" cpan local::lib
-eval "$(perl -I$HOME/perl5/lib/perl5 -Mlocal::lib=$HOME/perl5)"
+perl_err_msg="Run once on install:  PERL_MM_OPT="INSTALL_BASE=$HOME/perl5" cpan local::lib"
+eval "$(perl -I$HOME/perl5/lib/perl5 -Mlocal::lib=$HOME/perl5)" || echo "$perl_err_msg"
 
 
 echoerr() { printf "%s\n" "$*" >&2; return 1; }
@@ -136,3 +136,5 @@ remove_path_dupes
 test -e "${HOME}/.iterm2_shell_integration" && source "${HOME}/.iterm2_shell_integration"
 
 
+omp_theme=catppuccin_frappe
+eval "$(oh-my-posh init zsh --config $(brew --prefix oh-my-posh)/themes/$omp_theme.omp.json)"
