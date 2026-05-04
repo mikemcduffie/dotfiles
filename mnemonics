@@ -1,10 +1,10 @@
-# https://mywiki.wooledge.org/BashFAQ/109
+# //mywiki.wooledge.org/BashFAQ/109
 [[ $- != *i* ]] && exit 1  # file not sourced
 
 # neofetch (customisable system info script) is no longer supported; replaced with fastfetch
-neofetch() { glow  <<< 'Use `fastfetch` or `ff`' }
+neofetch() { glow  <<< 'Use `fastfetch` or `ff`' ;}
 
-exa() {echo "${CYAN}exa${YELLOW} is is not maintained. Running ${CYAN}eza${YELLOW}...${RESET_COLOR}"; eza $@ }
+exa() { echo "${CYAN}exa${YELLOW} is is not maintained. Running ${CYAN}eza${YELLOW}...${RESET_COLOR}"; eza $@ ;}
 
 splitnsp() {
     echo "Opening SplitNSP-GUI..."

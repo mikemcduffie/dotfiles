@@ -1,0 +1,36 @@
+sources=(
+"ansi_colors"
+"aliases"
+"exports"
+"functions"
+)
+
+if [[ $ZSH_VERSION ]]; then
+    sources+=("bindkeys")
+fi
+
+mac_sources=(
+"mac"
+"mnemonics"
+)
+
+
+for s in "${sources[@]}"; do
+#   echo Loading $s
+    if [ -f ~/.dotfiles/$s ]; then
+        source ~/.dotfiles/$s || echo "Failed to load ~/.dotfiles/$s" >&2
+    else
+        echo "Not found: ~/.dotfiles/$s" >&2
+    fi
+done
+
+if [[ "$(uname)" == "Darwin" ]]; then
+    for s in "${mac_sources[@]}"; do
+#       echo Loading $s
+        if [ -f ~/.dotfiles/$s ]; then
+            source ~/.dotfiles/$s || echo "Failed to load ~/.dotfiles/$s" >&2
+        else
+            echo "Not found: ~/.dotfiles/$s" >&2
+        fi
+    done
+fi

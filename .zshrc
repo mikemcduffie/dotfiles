@@ -5,23 +5,9 @@
 
 # https://apple.stackexchange.com/questions/388622/zsh-zprofile-zshrc-zlogin-what-goes-where
 
-sources=(
-"ansi_colors.sh"
-"aliases.sh"
-"exports.sh"
-"functions.sh"
-)
-
-if [[ "$ZSH_VERSION" ]]; then
-    sources+="zsh/bindkeys.zsh"
-fi
-
-mac_sources=(
-"mac.sh"
-"mnemonics.sh"
- )
-
 # exports in .zshenv
+
+source ~/.dotfiles/common
 
 for s in $sources; do
     [ -f ~/.dotfiles/$s ] && source ~/.dotfiles/$s || echo "${RED}Not found: ~/.dotfiles/$s ${RESEST}"
@@ -39,8 +25,8 @@ fi
 # source /opt/homebrew/share/powerlevel10k/powerlevel10k.zsh-theme
 
 
-# if [[ "$TERM" == "xterm-256color" &&  -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-#     source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+# if [[ "$TERM" == "xterm-256color" &&  -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}" ]]; then
+#     source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}"
 # fi
 
 if [[ "$TERM" == "xterm-256color" ]]; then
@@ -75,9 +61,9 @@ setopt AUTOCD                   # use path with cd command
 setopt CORRECT                  # small spelling corrections
 
 # history size
-HISTSIZE=5000
+HISTSIZE=10000
 HISTFILESIZE=10000
-SAVEHIST=5000
+SAVEHIST=10000
 #HISTFILE=${ZDO TDIR:-$HOME}/.zsh_history
 # setopt BANG_HIST                 # Treat the '!' character specially during expansion.
 setopt SHARE_HISTORY             # Share history between all sessions.
@@ -116,7 +102,7 @@ setopt completealiases
 
 
 # autojump
-[ -f /opt/homebrew/etc/profile.d/autojump.sh ] && source /opt/homebrew/etc/profile.d/autojump.sh
+[ -f /opt/homebrew/etc/profile.d/autojump ] && source /opt/homebrew/etc/profile.d/autojump
 
 
 # PATH="/opt/homebrew/opt/php@7.4/bin:$PATH"
@@ -131,13 +117,13 @@ command -v uv >/dev/null 2>&1 && eval "$(uv generate-shell-completion zsh)"
 source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 # To activate zsh-syntax-highlighting, add the following at the end of your .zshrc:
-  source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 
 source $(brew --prefix)/share/zsh-history-substring-search/zsh-history-substring-search.zsh
 
 # leave at end of zshrc to ensure priority for PATH
 export PATH="${HOME}/.local/bin:$PATH"
-test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+test -e "${HOME}/.iterm2_shell_integration" && source "${HOME}/.iterm2_shell_integration"
 
 
