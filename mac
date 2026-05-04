@@ -115,6 +115,8 @@ alias quicklook='qlmanage -p'
 alias sed=/opt/homebrew/opt/gnu-sed/libexec/gnubin/sed
 
 # Navigation
+alias dotfiles='cd ${HOME}/.dotfiles'
+
 alias dev='cd ${HOME}/Developer'
 
 alias docs='cd ${HOME}/Documents'
