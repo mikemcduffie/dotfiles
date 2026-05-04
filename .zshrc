@@ -33,7 +33,9 @@ if [[ "$TERM" == "xterm-256color" ]]; then
     # source /opt/homebrew/share/powerlevel10k/powerlevel10k.zsh-theme
     # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
     # [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
-    eval "$(starship init zsh)"
+    if command -v starship; then
+        eval "$(starship init zsh)"
+    fi
 else
     # Simple prompt for Cool Retro Term
     PS1="$ "
