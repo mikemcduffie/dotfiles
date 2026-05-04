@@ -123,7 +123,14 @@ source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source $(brew --prefix)/share/zsh-history-substring-search/zsh-history-substring-search.zsh
 
 # leave at end of zshrc to ensure priority for PATH
-export PATH="${HOME}/.local/bin:$PATH"
+
+# Safe way to append to PATH
+if [[ ":$PATH:" != *"${HOME}/.local/bin:"* ]]; then
+    export PATH="${HOME}/.local/bin:$PATH"
+fi
+
+remove_path_dupes
+
 test -e "${HOME}/.iterm2_shell_integration" && source "${HOME}/.iterm2_shell_integration"
 
 

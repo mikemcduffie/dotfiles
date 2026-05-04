@@ -78,7 +78,8 @@ end
 END
 }
 
-# robust flatten python script in ~/.local/bin
+# flatten: quick & dirty
+# Alt: see robust flatten python script in ~/.local/bin
 flatten-qd() {
     fd --hidden --fixed-strings '.DS_Store' -x rm
     fd -tf --min-depth 2 . -x mv -nv "{}" ./

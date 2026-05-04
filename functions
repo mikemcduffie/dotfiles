@@ -23,6 +23,18 @@ ____HELP
 }
 
 
+remove_path_dupes() {
+    local -A seen
+    local new_path=""
+    while read -d: dir; do
+        if [[ -z "${seen[$dir]}" ]]; then
+            new_path="${new_path:+$new_path:}$dir"
+            seen[$dir]=1
+        fi
+    done <<< "$PATH"
+    export PATH=$new_path
+}
+
 # requires pypyp; pip3 install pypyp
 nzbs() { echo "$1" |  pyp -b 'import xml.etree.ElementTree as ET' "ET.parse(line).getroot()[0].attrib['subject']"; }
 
