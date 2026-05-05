@@ -14,4 +14,10 @@ Host arvin
   HostName arvin.local
   User volumio
 
+Host m1max16
+    HostName M1-Max-MBP16.local
+    User mike
 
+Host m1pro14
+    HostName M1-Pro-MBP14
+    User mike
