@@ -77,7 +77,8 @@ eval "$(oh-my-posh init zsh --config $(brew --prefix oh-my-posh)/themes/$OMP_THE
 
 if [[ "$TERM" == "xterm-256color" ]]; then
     if command -v oh-my-posh &> /dev/null; then
-        export OMP_THEME=catppuccin_frappe
+        # NOTE: THIS SYNCS OH MY POSH THEME ACROSS SYSTEMS. NEED TO REWORK AS UNSYNCED FILE REF TO KEEP UNIQUE>
+        export OMP_THEME=bubbles
         eval "$(oh-my-posh init zsh --config $(brew --prefix oh-my-posh)/themes/$OMP_THEME.omp.json)"
     elif command -v starship; then
         eval "$(starship init zsh)"
