@@ -19,10 +19,6 @@ if [[ "$(uname)" == "Darwin" ]]; then
     done
 fi
 
-# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
-# Initialization code that may require console input (password prompts, [y/n]
-# confirmations, etc.) must go above this block; everything else may go below.
-# source /opt/homebrew/share/powerlevel10k/powerlevel10k.zsh-theme
 
 simple_peompt() {
     PS1="$ "
@@ -78,14 +74,8 @@ EOF
 
 eval "$(oh-my-posh init zsh --config $(brew --prefix oh-my-posh)/themes/$OMP_THEME.omp.json)"
 
-# if [[ "$TERM" == "xterm-256color" &&  -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}" ]]; then
-#     source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}"
-# fi
 
 if [[ "$TERM" == "xterm-256color" ]]; then
-    # source /opt/homebrew/share/powerlevel10k/powerlevel10k.zsh-theme
-    # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-    # [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
     if command -v oh-my-posh &> /dev/null; then
         export OMP_THEME=catppuccin_frappe
         eval "$(oh-my-posh init zsh --config $(brew --prefix oh-my-posh)/themes/$OMP_THEME.omp.json)"
