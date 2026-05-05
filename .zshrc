@@ -24,6 +24,59 @@ fi
 # confirmations, etc.) must go above this block; everything else may go below.
 # source /opt/homebrew/share/powerlevel10k/powerlevel10k.zsh-theme
 
+simple_peompt() {
+    PS1="$ "
+}
+
+oh-my-posh-change-theme() {
+    local prog=${0##*/}  # greedy remove to last '/'
+    local themes=$(ls $(brew --prefix oh-my-posh)/themes | grep -v 'schema.json')
+    local theme_names=$(cat "$themes" | sed -E 's/.omp.(json|yaml)$//')
+    usage() {
+        cat <<-EOF
+        Usage: $prog [options]
+
+        Change Oh My Posh prompt theme and reset shell
+
+        Options:
+            -h    Print this message
+            -l    List avaiable themes
+EOF
+
+        local opt OPTIND OPTARG
+        while getopts 'hl' opt; do
+            case "$opt" in
+                h) usage; return 0;;
+                l) if tty -s; then
+                       echo "$theme_names" | column
+                   else
+                       echo "$theme_names"
+                   fi
+                   ;;
+                *) usage >&2; return 1;;
+            esac
+        done
+        shift "$((OPTIND - 1))"
+
+    }
+
+    if  [[ $1 == *"$theme_names"* ]]; then
+        export OMP_THEME=$1
+    else
+        echo "No theme named $1 found." >&2 && return 1
+    fi
+
+    if [[ $ZSH_VERSION ]]; then
+        current_shell='zsh'
+    elif [[ $BASH_VERSION ]]; then
+        current_shell='bash'
+    else
+        echo "Could not detrmine current shell." >&2 && return 1
+    fi
+    eval "$(oh-my-posh init zsh --config $(brew --prefix oh-my-posh)/themes/$OMP_THEME.omp.json)" && exec $current_shell 
+}
+
+eval "$(oh-my-posh init zsh --config $(brew --prefix oh-my-posh)/themes/$OMP_THEME.omp.json)"
 
 # if [[ "$TERM" == "xterm-256color" &&  -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}" ]]; then
 #     source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}"
@@ -33,8 +86,13 @@ if [[ "$TERM" == "xterm-256color" ]]; then
     # source /opt/homebrew/share/powerlevel10k/powerlevel10k.zsh-theme
     # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
     # [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
-    if command -v starship; then
+    if command -v oh-my-posh &> /dev/null; then
+        export OMP_THEME=catppuccin_frappe
+        eval "$(oh-my-posh init zsh --config $(brew --prefix oh-my-posh)/themes/$OMP_THEME.omp.json)"
+    elif command -v starship; then
         eval "$(starship init zsh)"
+#   else
+#       simple_prompt
     fi
 else
     # Simple prompt for Cool Retro Term
@@ -134,7 +192,3 @@ fi
 remove_path_dupes
 
 test -e "${HOME}/.iterm2_shell_integration" && source "${HOME}/.iterm2_shell_integration"
-
-
-omp_theme=catppuccin_frappe
-eval "$(oh-my-posh init zsh --config $(brew --prefix oh-my-posh)/themes/$omp_theme.omp.json)"

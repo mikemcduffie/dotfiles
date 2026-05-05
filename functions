@@ -306,9 +306,6 @@ mcd() {
       done
     }
 
-oh-my-posh-theme() { 
-	sed -i "s/omp_theme=.*/omp_theme=$1/" ~/.zshrc && exec zsh
-}
 
 fd() {
     if [ "$PWD" = "$HOME" ]; then
@@ -426,3 +423,5 @@ help() {
 }
 
 rename-camelcase-split() { rename -e 's/([A-Z][a-z]+)(?=[A-Z])/$1 /g;' "$1"  ;}
+
+ompt() { sed -i "s/OMP_THEME=.*/OMP_THEME=$1/" ~/.zshrc && exec zsh ;}
