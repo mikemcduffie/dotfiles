@@ -49,3 +49,9 @@ if ! command -v oh-my-posh &> /dev/null; then
     brew install jandedobbeleer/oh-my-posh/oh-my-posh
     brew update && brew upgrade oh-my-posh
 fi
+
+# uv installs (~/.local/bin/)
+# uv tool install acefile
+#   executable: acefile-unace
+# uv tool install srt
+#   executables: srt, srt-deduplicate, srt-fixed-timeshift, srt-linear-timeshift, srt-lines-matching, srt-mux, srt-normalise, srt-play, srt-process
