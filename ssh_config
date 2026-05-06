@@ -21,3 +21,11 @@ Host m1max16
 Host m1pro14
     HostName M1-Pro-MBP14.local
     User mike
+
+Host familyroom
+    HostName family-room-mini.local
+    User familyroom
+
+Host m1mini
+    Hostname m1-mini.local
+    User mike
