@@ -66,3 +66,7 @@ fi
 #   executables: srt, srt-deduplicate, srt-fixed-timeshift, srt-linear-timeshift, srt-lines-matching, srt-mux, srt-normalise, srt-play, srt-process
 # uv tool install webvtt-py
 #   executable: webvtt
+
+
+# ln -s  ~/Library/Mobile Documents/com~apple~CloudDocs ~/iCloud
+#
