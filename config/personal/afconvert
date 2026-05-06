@@ -1,0 +1,51 @@
+# afconvert Codecs
+
+The afconvert command-line tool on macOS supports a wide range of audio
+codecs for converting audio files between different formats. The
+supported codecs are specified using the `-d` option and include:
+
+- **AAC (Advanced Audio Coding)**: Available as 
+  `aac`, `aace`, `aacf`, `aach`, `aacl`, `aacp`, and `paac`.
+- **Apple Lossless (ALAC)**: Specified as alac.
+- **MPEG-4 Audio**: Supported through formats like `m4af` (M4A) and `m4bf` (M4B).
+- **WAV (Waveform Audio File Format)**: Supports data formats such as 
+  `UI8`, `LEI16`, `LEI24`, `LEI32`, `LEF32`, `LEF64`, `ulaw`, and `alaw`.
+- **AIFF/AIFC (Audio Interchange File Format)**: Supports data formats like 
+  `I8`, `BEI16`, `BEI24`, `BEI32`, `BEF32`, `BEF64`, `ulaw`, `alaw`, `MAC3`,
+  `MAC6`, `ima4`, `QDMC`, `QDM2`, `Qclp`, and `agsm`.
+- **FLAC (Free Lossless Audio Codec)**: Supported as `flac`.
+- **MP3 (MPEG-1 Audio Layer III)**: Supported as `mp3`.
+- **QDesign Music 2 (QDM2)**: Specified as `QDM2`.
+- **QDesign Music (QDMC)**: Specified as `QDMC`.
+- **Qualcomm PureVoice (Qclp)**: Specified as `Qclp`.
+- **μ-law (ulaw)**: Specified as `ulaw`.
+- **A-law (alaw)**: Specified as `alaw`.
+- **Apple GSM 10 (agsm)**: Specified as `agsm`.
+- **Apple IMA 4 (ima4)**: Specified as `ima4`.
+- **AMR Narrowband (samr)**: Specified as `samr`.
+- **AC-3 (Dolby Digital)**: Supported as `ac-3`.
+- **DVI 4 (dvi)**: Specified as `dvi`.
+- **Microsoft ADPCM**: Supported.
+- **DVI ADPCM**: Supported.
+- **GSM610**: Supported.
+- **LPC 23 (lpc)**: Supported.
+- **Apple DRM Audio Decoder (drms)**: Supported.
+- **Qualcomm QCELP (qclq)**: Supported.
+- **Sawb (sawb)**: Supported.
+
+To view a complete list of supported file formats and data formats, use
+the command` afconvert -hf`.
+
+The `-f` option requires a four-character format code (e.g., WAVE for
+WAV, m4af for M4A), and the `-d` option specifies the data format or
+codec.
+
+It is necessary to specify both the format and the codec; otherwise, an
+error will be shown.
+
+Some codecs may not be supported by all file formats, and certain
+options like bitrate (-b) or quality (-q) are codec-dependent.
+
+
+[What are the afconvert settings for the iTunes Plus AAC encoding setting?]
+(https://apple.stackexchange.com/questions/46076/what-are-the-afconvert-settings-for-the-itunes-plus-aac-encoding-setting)

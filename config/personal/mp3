@@ -1,0 +1,25 @@
+---
+syntax: bash
+tags: [ shell mp3 ]
+---
+
+
+# print mp3 duration in human readable format
+mp3info -p "%f: %m:%s\n" *.mp3
+
+
+#Split mp3 by Fixed Duration
+# Use the following command to split an MP3 into segments of a specific length 
+# (e.g., 15 minutes = 900 seconds):
+ffmpeg -i input.mp3 -f segment -segment_time 900 -c copy output_%03d.mp3
+# -i input.mp3: Input MP3 file.
+# -f segment: Enables segmenting mode.
+# -segment_time 900: Sets each segment to 900 seconds (15 minutes). Adjust as needed.
+# -c copy: Copies audio stream without re-encoding (lossless).
+# output_%03d.mp3: Output files named output_000.mp3, output_001.mp3, etc.
+#Alternative: Use mp3splt for Fixed-Length Splits
+#For splitting into equal parts by duration, mp3splt offers a clean approach:
+mp3splt -t 15.00 -o output_%n input.mp3
+# -t 15.00: Splits into 15-minute segments.
+# -o output_%n: Names files output_1.mp3, output_2.mp3, etc. 
+

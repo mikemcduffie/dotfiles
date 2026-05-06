@@ -1,0 +1,14 @@
+# mariadb mysql
+
+# mariadb App Template portainer.io on openmediavault (omv)
+Under Advanced: Host port: 3306 -> container port: 3306 (default)
+Keep Default Administrators access
+# connect with administrator 
+❯ mysql -h 192.168.0.111 -u root -p'password-from-app-template-install' 
+# (optional?) creat local user
+mysql> CREATE USER 'kodi'@'localhost' IDENTIFIED BY 'kodi';
+# Enable remote user access 
+mysql> GRANT ALL PRIVILEGES ON *.* TO 'kodi' IDENTIFIED BY 'kodi';
+$ then can remotely connect
+❯ mysql -h 192.168.0.111 -u kodi -pkodi  # this is how Kodi will connect via userdata/advancedsettings.xml
+# Kodi v19 created Kodi-music82 & Kodi-video119

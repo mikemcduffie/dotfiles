@@ -1,0 +1,3 @@
+# Convert ebooks with Calibre CLI tool
+❯ ebook-convert source.fb2 .epub
+

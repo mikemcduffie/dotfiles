@@ -1,0 +1,21 @@
+# avidemux key shortcuts
+# -------------------------------------------------------------
+#  UP Is forwards/next; DOWN is previous/back
+# -------------------------------------------------------------
+# Key frames is a good medium speed scrub
+▲   (Shift + Up)            Previous Key Frame (real Cut Point)
+▼   ((Shift + Down)         Nexts Key Frame (real Cut Point)
+#        May need to move multiple to work with VideoCopy
+⇧▲ (Shift + Arrow Up)       Forward 4 seconds
+⇧▼ (Shift + Arrow Down )    Backward 4 seconds
+# ------------------- Bigger Jumps ----------------------------
+⌘▲  (Cmd + Arrow Up)        Forward one minute  
+⌘▲  (Cmd + Arrow Down)      Forward one minute  
+    (Home Key)              First Frame
+    (End Key)               Last Frame
+# -------------------------------------------------------------
+⤒   (PageUp)                Go to Marker A
+⤓   (PageDown)              Go to Marker B
+    (Space)                 Play/Stop
+
+

@@ -1,0 +1,269 @@
+---
+syntax: bash
+tags: [ mac ]
+---
+
+# Homebrew cheatsheet
+https://devhints.io/homebrew
+
+
+brew cat git	                                # Print formula
+brew cleanup git	                            # Remove old versions
+brew commands                                   # Show commands
+brew create https://example.com/foo-0.1.tar.gz  # create new formula            [CUSTOM]
+brew doctor	                                    # Diagnose brew issues
+brew edit git	                                # Edit formula                  [CUSTOM]
+brew help <command>                             # Print help info
+brew home git	                                # Open package homepage
+brew info git	                                # List versions, caveats, etc
+brew install --cask firefox	                    # Install the Firefox browser
+brew install git	                            # Install package(s)
+brew link git	                                # Link package(s) to /opt/homebrew/bin
+brew list	                                    # List installed
+brew list --cask	                            # List installed casks
+brew list --versions git	                    # List available versions
+brew list git                                   # List formula component path(s)/cask artifact(s)
+brew log cheat                                  # Check previous versions
+brew outdated	                                # What’s due for upgrades?
+brew pin cheat@4.2.6                            # pin/lock version
+brew search git	                                # Search for formulas
+brew switch git 2.5.0	                        # Change versions
+brew uninstall git	                            # Remove/Uninstall package(s)
+brew uninstall --zap <formula/cask>             # uninstall and delete all data/settings
+brew unlink git	                                # Unlink
+brew update	                                    # Update brew and cask
+brew upgrade	                                # Upgrade all packages
+brew upgrade git	                            # Upgrade package(s)
+
+# Revert/downgrade homebrew package:  
+https://ailinykh.com/homebrew-formula-downgrade/
+
+# if FIRST TIME downgrading any package, create local tap
+❯ brew tap-new $USER/local-git-lfs
+# >>> Created mike/local-git-lfs
+# /opt/homebrew/Library/Taps/mike/homebrew-local-git-lfs
+❯ brew extract --version 4.2.6 cheat $USER/local-git-lfs
+❯ brew install cheat@4.2.6
+
+
+
+# Open homepage for Formula
+❯ brew home cheat
+
+#Open homepage
+❯ brew home <package_name>
+
+# Print formula
+❯ brew cat git
+
+#Install without Gatekeeper restrictions
+❯ brew install --no-quarantine <package_name>
+
+#Reinstall without Gatekeeper restrictions
+❯ brew reinstall --no-quarantine <package_name>
+
+#Cask Upgrade add-on (requires "brew tap buo/cask-upgrade")
+❯ brew cu
+
+#Pin the current app version, preventing upgraded with brew cu
+❯ brew cu pin
+
+#Unpin the current app version, allow upgrades
+❯ brew cu unpin
+
+#Print all pinned apps and its version
+❯ brew cu pinned
+
+    
+#Prevent the specified formulae from being upgraded
+❯ brew pin <formula>
+
+#Allow the specified formulae to be upgraded.
+❯ brew unpin <formula>
+
+#List all the installed formulae.
+❯ brew list
+
+#Display all locally available formulae for brewing.
+❯ brew search
+
+#Search for font (requires tap "homebrew/cask-fonts")
+❯ brew search font <font_name>
+
+#List available fonts (requires tap "homebrew/cask-fonts")
+❯ brew search font
+
+#Remove older versions of installed formulae.
+❯ brew cleanup
+
+#Remove older versions of specified formula.
+❯ brew cleanup <formula>
+
+#Display all formula that will be removed (dry run)
+❯ brew cleanup -n
+
+#Show installed versions
+❯ brew list --versions <package_name>
+
+#Switch installed versions
+❯ brew switch <package_name> 2.5.0
+
+#Remove old versions
+❯ brew cleanup <package_name>
+
+#Show installed packages dependent on this package
+❯ brew uses <package_name> --installed
+
+#Generate graph of dependencies and highlight leaves (tap martido/homebrew-graph) 
+❯ brew graph --installed --highlight-leaves | fdp -T png -o graph.png; open graph.png
+
+#Show packages without dependents (doesn't count requirements)
+❯ brew leaves
+
+#Show all installed dependencies
+❯ brew deps --installed
+
+#Show pending upgrades
+❯ brew outdated
+
+#List all the current tapped repositories (taps)
+❯ brew tap
+
+#Tap a formula repository from Github using https for tap https://github.com/user/homebrew-repo
+❯ brew tap <user/repo>
+
+#Tap a formula repository from the specified URL
+❯ brew tap <user/repo> <URL>
+
+#Remove the given tap from the repository
+❯ brew untap <user/repo>
+
+#Troubleshooting
+❯ brew config
+
+#Troubleshooting
+❯ brew doctor
+
+#Troubleshooting
+❯ brew install --verbose --debug <formula>
+
+#Contributing
+❯ brew create [URL [--no-fetch]]
+
+#Contributing
+❯ brew edit [FORMULA...]
+
+#Create ~/Brewfile
+❯ brew bundle dump
+
+#Create Brewfile at custom location
+❯ brew bundle dump --file=~/.private/Brewfile
+
+#Overwrite existing brewfile
+❯ brew bundle dump --force
+
+#install from Brewfile
+❯ brew bundle install --file=rs-brew-dump
+
+#Sync current system configuration to brewfile
+❯ brew bundle --force cleanup
+
+#Install Xcode CLI tools
+❯ xcode-select --install
+
+#Install homebrew
+❯ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# install php@7.x (avoids Error: has been disabled because it is a versioned formula)
+# https://stackoverflow.com/questions/70417377/error-php7-3-has-been-disabled-because-it-is-a-versioned-formula
+❯ brew tap shivammathur/php
+❯ brew install shivammathur/php/php@7.4
+❯ brew link php@7.4
+
+
+# My Mac .apps don’t find Homebrew utilities!
+# GUI apps on macOS don’t have Homebrew’s prefix in their PATH by default. 
+# If you’re on Mountain Lion or later, you can fix this by running 
+sudo launchctl config user path "$(brew --prefix)/bin:${PATH}" 
+# and then rebooting, as documented in man launchctl. Note that this sets the launchctl PATH for all users. 
+
+
+# Can I edit formulae myself?
+# Yes! It’s easy! If brew tap doesn’t show homebrew/core, set yourself up to edit a local copy:
+export HOMEBREW_NO_INSTALL_FROM_API=1
+# in your shell environment,
+Run brew tap --force homebrew/core and wait for the clone to complete, then
+Run brew edit <formula> to open the formula in EDITOR.
+# You don’t have to submit modifications back to homebrew/core, just edit the formula
+# to what you personally need and 
+brew install <formula>
+# As a bonus, brew update will merge your changes with upstream so you can still 
+# keep the formula up-to-date with your personal modifications!
+# Note that if you are editing a core formula or cask you must set 
+HOMEBREW_NO_INSTALL_FROM_API=1 
+# before using brew install or brew update otherwise they will ignore your local changes and default to the API.
+# To undo all changes you have made to any of Homebrew’s repositories, run 
+brew update-reset
+# It will revert to the upstream state on all Homebrew’s repositories.
+
+# Can I make new formulae?
+# Yes! It’s easy! If you already have a local copy of homebrew/core (see above), 
+# just use the 
+brew create command
+# Homebrew will then open the formula in EDITOR so you can edit it, but it probably 
+# already installs; try it: 
+brew install <formula>
+# If you encounter any issues, run the command with the --debug switch like so: 
+brew install --debug <formula>
+# which drops you into a debugging shell.
+
+
+bnf() {
+# Get info on all installed formulas
+brew leaves | while IFS= read -r FORMULA;do
+    brew info $FORMULA
+    echo =================================================================================
+done
+}
+
+bnc() {
+# Get info on all installed casks
+brew list --cask | while IFS= read -r CASK; do
+    brew info $CASK
+    echo =================================================================================
+done
+}
+
+
+
+brew list | grep julia | xargs brew remove
+
+grep -R "fails_with :llvm" $(brew --cellar)
+
+git -C "/opt/homebrew/Library/Taps/homebrew/homebrew-cask" stash -u && git -C "${path}" clean -d -f
+
+/opt/homebrew/Cellar
+
+brew list --full-name
+
+sidneys/homebrew
+
+git -C $(brew --repo)/Library/Taps/homebrew/homebrew-core checkout Formula/$FORMULA_NAME.rb
+git -C $(brew --repo)/Library/Taps/homebrew/homebrew-cask checkout Casks/m/mkvtoolnix-app.r
+
+git -C "/opt/homebrew/Library/Taps/homebrew/homebrew-cask" stash -u && git -C "${path}" clean -d -f
+
+brew untap shivammathur/php
+
+ 5592  brew untap sidneys/homebrew
+ 5623  brew untap miserlou/loop
+ 5630  brew untap shivammathur/php
+ 
+alias buses='brew uses --installed'
+
+brew install blogabe/xplanet/imagemagick --with-fftw
+
+rm -rf /opt/homebrew/Caskroom/fig
+
+
+ 

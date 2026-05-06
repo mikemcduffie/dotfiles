@@ -1,0 +1,11 @@
+#!/usr/bin/python
+
+from string import maketrans
+from sys import stdin, stdout
+
+alpha = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+rot13 = 'nopqrstuvwxyzabcdefghijklmNOPQRSTUVWXYZABCDEFGHIJKLM'
+r13table = maketrans(alpha, rot13)
+
+orig = stdin.read()
+stdout.write(orig.translate(r13table))

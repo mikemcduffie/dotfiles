@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+tshark -r $1  -n -t a -T fields -e frame.number -e col.Time -e ip.src -e ip.dst -e col.Protocol -e col.Length -e col.Info -E header=y -E separator=,  -E occurrence=f > ${1%%.*}.csv

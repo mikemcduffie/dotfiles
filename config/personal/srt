@@ -1,0 +1,14 @@
+Find non-English srt files
+
+```zsh
+fd -e srt | pyp 'x if len(x.split(".")[-2]) == 3 and x.split(".")[-2].isalpha() and x.split(".")[-2].lower() != "eng" else None'
+
+fd -e srt | grep -E '(chi|cze|dan|deu|dut|fin|fra|fre|ger|gre|hun|ita|jpn|kor|nor|pol|por|rum|rus|slo|spa|swe|tur)\.srt$'
+```
+
+Find and remove non-English srt files
+
+
+```zsh
+fd -e srt | grep -E '(chi|cze|dan|deu|dut|fin|fra|fre|ger|gre|hun|ita|jpn|kor|nor|pol|por|rum|rus|slo|spa|swe|tur)\.srt$' | while IFS= read -r line; do trash -- "$line"; done
+```

@@ -1,0 +1,27 @@
+---
+tags: [ mac ]
+---
+
+# Disable subtitles in IINA
+# https://codesti.com/issue/iina/iina/4090
+# IINA can be configured to use the mpv sub-auto option:
+--sub-auto=<no|exact|fuzzy|all>, --no-sub-auto
+# Load additional subtitle files matching the video filename. The parameter specifies how external subtitle files are matched. exact is enabled by default.
+no:      Don't automatically load external subtitle files.
+exact: Load the media filename with subtitle file extension and possibly language suffixes (default).
+fuzzy: Load all subs containing the media filename.
+all:      Load all subs in the current and --sub-file-paths directories.
+# To use this mpv feature follow these instructions:
+Start IINA
+1.  Click on Preferences… under the IINA menu
+2.  The preferences panel appears
+3.  On the left side of the panel click on Subtitle
+4.  Choose Disabled in the Auto load pull-down button
+5.  On the left side of the panel click on Advanced
+6.  Slide the Enable advanced settings toggle button to be on (blue)
+7.  In the Additional mpv options section click on +
+8.  A new entry appears in the table
+9.  Double click on name and replace it with sub-auto
+10. Double click on value and replace it with fuzzy
+11. Make "Use config directory" is UNCHECKED to prevent override. 'echo "sub-auto=no" >> ~/.config/mpv/mpv.conf'  doesn't work in IINA
+12. Restart IINA to activate the new settings

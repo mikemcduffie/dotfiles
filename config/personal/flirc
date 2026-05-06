@@ -1,0 +1,62 @@
+# expose flirc_util embedded in Flirc app bundle
+ln -s /Applications/Flirc.app/Contents/Resources/flirc_util ~/bin/flirc_util
+
+# long presses via flirc_util record_lp
+
+
+# get dongle configiration
+flirc_util settings
+
+# modifiers keys combo only available in CLI via record_api? 
+https://forum.flirc.tv/index.php?/topic/828-flirc_util-record_api-1-p-doesnt-generate-ctrlp/&/topic/828-flirc_util-record_api-1-p-doesnt-generate-ctrlp=
+
+# Alfred workflow for Kodi + Flirc integration workarounds
+# HOMEPAGE / Bring Kodi to front (focus) via single remote button
+# Use 'related apps' tab on the workflow Hot Key trigger to execute applescript below if the apps "Don't have focus", otherwise pass thru
+on run
+    tell application "Kodi" to activate
+end run
+# add to ~/LibraryApplication Support/Kodi/userdata/keymaps/keyboard.xml
+<keymap>
+	<global>
+		<keyboard>
+			<n>NextAudioLanguage</n>
+			<escape>Back</escape>
+			<k mod="ctrl">ActivateWindow(Home)</k>
+			<m mod="ctrl">ActivateWindow(Videos,videodb://movies/titles/)</m>
+			<m mod="ctrl,command">ActivateWindow(Videos,videodb://movies/genres/)</m>
+			<t mod="ctrl">ActivateWindow(Videos,videodb://tvshows//titles)</t>
+			<t mod="ctrl,command">ActivateWindow(Videos,videodb://tvshows//genres)</t>
+			<f mod="ctrl"ActivateWindow(Videos,sources://video/)</f>
+			<p mod="ctrl">ActivateWindow(Videos,special://videoplaylists/)</p>
+		</keyboard>
+	</global>
+	<FullscreenVideo>
+		<keyboard>
+			<escape>Stop</escape>
+		</keyboard>
+	</FullscreenVideo>
+</keymap>
+# "Kill Kodi" Alfred Workflow
+flirc_util record_lp F12
+# use F12 when Kodi has focus via trigger "related apps" tab to run script
+ps -ax | grep Kodi| grep -v grep | awk '{print $1}' | xargs kill -9
+# or
+killall Kodi
+# Haven't figured out key combos with record_lp yet
+https://flirc.gitbooks.io/flirc-instructions/content/command-line-interface-guide/long-presses.html
+https://forum.flirc.tv/index.php?/topic/828-flirc_util-record_api-1-p-doesnt-generate-ctrlp/&/topic/828-flirc_util-record_api-1-p-doesnt-generate-ctrlp=
+https://www.freebsddiary.org/APC/usb_hid_usages
+    Modifiers Advanced
+    The modifiers are defined as follows. This is helpful if a user wants to use the flirc_util record_api command
+    #define MOD_CTRL_LEFT           (1<<0)
+    #define MOD_SHIFT_LEFT          (1<<1)
+    #define MOD_ALT_LEFT            (1<<2)
+    #define MOD_COMMAND_LEFT        (1<<3)
+    #define MOD_CTRL_RIGHT          (1<<4)
+    #define MOD_SHIFT_RIGHT         (1<<5)
+    #define MOD_ALT_RIGHT           (1<<6)
+    #define MOD_COMMAND_RIGHT       (1<<7)
+# Workaround may be to use F12 or similiar to trigger Alfred and send key combo to Kodi
+# Alternatively can F12, etc be used in keyboard.xml?
+

@@ -1,0 +1,30 @@
+#!/bin/env bash
+filename="${1%.*}"
+ext="${1##*.}"
+regex='^(https?|ftp|file)://[-A-Za-z0-9\+&@#/%?=~_|!:,.;]*[-A-Za-z0-9\+&@#/%=~_|]\.[-A-Za-z0-9\+&@#/%?=~_|!:,.;]*[-A-Za-z0-9\+&@#/%=~_|]$'
+
+if [[ "$ext" != "webloc" ]]; then
+    url=$(/opt/homebrew/bin/ggrep -oPm1 "(?<=<string>)[^<]+" "$1")
+    if [[ $url =~ $regex ]]; then 
+        # url IS valid
+        echo -e "[InternetShortcut]\r\nURL=${url}" > "$filename.url"
+    else
+        echo "No URL found: $url"
+        exit 1
+    fi
+elif [[ "$ext" != "url" ]]; then
+    url=$(sed -n '2p' "$1" | sed 's/URL=//')
+    if [[ $url =~ $regex ]]; then 
+        # url IS valid
+        echo -e '<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">\n<plist version="1.0">\n<dict>\n	<key>URL</key>\n	<string>'$url'</string>\n</dict>\n</plist>' > "$filename.webloc"
+    else
+        echo "No URL found: $url"
+        exit 1
+    fi
+else
+
+    echo "Must supply a webloc or url file"
+    exit 1
+fi
+
+

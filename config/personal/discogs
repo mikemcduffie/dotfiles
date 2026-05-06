@@ -1,0 +1,27 @@
+# Discogs API reference
+https://www.discogs.com/developers
+# Advanced search
+https://support.discogs.com/hc/en-us/articles/360003622014-How-To-Browse-Search-In-The-Database
+https://www.discogs.com/forum/thread/336105
+
+# Discogs API token stored in keychain (access via TouchID)
+keymaster get DiscogsToken
+token=$(keymaster get DiscogsToken)
+# https://github.com/johnthethird/keymaster
+
+# Discogs https search format -> JSON
+https://api.discogs.com/database/search?q=More+Than+A+Feeling&artist=Boston&type=release&token=insert_token_here
+# API accepts %20 as well
+# other filters
+&title=More+Than+A+Feeling
+# JSON will return "title": "<artist> - <title>" but you cannot use that format for search query
+&type=master
+e&country=US
+&format=album
+&format=single
+
+# Discogs curl format
+curl "https://api.discogs.com/database/search?q=&title=More+Than+A+Feeling&artist=Boston&type=release&country=US&format=single" -H "Authorization: Discogs token=HYQqowrmTgawCOTUJtNfUphaGhDmXIEaztKHJTPf" --user-agent "CertunaScript/0.1"
+curl "https://api.discogs.com/database/search?q=More+Than+A+Feeling&artist=Boston&type=release&country=US&format=album" -H "Authorization: Discogs token=insert_token_here" --user-agent "CertunaScript/0.1" | python -m json.tool | bbedit
+curl "https://api.discogs.com/database/search?q=More+Than+A+Feeling&artist=Boston&type=release&country=US&format=single" -H "Authorization: Discogs token=insert_token_here" --user-agent "CertunaScript/0.1" | python -m json.tool | bbedit
+

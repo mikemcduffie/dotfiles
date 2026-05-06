@@ -1,0 +1,30 @@
+# common ripgrep (rg) flags I use
+rg [OPTIONS] PATTERN [PATH ...]
+-l, --files-with-matches
+-F, --fixed-strings
+-- (no more flags)
+
+# more interesting ripgrep (rg) flags
+--files-without-match
+-s, --case-sensitive 
+-c, --count
+-f, --file <PATTERNFILE>... 
+-g, --glob <GLOB>...
+--glob-case-insensitive
+-., --hidden
+-i, --ignore-case
+-v, --invert-match
+--json (output)
+-M, --max-columns <NUM>
+    --max-columns-preview
+-I, --no-filename
+-N, --no-line-number
+-0, --null
+-p, --pretty (pretty text piped to command)
+-q, --quiet (used to test if found)
+-e, --regexp <PATTERN>...
+-z, --search-zip
+--type-add <TYPE_SPEC>...                
+  rg --type-add 'foo:*.foo' -tfoo PATTERN
+-t, --type <TYPE>...
+-w, --word-regexp (inside word boundaries)

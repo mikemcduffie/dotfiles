@@ -1,0 +1,22 @@
+#!/usr/bin/env python3
+
+import re
+import sys
+from pathlib import Path
+
+regex = r"(.*)[\ \.\(\[](19|20)(\d\d)[\ \.\)\]].*"
+
+for arg in sys.argv[1:]:
+    d = Path(arg)
+    if not d.is_dir():
+        print(f"{d} is not a directory")
+        continue
+    if m := re.match(regex, arg):
+        title = m.group(1)
+        if " " not in title:
+            #title.replace(".", " ")
+            title = re.sub(r"\.|_", " ", title)
+        title = title.rstrip()
+        year = f"{m.group(2)}{m.group(3)}"
+        new = f"{title} ({year})"
+        d.rename(new)

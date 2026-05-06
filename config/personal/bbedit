@@ -1,0 +1,58 @@
+---
+tags: [ mac ]
+---
+
+# Edit BBEdit keybinding/keyboard shortcuts
+Preferences>Menus & Shortcuts
+# May be custom edited shortcuts
+^L  = Open Language Menu # for syntax highlighting
+^O  = Open Text Options
+Find Windows:
+^⇧N    = Case Sensitive
+^⇧E    = Entire Word
+^⇧G    = Use Grep
+^⇧M    = Show Matches
+^⇧S    = Selection Only
+^⇧W    = Wrap Around
+^⇧H    = Open Search History Menu
+^⇧P    = Open Saved Patterns Menu
+^⇧C    = Open Pattern Cheat Sheet
+^⇧down = Swap Search & Replace Fields
+
+# useful options to enable
+Preferences>Editing>Allow pinch-to-zoom to change magnification
+Preferences>Editing>Display instance of selected text>underline
+                    # better for dark mode/low contrast highlight
+Preferences>Editing>Allow single-click line selection
+# 
+Preferences>Editor Defaults>Spaces per tab: 4
+# 
+Preferences>Completion>Include system text replacements in completion list
+                       # requires paid licence to Pro?
+# 
+Preferences>Keyboard>Use Tab key to navigate Placeholders
+Preferences>Keyboard>"Home" and "End" key behavior:
+                      - Scroll to beginning and end of document
+Preferences>Keyboard>Allow Tab key to indent text blocks
+Preferences>Keyboard>Enable Shift-Delete for forward delete
+Preferences>Keyboard>eferences>Keyboard>Enable macOS "Help" key
+Preferences>Keyboard>When auto-indenting, remove leading white space from indented line
+Preferences>Keyboard>Allow Page Up and Page Down keys to move the insertion point
+Preferences>Keyboard>Option-up and option-down move by paragraphs
+# 
+Preferences>Sidebar>Add documents to sidebar in alphabetical order
+                    # disable to add new/opened docs to end of list
+# 
+Preferences>Text Colors
+            # modify syntax highlighting colors per color scheme & language
+            # alternately you can switch color theme from here (vs in Appearance)
+
+# Keyboard navigation
+in addition to standard Mac option/command navigation shortcuts
+    option-right/left  = move cursor by "word"
+    command-right/left = jump to beginning/end of line
+BBEdit supports standard readline keybindings:
+    control-A = jump to beginning of line
+    control-E = jump to end of line
+
+    

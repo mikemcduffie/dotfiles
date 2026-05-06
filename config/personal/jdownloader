@@ -1,0 +1,77 @@
+# https://superuser.com/questions/1297098/how-to-disable-ads-in-jdownloader#1297100
+
+# Number of Simultaneous Downloads
+Settings > General > Download Manage
+Max simultaneous Downloads :                               9
+Maximum of simultaneous downloads per host   [checkbox] :  3
+
+
+# Disable creating folders for single file downloads
+Advanced Settings > LinkgrabberSettings: Subfolder Threshold = 1
+#
+'/Applications/JDownloader 2/cfg/org.jdownloader.gui.views.linkgrabber.addlinksdialog.LinkgrabberSettings.json'
+    "subfolderthreshold" : 1
+
+
+# find JDownloader config folder
+JDFOLDER=$(fd org.jdownloader.settings.GraphicalUserInterfaceSettings.json -p /Applications -x echo {//})
+
+# Check custom quality-of-life settings
+❯ rg --no-line-number --glob '*.json' \
+  "special|premium|oboom|bannerenabled|donatebuttonstate|^subfolderthreshold|flashingenable|flashenabled|maxsimul"
+org.jdownloader.settings.GraphicalUserInterfaceSettings.json
+   "bannerenabled" : false,
+   "clipboarddisabledwarningflashenabled" : false,
+   "donatebuttonstate" : "AUTO_HIDDEN",
+   "premiumalertspeedcolumnenabled" : false,
+   "premiumalerttaskcolumnenabled" : false,
+   "premiumstatusbardisplay" : "GROUP_BY_ACCOUNT_TYPE",
+   "statusbaraddpremiumbuttonvisible" : false,
+   "updatebuttonflashingenabled" : true
+
+org.jdownloader.settings.GeneralSettings.json
+   "maxsimultanedownloads" : 9,
+   "maxsimultanedownloadsperhost" : 3,
+
+plugins/HOSTER/1fichier.com.json
+   "usepremiumapienabled" : false
+
+plugins/HOSTER/nitroflare.com.json
+   "trustapiaboutpremiumonlyflag" : false
+   
+   
+   
+# restore custom quality-of-life settings
+❯ cat org.jdownloader.settings.GraphicalUserInterfaceSettings.json | \
+jq --sort-keys '. |= . + {
+    "bannerenabled" : false,
+    "clipboarddisabledwarningflashenabled" : false,
+    "premiumalertspeedcolumnenabled" : false,
+    "premiumalerttaskcolumnenabled" : false,
+    "statusbaraddpremiumbuttonvisible" : false,
+    "updatebuttonflashingenabled" : false
+}' > temp.json && \
+mv org.jdownloader.settings.GraphicalUserInterfaceSettings.json \
+   org.jdownloader.settings.GraphicalUserInterfaceSettings.json.old && \
+mv temp.json org.jdownloader.settings.GraphicalUserInterfaceSettings.json
+#  ^^^ write update to temp.json, backup current cfg to .old, rename temp to cfg
+
+
+
+
+# pretty print
+❯  fd org.jdownloader.settings.GraphicalUserInterfaceSettings.json -p /Applications -x cat {} | json_pp
+
+
+# pretty print (default to terminal/stdout) sorted json   
+❯ cat org.jdownloader.settings.GraphicalUserInterfaceSettings.json | jq --sort-keys "."
+
+
+❯ jq --raw-output '.specialdealoboomdialogvisibleonstartup |= "false"' org.jdownloader.settings.GraphicalUserInterfaceSettings.json
+
+# Merging/overwriting keys
+echo '{ "a": 1, "b": 2 }' |\
+jq '. |= . + {
+  "c": 3
+}'
+

@@ -1,0 +1,258 @@
+# remove "sample" sample videos; nested for loops: rename all files to directory name retaining extension
+fd 'sample-' -x rm; for d in */; do cd "$d"; d=${d:0:-1}; for f in *.*; do mv -n  "$f" "${d}.${f##*.}"; done; cd ..;done
+
+# create directories and movie movie files
+for f in *.* ; do dir=$(echo $f | sed 's/).*/)/'); mkdir "$dir"; mv -n "$f" "${dir}/"; done
+
+# Battery stats to XML
+ioreg -arw0 -d1 -n AppleSmartBattery > USB-C Cable.xml
+
+# fd -e sh doesn't work
+fd '\.sh$'
+
+# parse xml for key form value
+ggrep -oPm1 "(?<=<title>)[^<]+"
+
+# rename mkvs based on nfos (NO ERROR CHECKING) 
+for f in *.mkv; do fd -e nfo "${f%.*}" -x mv "$f" "{.}.${f##*.}"; done
+
+# check if video file has matching ndo file
+setopt NULL_GLOB; for filename in **/*.{MKV,mkv,avi,mp4,m4v}; do [[ -f "${filename%.*}.nfo" ]] || echo "Missing: $filename"; done
+
+# check mkv subtitles
+for f in *.mkv; do echo "$f"; ffmpeg -i "$f" 2>&1 | grep 'Subtitle:'; echo; done
+sub_check() {for f in **/*.mkv; do echo "$f"; ffmpeg -i "$f" 2>&1 | grep 'Subtitle'; echo; done}
+
+# Home Assistant (Nativefier)
+nativefier 'http://hassio.local:8123/lovelace/main' -n 'Home Assistant (Nativefier)' --disable-old-build-warning-yesiknowitisinsecure --insecure -i "/Users/mike/Documents/Home Assistant icons/Home Assistant Orange Big Sur Icon .png"
+# Home Assistant (Master Bedroom)
+nativefier 'http://hassio.local:8123/lovelace/master-bedroom' -n 'Home Assistant (Master Bedroom)' --disable-old-build-warning-yesiknowitisinsecure --insecure -i "/Users/mike/Documents/Home Assistant icons/Home Assistant Purple Big Sur Icon .png"
+# TasmoAdmin | Home Asisstant | BNativefier
+nativefier  "https://hassio.local:9541/devices" --disable-old-build-warning-yesiknowitisinsecure --insecure  --name "TasmoAdmin" --icon /Users/mike/Documents/tasmoadmin_icon.png  -a arm64
+
+# Arvin / Volumio Player app
+nativefier 'http://arvin.local/playback' -n 'Arvin Player (Volumio)' --disable-old-build-warning-yesiknowitisinsecure --insecure -i /Users/mike/Documents/Volumio\ icon.png
+
+
+# upgrade nativefier app
+nativefier --upgrade <pathToExistingApp> [other options]
+
+
+https://github.com/nativefier/nativefier/blob/master/API.md#browserwindow-options
+#Voice Alert When Your Mac is Back Online
+until ping -W1 -c1 8.8.8.8; do sleep 5; done && say "the internet is back"
+
+# convert to lowercase in shell
+awk '{print tolower($0)}'
+
+# convert to uppercase in shell
+awk '{print toupper($0)}'
+
+# titlecase using awk
+awk  'BEGIN { FS=OFS="\0" }
+      {n = split($0, words, /[ |]/, separators);
+       out = separators[0];
+       for (i=1; i<=n; ++i) {
+           out = out toupper(substr(words[i],1,1)) tolower(substr(words[i],2)) separators[i];
+       };
+       print out separators[n+1]; }' <file>
+
+# call function (ex: main) in shell script and handle exit codes
+main || exit 1
+exit 0
+
+# find and replace test string in-place with backup
+find . -type file -name "s03e*.nfo" -print0 | xargs -0 sed -i.bak 's/Scooby-Doo, Where Are You\!/The Scooby-Doo Show/'
+
+# multi-line remove with sed
+remove_actors() { sed -i '' '/<actor>/,/<\/actor>/d' "$1" }
+
+# find and replace in files
+rg --files-with-matches  -0 Pussyfoot **/*.txt | xargs -0 sed -i '' 's/Marc Anthony and Pussyfoot/Marc Antony and Pussyfoot/g'
+
+# check Kodi nfo files
+ ggrep -oPm1 "(?<=<title>)[^<]+" **/*.nfo | sed 's/:/\t/'  | python3 ~/scripts/python/check_nfo_title.py
+ 
+ # more echo test examples with str replacement for file rename
+f="Tex Avery's Wolf.xsp"; for n in "Southern Wolf" "George and Junior" "Droopy" "Screwy Squirrel" "Spike"; do cp "$f" "${f/Wolf/$n}"; sed -i '' "s/Wolf/$n/g"  "${f/Wolf/$n}"; done
+for f in *.mkv; do echo mkvextract "$f" tracks 3:"${f/.mkv/.sup}"; done
+
+# multiple extensions
+setopt NULL_GLOB; for filename in **/*.{MKV,mkv,avi,mp4,m4v}; do [[ -f "${filename%.*}.nfo" ]] || echo "Missing: $filename"; done
+
+# test for string contains substring: echo string | grep -q substring
+for f in *.nfo; do if echo $f | grep -q "0—"; then echo "${f/0—/0 —}"; fi; done
+
+# sed regex; must escape &
+for f in *—Red*.nfo; do sed -E -i  '' 's/<name>.*Red.*<\/name>/<name>\&apos;Red\&apos;<\/name>/g' "$f"; done
+
+missing_nfo() {for f in *.{mkv,mp4,avi}; do [[ -f "${f%.*}.nfo" ]] || echo "MISSING: ${f%.*}.nfo"; done }
+e=mkv; for f in *.$e; do  new="$(echo ${f%.nfo} | awk '{s=$NF; $NF=$1; $1=s; print $0}').$e"; mv "$f" "$new"; done
+❯ for f in *.mkv; do t="${f/\(*}"; ep=$(echo $t | awk '{print $1}'); y=${ep/S/};y=${y/E*/};t=$(echo $t | cut -c 10-); folder="$t ($y)"; mkdir "$folder"; mv $ep*.* "$folder/" ;done
+
+# rsync all directories
+fd -td -d1 -x rsync -rvh --progress --size-only "{}/" "/media/media2/{/}/"
+
+# Rename files as dirname
+#   -mindepth 2 : ensures that the file has a parent directory.
+#   -type f : ensures that we are working with a `regular file` (not directory, symlink, etc.).
+find . -mindepth 2 -type f -exec bash -c 'file="{}"; dir="$(dirname $file)"; mv "$file" "$dir/${dir##*/}.${file##*.}"' \;
+# mp3 ONLY (case insensitive) 
+find . -mindepth 2 -type f -iname "*.mp3" -exec bash -c 'file="{}"; dir="$(dirname $file)"; mv "$file" "$dir/${dir##*/}.${file##*.}"' \;
+# mp3 OR mp4 ONLY (case insensitive)
+find . -mindepth 2 -type f \( -iname "*.mp3" -or -iname "*.mp4" \) -exec bash -c 'file="{}"; "dir=$(dirname $file)"; mv "$file" "$dir/${dir##*/}.${file##*.}"' \; 
+
+# Find non-English srts
+fd -e srt '^\d+_' -E '*[Ee]ng*' -E '*[Uu]nd*' -x echo {/.} | sort | uniq
+
+# Convert image format
+sips -s format jpeg -s formatOptions 80 "Beach party.tiff" --out out.jpg
+fd -e jp2 -x sips -s format jpeg -s formatOptions normal {} resampleWidth 2000 --out {.}.jpg        
+# formatoptions: quality 
+0-100 
+# or 
+low, normal, high, best
+# resize image
+--resampleHeightWidth pixelsH pixelsW
+# single dimension auto resizes other dimension
+--resampleWidth pixelsW
+--resampleHeight pixelsH
+
+# Optimize/resize jpeg image
+jpegoptim [options] <filenames> 
+-S<size>, --size=<size>
+                    Try to optimize file to given size (disables lossless
+                    optimization mode). Target size is specified either in
+                    kilo bytes (1 - n) or as percentage (1% - 99%)
+-m<quality>, --max=<quality>
+                    set maximum image quality factor (disables lossless
+                    optimization mode, which is by default on)
+                    Valid quality values: 0 - 100  
+-s, --strip-all   strip all markers from output file
+
+# get wan router IP address
+wget -qO- http://www.showmyip.com/simple/ | ggrep -oPm1 "(?<=<title>)[^<]+"
+ifconfig -lu; if wget -qO- http://www.showmyip.com/simple/ | ggrep -oPm1 "(?<=<title>)[^<]+" | grep -e "^192.145"; then echo VPN ON; else echo VPN OFF; fi
+
+# If run directly, execute
+if [[ "$(basename $0 .sh)" == 'my_shell_name' ]]; then
+# my_shell_name.sh would return my_shell_name
+
+# uBlock Origin filters for Twitter
+twitter.com##.r-zchlnj.r-1xcajam.r-12vffkv.r-1d2f490.r-1p0dtai.r-aqfbo4.css-1dbjc4n
+twitter.com##html:style(overflow:auto !important)
+twitter.com##+js(cookie-remover, guest_id)
+twitter.com##.r-16wqof.r-1dqxon3.r-16y2uox.r-kemksi.css-1dbjc4n
+twitter.com##.r-g6jmlv.r-ipm5af.r-1xcajam.r-xr3zp9.r-1pjcn9w.r-1777fci.r-1pi2tsx.r-18u37iz.r-1kihuf0.r-1awozwy.css-1dbjc4n > .r-ipm5af.r-zchlnj.r-1xcajam.r-1d2f490.r-1p0dtai.r-11z020y.css-1dbjc4n
+twitter.com##.r-g6jmlv.r-ipm5af.r-1xcajam.r-xr3zp9.r-1pjcn9w.r-1777fci.r-1pi2tsx.r-18u37iz.r-1kihuf0.r-1awozwy.css-1dbjc4n
+
+
+# rename TV subs from subs/parent folder
+for d in *; do for i in {1..3}; do [ -f "$d/$i_english.srt" ] && "$d/$i_english.srt" "../$d.English.srt"; done; done
+for d in *; do [ -f "$d/2_english.srt" ] && mv -n "$d/2_english.srt" "../$d.English.srt"; [ -f "$d/3_english.srt" ] && mv -n "$d/2_english.srt" "../$d.English.srt"; done
+for d in *; do [ -f "$d/2_english.srt" ] && mv -n "$d/2_english.srt" "../$d.English.srt"; done
+for d in *; do [ -f "$d/3_english.srt" ] && mv -n "$d/2_english.srt" "../$d.English.srt"; done
+
+#  quick generate kodi nfo files
+i=1;for f in *.mp4; do echo '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<episodedetails>\n  <title>'"${f%.*}"'</title>\n<genre>Vietnam</genre>\n<season>1</season>\n<episode>'$i'</episode>\n</episodedetails>'  >  "${f%.*}.nfo"; ((i++)); done
+
+
+
+rg1="$1"
+shift
+others="$@"
+
+awk -v arg1="${arg1}" -v others="${others}" '
+BEGIN { n=split(others,arr,"")                 # split into into array of single characters
+        for (i=1;i<=n;i++)                     # loop through indices of arr[] array
+            letters[arr[i]]                    # assign characters as indices of letters[] array; eliminates duplicates
+        delete letters[" "]                    # delete array index for "<space>"
+        PROCINFO["sorted_in"]="@ind_str_asc"   # sort array by index
+        for (i in letters)                     # loop through indices
+            printf "%s", i                     # print index to stdout
+        printf " -> %s\n", arg1                # finish off line with final string
+      }
+'
+
+
+# "****Example to show use of IFS to split a string****"
+IFS='-'
+str="Learn-Bash-From-EduCBA"
+# "The string we are going to split by hyphen '-' is: $str"
+read -rasplitIFS<<< "$str"
+# "Print out the different words separated by hyphen '-'"
+for word in "${splitIFS[@]}"; do
+# $word
+done
+# "Setting IFS back to whitespace"
+IFS=''
+
+
+# "****Example to show split a string without IFS****"
+str="Learn,Bash,From,EduCBA"
+# "The string we are going to split by comma ',' is: $str"
+readarray -d , -t splitNoIFS<<< "$str"
+# "Print out the different words separated by comma '',''"
+for word in "${splitNoIFS[@]}"; do
+# $word
+done
+
+
+
+check_title() {
+s="$@"
+fullpath=${s%:*}
+filename="$(basename "$fullpath")"
+name=""${filename%.*}""
+title=${s##*:}
+ecaped_title="$(tr)"
+if [[ "$name" != "*$title" ]]; then
+    echo "$name --> $title"
+fi
+}
+
+jmkv1() { mkvpropedit "$1" --edit track:s1 --set flag-default=1 --set flag-forced=1 --set language="eng" --edit track:v1 --set language="jpn" --edit track:a1 --set language="jpn" }
+jmkv2() { mkvpropedit "$1" --edit track:s2 --set flag-default=1 --set flag-forced=1 --set language="eng" --edit track:v1 --set language="jpn" --edit track:a1 --set language="jpn" }
+sub_check() {for f in **/*.mkv; do echo "$f"; ffmpeg -i "$f" 2>&1 | grep 'Subtitle'; echo; done}
+checknfo() { egrep -Lir --include="$f/*.nfo" '<order4' }   
+
+check_title() {                                                                      
+s="$@"
+fullpath=${s%:*}
+filename="$(basename "$fullpath")"
+name=""${filename%.*}""
+title=${s##*:}
+if [[ "$name" != "*$title" ]]; then
+    echo "$name --> $title"
+fi
+}
+
+❯ for f in **/**/*.m4a; do echo $f; done | wc -l
+   41784
+❯ for f in **/**/*.m4a; do mediainfo "$f" | grep 'Apple Lossless Audio Codec'; done | wc -l
+    3783
+
+# convert webloc to url
+#!/usr/local/bin/env bash
+dir=$(dirname "$1")
+filename=$(basename "${1%.*}")
+cleanedname=${filename//[!0-9A-Za-z \.\-()\[\]]/}
+ext="${1##*.}"
+regex='^(https?|ftp|file)://[-A-Za-z0-9\+&@#/%?=~_|!:,.;]*[-A-Za-z0-9\+&@#/%=~_|]\.[-A-Za-z0-9\+&@#/%?=~_|!:,.;]*[-A-Za-z0-9\+&@#/%=~_|]$'
+
+if [[ "$ext" != "webloc" ]]; then
+    echo "Must supply a webloc file"
+    exit 1
+fi
+
+url=$(/opt/homebrew/bin/ggrep -oPm1 "(?<=<string>)[^<]+" "$1")
+if [[ $url =~ $regex ]]; then 
+    # url IS valid
+    echo -e "[InternetShortcut]\r\nURL=${url}" > "$dir/$cleanedname.url"
+	cp "$1" "$dir/$cleanedname.webloc"
+else
+    echo "No URL found: $url"
+fi
+
+
+for f in *.nzb; do mv "$f" "$( grep 'file poster=' "$f" | sed -E 's/.*subject="//; s/Detective Comics - //; s/\.cbr.*//')".nzb; done

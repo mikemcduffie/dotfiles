@@ -1,0 +1,283 @@
+#     .zprofile .zlogin and .zprofile are basically the same thing -
+# they set the environment for login shells1; they just get loaded at
+# different times (see below). .zprofile is based on the Bash's
+# .bash_profile while .zlogin is a derivative of CSH's .login. Since
+# Bash was the default shell for everything up to Mojave, stick with
+# .zprofile.
+#
+#     .zshrc This sets the environment for interactive shells2. This
+# gets loaded after .zprofile. It's typically a place where you "set
+# it and forget it" type of parameters like $PATH, $PROMPT, aliases,
+# and functions you would like to have in both login and interactive
+# shells.
+#
+#     .zshenv (Optional) This is read first and read every time. This
+# is where you set environment variables. I say this is optional
+# because is geared more toward advanced users where having your
+# $PATH, $PAGER, or $EDITOR variables may be important for things
+# like scripts that get called by launchd. Those run under a
+# non-interactive shell 3 so anything in .zprofile or .zshrc won't
+# get loaded. Personally, I don't use this one because I set the PATH
+# variable in my script itself to ensure portability.
+#
+#     .zlogout (Optional) But very useful! This is read when you log
+# out of a session and is very good for cleaning things up when you
+# leave (like resetting the Terminal Window Title)
+#
+#     For an excellent, in-depth explanation of what these files do,
+# see What should/shouldn't go in .zshenv, .zshrc, .zlogin,
+# .zprofile, on Unix/Linux.
+# https://unix.stackexchange.com/q/71253/107777
+
+#     Some Caveats Apple does things a little differently so it's
+# best to be aware of this. Specifically, Terminal initially opens
+# both a login and interactive shell even though you don't
+# authenticate (enter login credentials). However, any subsequent
+# shells that are opened are only interactive.
+#
+#     You can test this out by putting an alias or setting a variable
+# in .zprofile, then opening Terminal and seeing if that
+# variable/alias exists. Then open another shell (type zsh); that
+# variable won't be accessible anymore.
+#
+#     SSH sessions are login and interactive so they'll behave just
+# like your initial Terminal session and read both .zprofile and
+# .zshrc
+#
+#     Order of Operations This is the order in which these files get
+# read. Keep in mind that it reads first from the system-wide file
+# (i.e. /etc/zshenv) then from the file in your home directory
+# (~/.zshenv) as it goes through the following order.
+#
+#     .zshenv → .zprofile → .zshrc → .zlogin → .zlogout
+#
+#     1 A login shell is simply a shell, whether local or remote,
+# that allows a user to authenticate to the system. These shells are
+# typically interactive shells.
+#
+#     2 In interactive mode, they [the shell] accept input typed from
+# the keyboard. (GNU Bash Reference Manual, 1.2 What is a Shell?)
+# https://www.gnu.org/software/bash/manual/html_node/What-is-a-shell_003f.html
+#
+#     3 When executing non-interactively, shells execute commands
+# read from a file.
+# https://www.gnu.org/software/bash/manual/html_node/What-is-a-shell_003f.html
+
+
+# run zsh without any customizations
+zsh -o NO_RCS
+
+
+# zsh builtin commands
+https://zsh.sourceforge.io/Doc/Release/Shell-Builtin-Commands.html
+
+
+# string substitution
+${main_string:s/search_term/replace_term} # in zsh
+${main_string/search_term/replace_term} # bash or zsh
+#global substring substition
+${main_string:gs/search_term/replace_term} # in zsh
+${main_string//search_term/replace_term} # bash or zsh; double // == global
+
+# ZSH/Bash string manipulation
+# https://bougui505.github.io/assets/ZSH_Bash_string_manipulation_Tim_s_blag.html
+# Substrings
+# Given a test string:
+    word='hello - world - how - are - you'
+# 
+# Take elements (letters) 5 through 10
+    $word[5,10] == 'o - wo' # for zsh
+    ${word:5:5} == '- wo'   # for bash
+# in bash the first character is at index 0, in zsh this is at index 1!
+# ${parameter:start:length}
+# If you omit the :length
+    ${word:1}
+# single letter
+    ${word[1]}
+# Substring matching
+# To match a string with a substring, we can use:
+    ${str#substr}  # Deletes shortest match of $substr from front $str
+    ${str##substr} # Deletes longest match of $substr from front $str
+# for example: take part before 'how*', or o*
+    ${word%how*} == 'hello - world - '
+    ${word%o*} == 'hello - world - how - are - y'
+    ${word%%o*} == 'hell'
+# Or take the part after '* - '
+    ${word#* - } == 'world - how - are - you'
+    ${word##* - } == 'you'
+# 
+# Explode strings
+# To explode or split strings into array, we can use several zsh functions:
+# To split by ' - ', take 3rd element
+    ${word[(ws: - :)3]} == 'how' # only zsh
+# Split by ' - ', take second element, capitalize
+    ${(C)${word[(ws: - :)2]}} == 'World' # only zsh
+# Split by word, take first word
+    $word[(w)1] == 'hello' # only zsh
+# 
+# File rename examples
+# Get the file extension:
+    file=helloworld.multiple.dots.jpg
+    ${file##*\.} == jpg
+    echo ${file##*\.}
+# 
+# Get the file base name:
+    file=helloworld.multiple.dots.jpg
+    ${file%\.*} == helloworld.multiple.dots
+    echo ${file%\.*}
+
+# silently get an empty string from a glob pattern with no matches (globbing)
+setopt NULL_GLOB
+
+# A plain old glob (globbing)
+print -l *.txt
+print -l **/*.txt
+
+# test glob (globbing)
+ls -1 **/*.txt
+
+# standard globbing wildcards
+asterisk (*) character for zero or more characters
+question mark (?) character for any single character
+[123] specifier, which indicates any of the characters 1, 2, or 3
+[0-9] specifier, which indicates any number between 0 and 9 (or [a-z] for any letters between a and z).
+[::alpha::] for any letter
+[::alnum::] for any letter or number
+[::lower::] for any lowercase character
+
+# Show text files that end in a number from 1 to 10
+print -l **/*<1-10>.txt
+
+# Show text files that start with the letter a
+print -l **/[a]*.txt
+
+# Show text files that start with either ab or bc
+print -l **/(ab|bc)*.txt
+
+# Show text files that don't start with a lower or uppercase c
+print -l **/[^cC]*.txt
+
+# Show only directories
+print -l **/*(/)
+
+# Show only regular files
+print -l **/*(.)
+
+# Show empty files
+print -l **/*(L0)
+
+# Show files greater than 3 KB
+print -l **/*(Lk+3)
+
+# Show files modified in the last hour
+print -l **/*(mh-1)
+
+# Sort files from most to least recently modified and show the last 3
+print -l **/*(om[1,3])
+
+# `.` show files, `Lm-2` smaller than 2MB, `mh-1` modified in last hour,
+# `om` sort by modification date, `[1,3]` only first 3 files
+print -l **/*(.Lm-2mh-1om[1,3])
+
+# Show every directory that contain directory `.git`
+print -l **/*(e:'[[ -d $REPLY/.git ]]':)
+
+# Return the file name (t stands for tail)
+print -l *.txt(:t)
+
+# Return the file name without the extension (r stands for remove_extension)
+print -l *.txt(:t:r)
+
+# Return the extension
+print -l *.txt(:e)
+
+# Return the parent folder of the file (h stands for head)
+print -l *.txt(:h)
+
+# Return the parent folder of the parent
+print -l *.txt(:h:h)
+
+# Return the parent folder of the first file
+print -l *.txt([1]:h)
+
+# Parameter expansion (globbing)
+files=(*.txt)          # store a glob in a variable
+print -l $files
+print -l $files(:h)    # this is the syntax we saw before
+print -l ${files:h}
+print -l ${files(:h)}  # don't mix the two, or you'll get an error
+print -l ${files:u}    # the :u modifier makes the text uppercase
+
+# :s modifier
+variable="path/aaabcd"
+echo ${variable:s/bc/BC/}    # path/aaaBCd
+echo ${variable:s_bc_BC_}    # path/aaaBCd
+echo ${variable:s/\//./}     # path.aaabcd (escaping the slash \/)
+echo ${variable:s_/_._}      # path.aaabcd (slightly more readable)
+echo ${variable:s/a/A/}      # pAth/aaabcd (only first A is replaced)
+echo ${variable:gs/a/A/}     # pAth/AAAbcd (all A is replaced)
+
+# Split the file name at each underscore
+echo ${(s._.)file}
+
+# Join expansion flag, opposite of the split flag.
+array=(a b c d)
+echo ${(j.-.)array} # a-b-c-d
+
+# Short if
+if [[ ... ]] command
+if [[ ... ]] { command ... }
+
+# Short for
+for i ( word ... ) command
+for i ( word ... ) { command ... }
+for i in word ... ; command
+
+# Short while/until
+while [[ ... ]] { command ... }
+until [[ ... ]] { command ... }
+
+# Use output of command, when using pipe is not possible
+<( command )
+
+# Similar to <( ), but creates temporary file (instead of FD or FIFO), when
+# program needs to seek in output.
+=( command )
+
+# list last 10 commands
+history -10
+
+# list files without extension
+print -rl -- *.png(:r)
+
+# search command history by typing starting characters and use up/down arrow keys: 
+# add to .zshrc
+bindkey '\e[A' history-beginning-search-backward
+bindkey '\e[B' history-beginning-search-forward
+
+# stdout & stderr piped
+|&
+# shorthad for:
+2>&1 | 
+
+
+
+# functions are stored in an associative array functions, so to get only
+# the function names (k flag for keys) in alphabetical order (o flag for
+# ordering) you can use:
+print -l ${(ok)functions}
+# filter out the ones with a leading underscore
+print -l ${(ok)functions[(I)[^_]*]}
+# https://superuser.com/questions/681575/any-way-to-get-list-of-functions-defined-in-zsh-like-alias-command-for-aliases
+
+
+# To print the size of a file in bytes using zsh on macOS, you can use the
+# stat builtin command, which is available in the zsh/stat module. Load
+# the module and use the +size format specifier to get the size of the
+# file in bytes.
+zmodload zsh/stat
+stat -L +size -- /path/to/your/file
+# The -L flag ensures the size is reported after resolving any symbolic
+# links, and +size specifies the size attribute. This method is
+# efficient and directly retrieves the st_size attribute from the file's
+# inode.

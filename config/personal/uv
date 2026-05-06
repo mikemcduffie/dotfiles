@@ -1,0 +1,181 @@
+UV Install Python
+https://mac.install.guide/python/install-uv
+
+
+Install UV with Homebrew
+It's easiest to install UV directly with the curl command (below) but if you prefer, you can install UV with Homebrew.
+
+❯ brew install uv
+When you install UV with Homebrew, you will need to set the PATH environment variable for UV
+
+Set the $PATH for UV
+If you want to set the PATH manually, or you've installed UV using Homebrew, you must set the Mac PATH to make sure UV is available on the commnd line. Otherwise, entering the command python will trigger zsh: command not found: python and the command python3 will access the older Xcode-installed Python version.
+
+You have two options to set the $PATH for UV.
+
+Use the UV uv tool update-shell command to set the $PATH in ~/.zshenv
+Set the $PATH manually in ~/.zprofile
+Use the UV uv tool update-shell command
+UV provides a utility command to set the $PATH in ~/.zshenv:
+
+❯ uv tool update-shell
+This is the command that runs automatically during the curl installation process to set the $PATH for UV but you can run it yourself if you installed UV with Homebrew.
+
+This adds the following line to ~/.zshenv:
+
+export PATH="$HOME/.local/bin:$PATH"
+Many developers prefer to set the $PATH in the ~/.zprofile file, not ~/.zshenv, so you may want to set the $PATH manually.
+
+Set the $PATH manually
+You can use TextEdit, the default macOS graphical text editor, to edit the ~/.zprofile file. Alternatively, you can edit the ~/.zshrc file. It works the same but, by convention and design, the ~/.zprofile file is used for setting the $PATH (see .zshrc or .zprofile for an explanation). You can open a file in TextEdit from the terminal:
+
+❯ open -e ~/.zprofile
+You also can use the command line editors nano or vim to edit the shell configuration files. See Shell Configuration for more about editing shell configuration files.
+
+Add this command as the last line of your configuration file to configure the Zsh shell for UV.
+
+export PATH="~/.local/bin:$PATH"
+Changes to the ~/.zprofile file will not take effect in the Terminal until you've quit and restarted the terminal. Alternatively (this is easier), you can use the source command to reset the shell environment:
+
+❯ source ~/.zprofile # Or just restart your terminal
+The source command reads and executes a shell script file, in this case resetting the shell environment with your new $PATH setting.
+
+After resetting your shell, you can check the $PATH setting.
+
+❯ echo $PATH
+~/.local/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin
+The ~/.local/bin directory will be leftmost, taking precedence over other directories. If you've used the uv tool update-shell command, the ~/.local/bin directory will be rightmost, with the lowest precedence.
+
+Verify UV installation
+After installing UV, use uv --version to verify that it has been installed.
+
+❯ uv --version
+uv 0.6.14
+If you don't see this output, make sure that the UV installation directory is in your PATH. You may need to restart your terminal or source your shell configuration file.
+
+Install Python with UV
+One of UV's features is its ability to install and manage Python versions. To install the latest Python version:
+
+❯ uv python install --preview
+As of this writing, the  --preview flag is necessary to install a Python executable into ~/.local/bin so that it is available from the command line.
+
+To install a specific Python version:
+
+❯ uv python install 3.12 --preview
+You can remove Python versions:
+
+❯ uv python uninstall 3.13
+Verify Python installation
+After installing Python with UV, you can find which Python versions are installed:
+
+❯ uv python find
+UV provides a command to show which directory contains the Python executables:
+
+❯ uv python dir
+When using UV commands, the appropriate Python version will be automatically selected. If you want to directly use Python, you can rely on UV's automatic Python downloads. For example:
+
+❯ uvx python@3.13 -c "print('hello world')"
+This will automatically download Python 3.13 if it's not already installed.
+
+Use UV
+You can use UV to:
+
+Install and manage Python versions.
+Set up a Python project with package dependencies.
+Run Python scripts.
+Run Python tools.
+Install Python packages.
+
+
+1. Managing Python versions
+
+# Install Python versions
+❯ uv python install 3.11 3.12
+
+# List available and installed versions
+❯ uv python list
+
+# Pin a project to a specific Python version
+❯ uv python pin 3.11
+You can check if a Python version is availble:
+
+❯ python --version
+You can check where Python versions are installed:
+
+❯ which -a python
+/Users/daniel/.local/bin/python
+
+
+2. Working with projects
+
+# Create a new project
+❯ uv init myproject
+
+# Add dependencies
+❯ uv add requests
+
+# Sync dependencies with the environment
+❯ uv sync
+
+# Lock dependencies
+❯ uv lock
+
+# Run commands in the project environment
+❯ uv run python script.py
+Here uv init myproject creates both the directory structure and the pyproject.toml file so you can add a library (requests in this example).
+
+With uv init myproject, UV automatically handles Python virtual environments -- isolated spaces that keep project dependencies separate from each other. This is crucial for managing multiple Python projects without package conflicts. For a more detailed explanation of virtual environments, lock files, and why they matter, see my Mac Python general guide.
+
+If you are following a tutorial that uses pip to install packages, you can choose to use UV's add command. Or use UV's drop-in replacement for pip, the Python package installer, like this:
+
+# Create a virtual environment
+❯ uv venv
+
+# Install packages
+❯ uv pip install requests 
+
+# Compile requirements
+❯ uv pip compile requirements.in -o requirements.txt
+
+
+3. Managing scripts
+
+# Run a script with dependencies
+❯ uv run script.py
+
+# Add dependencies to a script
+❯ uv add --script script.py requests
+
+
+4. Working with tools
+
+# Run a tool in an ephemeral environment
+❯ uvx ruff check .
+
+# Install a tool
+❯ uv tool install ruff
+Shell autocompletion
+To enable shell autocompletion for uv commands in the Zsh shell:
+
+echo 'eval "$(uv generate-shell-completion zsh)"' >> ~/.zshrc
+Then restart your shell or source the configuration file.
+
+Updating UV
+When UV is installed via the standalone installer, it can update itself on-demand:
+
+❯ uv self update
+If you installed UV using Homebrew, you can update it using the following command:
+
+❯ brew upgrade uv
+Uninstall UV
+If you decide you don't want to use UV anymore, you can remove it:
+
+Clean up stored data (optional):
+❯ uv cache clean
+❯ rm -r "$(uv python dir)"
+❯ rm -r "$(uv tool dir)"
+Remove the UV binaries:
+❯ rm ~/.local/bin/uv ~/.local/bin/uvx
+If the installer modified your shell profiles, you'll need to edit those files to remove any UV-related lines.
+What's next
+Now that you have UV installed, you can start using it for all your Python development needs. UV simplifies Python development by providing a single tool for managing versions, packages, and projects.

@@ -1,0 +1,7 @@
+if [ -f "$1" ]; then
+    edge-playback -f "$1" -v en-US-AndrewNeural
+elif [ -n "$1" ]; then
+    edge-playback -t "$1" -v en-US-AndrewNeural
+else
+    edge-playback -t "$(pbpaste)" -v en-US-AndrewNeural
+fi

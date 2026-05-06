@@ -1,0 +1,118 @@
+---
+tags: [ mac ]
+---
+
+# List of macOS version names (as of Sep 2023)
+# ----------------------------------------------------------------------------------------
+# https://www.macworld.com/article/672681/list-of-all-macos-versions-including-the-latest-macos.html
+# https://www.macworld.com/article/673697/what-version-of-macos-can-my-mac-run.html
+# ----------------------------------------------------------------------------------------
+# OS X 10 beta: Kodiak – September 13, 2000
+# OS X 10.0: Cheetah – March 14, 2001 (Latest: 10.0.4)
+# OS X 10.1: Puma – September 15, 2001 (Latest: 10.1.5)
+# OS X 10.2: Jaguar – August 14, 2002 (Latest: 10.2.8)
+# OS X 10.3 Panther (Pinot) – October 24, 2003 (Latest: 10.3.9)
+# OS X 10.4 Tiger (Merlot) – April 29, 2005 (Latest: 10.4.11)
+# OS X 10.4.4 Tiger (Chardonnay) – January 10, 2006 (for Intel Macs) (Latest: 10.4.11)
+# OS X 10.5 Leopard (Chablis) – October 26, 2007 (Latest: 10.5.8)
+# OS X 10.6 Snow Leopard – August 28, 2009 (Latest: 10.6.8)
+# OS X 10.7 Lion (Barolo) – July 20, 2011 (Latest: 10.7.5)
+# OS X 10.8 Mountain Lion (Zinfandel) – July 25, 2012 (Latest: 10.8.5)
+#   - MacBook (Late 2008 to 2010)
+#   - MacBook Air (Late 2008 to mid 2012)
+#   - MacBook Pro (Mid/Late 2007 to mid-2012)
+#   - Mac mini (Early 2009 to 2011)
+#   - iMac (Mid-2007 to 2011)
+#   - Mac Pro (Early 2008 and 2010)
+# OS X 10.9 Mavericks (Cabernet) – October 22, 2013 (Latest: 10.9.5)
+#   - MacBook (Late 2008 to 2010)
+#   - MacBook Air (Late 2008 to mid 2013)
+#   - MacBook Pro (Mid 2007 to early 2013)
+#   - Xserve (Early 2009)
+#   - Mac mini (Early 2009 to 2012)
+#   - iMac (Mid 2007 to early 2013)
+#   - Mac Pro (Early 2008 and 2010)
+# OS X 10.10: Yosemite (Syrah) – October 16, 2014 (Latest: 10.10.5)
+#   - MacBook (Late 2008 to 2010)
+#   - MacBook Air (Late 2008 to mid 2013)
+#   - MacBook Pro (13″ Mid-2009 to mid 2014)
+#   - MacBook Pro (15″ Mid/Late 2007 to mid 2014)
+#   - MacBook Pro (17″ Late 2007 to 2011)
+#   - Mac mini (Early 2009 to 2012)
+#   - iMac (Mid-2007 to mid-2014)
+#   - Mac Pro (2008 and 2010)
+# OS X 10.11: El Capitan (Gala) – September 30, 2015 (Latest: 10.11.6)
+#   - MacBook (Early 2015 to 2017)
+#   - MacBook (Late 2008 to 2010)
+#   - MacBook Air (Late 2008 to early 2015)
+#   - MacBook Pro (Mid/Late 2007 to early 2015)
+#   - Mac mini (Early 2009 to 2014)
+#   - iMac (Mid 2007 to mid-2015)
+#   - Mac Pro (2008, 2010, 2013)
+# ma-OS 10.12: Sierra (Fuji) – September 20, 2016 (Latest: 10.12.6)
+#   - MacBook (Late 2009 to 2017)
+#   - MacBook Air (Late 2010 to 2017, which is same as 2015 model)
+#   - MacBook Pro (Mid 2010 to 2015)
+#   - Mac mini (Mid 2010 to 2014)
+#   - iMac (Late 2009 to 2015)
+#   - Mac Pro (Mid 2010 and 2013)
+# macOS 10.13: High Sierra (Lobo) – September 25, 2017 (Latest: 10.13.6)
+#   - MacBook (Late 2009 to 2017)
+#   - MacBook Air (Late 2010 to 2017, which is same as 2015 model)
+#   - MacBook Pro (Mid 2010 to 2017)
+#   - Mac mini (Mid 2010 to 2014)
+#   - iMac (Late 2009 to mid-2017)
+#   - Mac Pro (Mid 2010 and 2013)
+# macOS 10.14: Mojave (Liberty) – September 24, 2018 (Latest: 10.14.6)
+#   - MacBook (Early 2015 to 2017)
+#   - MacBook Air (Mid 2012 to 2017, because it’s the same as 2015 model)
+#   - MacBook Pro (Mid 2012 to 2018)
+#   - Mac mini (Late 2012 to late-2018)
+#   - iMac (Late 2012 to mid-2017)
+#   - iMac Pro (all models)
+#   - Mac Pro (Late 2013, plus mid-2010 and mid-2012 models with recommended Metal-capable GPU)
+# macOS 10.15: Catalina (Jazz) – October 7, 2019 (Latest: 10.15.7, Security Update 2022-005)
+#   - MacBook (2015 to 2017)
+#   - MacBook Air (Mid-2012 to 2019)
+#   - MacBook Pro (Mid-2012 to 2019)
+#   - Mac mini (Late 2012 to late-2018)
+#   - iMac (Late 2012 to 2019)
+#   - iMac Pro (all models)
+#   - Mac Pro models from 2013
+# macOS 11: Big Sur (GoldenGate) – November 12, 2020 (Latest: 11.7.10)
+#   - MacBook models from early 2015 or later
+#   - MacBook Air models from 2013 or later
+#   - MacBook Pro models from 2013 or later
+#   - Mac mini models from 2014 or later
+#   - iMac from 2014 or later
+#   - iMac Pro (all models)
+#   - Mac Pro models from 2013 and 2019
+# ma-OS 12: Monterey (Star) – October 25, 2021 (Latest: 12.7)
+#   - MacBook models from early 2016 or later
+#   - MacBook Air models from early 2015 or later
+#   - MacBook Pro models from early 2015 or later
+#   - Mac mini models from 2014 or later
+#   - iMac from 2015 or later
+#   - iMac Pro (2017 and later)
+#   - Mac Pro models from late 2013 and later
+#   - Mac Studio
+# macOS 13: Ventura (Rome) – October 24, 2022 (Latest: 13.6)
+#   - MacBook models from 2017 or later
+#   - MacBook Air models from 2018 or later
+#   - MacBook Pro models from 2017 or later
+#   - Mac mini models from 2018 or later
+#   - iMac models from 2017 or later
+#   - iMac Pro (all models)
+#   - Mac Pro models from 2019 or later
+#   - Mac Studio (all models)
+# macOS 14: Sonoma (Sunburst) – September 25, 2023 (Latest: 14.0)
+#   - iMac from 2019 and later
+#   - Mac Pro from 2019 and later
+#   - iMac Pro from 2017
+#   - Mac Studio from 2022 and later
+#   - MacBook Air from 2018 and later
+#   - Mac mini from 2018 and later
+#   - MacBook Pro from 2018 and later
+
+
+

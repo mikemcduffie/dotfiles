@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -e  # Exit immediately if a command exits with a non-zero status.
+dir=$(dirname "$1")
+filename=$(basename "${1%.*}")
+cleanedname=${filename//[!0-9A-Za-z \.\-()\[\]]/}
+ext="${1##*.}"
+regex='^(https?|ftp|file)://[-A-Za-z0-9\+&@#/%?=~_|!:,.;]*[-A-Za-z0-9\+&@#/%=~_|]\.[-A-Za-z0-9\+&@#/%?=~_|!:,.;]*[-A-Za-z0-9\+&@#/%=~_|]$'
+
+if [[ "$ext" != "webloc" ]]; then
+    echo "Must supply a webloc file"
+    exit 1
+fi
+
+url=$(/opt/homebrew/bin/ggrep -oPm1 "(?<=<string>)[^<]+" "$1")
+if [[ $url =~ $regex ]]; then 
+    # url IS valid
+    echo -e "[InternetShortcut]\r\nURL=${url}" > "$dir/$cleanedname.url"
+    cp -n "$1" "$dir/$cleanedname.webloc"
+else
+    echo "No URL found: $url"
+fi

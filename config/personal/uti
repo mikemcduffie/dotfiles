@@ -1,0 +1,69 @@
+# http://duti.org/documentation.html
+
+# Uniform Type Identifier (UTI) is a text string used on software 
+# provided by Apple to uniquely identify a given class or type of item
+
+
+
+# Tools to handle UTIs on Mac
+brew tap nshipster/homebrew-formulae
+
+
+# https://apple.stackexchange.com/questions/49532/change-the-default-application-for-a-file-extension-via-script-command-line
+❯ tldr duti
+duti
+Set default applications for document types and URL schemes on macOS.
+More information: <https://github.com/moretension/duti>.
+
+❯ uti "Downloads/Land of the lost series.nzb"
+dyn.ah62d4rv4ge8068xc
+
+❯ duti -x nzb       # list default handler for ext
+NZBVortex 3.app
+/Applications/NZBVortex 3.app
+com.VortexApps.NZBVortex3
+
+>duti -s com.VortexApps.NZBVortex3 dyn.ah62d4rv4ge8068xc all  # set default handler for UTI
+ 
+❯ duti -x .mkv
+IINA.app
+/Applications/IINA.app
+com.colliderli.iina
+
+❯ duti -v ~/dotfiles/settings/duti/     # set default handlers from setting folder (plist and simple settings files)
+
+
+❯ cat -v ~/dotfiles/settings/duti/default_handlers
+# blank lines and lines beginning with a '#' are ignored
+#
+# Valid roles are defined as follows:
+# all         application handles all roles for the given UTI.
+# viewer      application handles reading and displaying documents with the given UTI.
+# editor      application can manipulate and save the item. Implies viewer.
+# shell       application can execute the item.
+# none        application cannot open the item, but provides an icon for the given UTI.
+#
+# app bundle id                 UTI/ext/MIME type               role
+com.VortexApps.NZBVortex3       dyn.ah62d4rv4ge8068xc           all
+com.VortexApps.NZBVortex3       nzb                             all
+com.colliderli.iina             mkv                             viewer
+com.colliderli.iina             avi                             viewer
+com.colliderli.iina             mp4                             viewer
+com.colliderli.iina             m4v                             viewer
+com.microsoft.VSCode            py                              editor
+com.ToWatchList.SimpleComic     cbr                             viewer
+com.ToWatchList.SimpleComic     cbz                             viewer
+
+
+❯ duti -s $(osascript -e 'id of app "VSCodium"') .md all
+❯ duti -s $(osascript -e 'id of app "VSCodium"') .py all
+
+
+# https://superuser.com/questions/273756/how-to-change-default-app-for-all-files-of-particular-file-type-through-terminal
+
+# file UTI (type identifier e.g. "com.apple.applescript.script", "com.apple.applescript.text"or "cx.c3.cbz-archive")
+❯ mdls -name kMDItemContentType <file>
+
+# alternately 
+❯ osascript -e 'on run argv' -e 'type identifier of (info for POSIX file (item 1 of argv))' -e 'end run' <files>
+

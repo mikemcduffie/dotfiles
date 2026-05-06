@@ -1,0 +1,18 @@
+---
+syntax: bash
+tags: [ mac ]
+---
+
+# Comic Zip Preset
+Save next to: original
+Zip Format
+Not encrypted
+✔ Remove Mac specific stuff from the archive
+Compression: Normal
+Run script when done: /Users/mike/.local/bin/zip2cbz.sh
+Exclude Patterns: */.svn;*/CVS;*/.git/.SFV
+Move originals to: Trash
+
+# zip2cbz.sh
+#! /bin/zsh
+mv -n "$1" "${1%.*}.cbz"

@@ -1,0 +1,10 @@
+# column selection mode (really multicursor in vscode)
+Option-Command + arrow to select column with keyboard
+# Mouse behaviorBased on Selection>Switch to Cmd+Click for Multi-Cursor
+                                   Switch to Alt-Click for Multi-Cursor
+Shift + alt + mouse drag (from current cursor location) to select column
+Shift _ alt + mouse click to mark end of column selection from current cursor position
+- click outside selection to exit column mode
+- sometimes buggy display but it works mostly (deselect/reselect to see highlights/insertion points correctly)
+# https://superuser.com/questions/1052795/selecting-columns-in-visual-studio-code
+

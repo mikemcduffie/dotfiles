@@ -1,0 +1,168 @@
+# Kodi links
+https://kodi.wiki/view/Syncing_and_sharing
+https://kodi.wiki/view/NFO_files/Creating
+https://kodi.wiki/view/Built-in_scripting
+https://kodi.wiki/view/List_of_built-in_functions
+https://kodi.wiki/view/Window_IDs
+https://stackoverflow.com/questions/60858950/launch-script-from-kodi-menu
+
+# Tips
+Enable "Movies are in separate folders that match the movie title" option
+Do NOT enable "Selected folder contains a single TV show"
+
+# Flirc integration: see "cheat flirc"
+Alfred workflow integration is covered as well
+
+# No video / audio only
+disable HW acceleration Settings > Player
+
+# Modern Kodi uses ActivateWindow native control in keyboard keymap to navigate
+# Haven't investigated how this affects python integration
+# add to ~/LibraryApplication Support/Kodi/userdata/keymaps/keyboard.xml
+<keymap>
+	<global>
+		<keyboard>
+			<n>NextAudioLanguage</n>
+			<escape>Back</escape>
+			<k mod="ctrl">ActivateWindow(Home)</k>
+			<m mod="ctrl">ActivateWindow(Videos,videodb://movies/titles/)</m>
+			<t mod="ctrl">ActivateWindow(Videos,videodb://tvshows//titles)</t>
+			<f mod="ctrl">ActivateWindow(Videos,sources://video/)</f>
+			<p mod="ctrl">ActivateWindow(Videos,special://videoplaylists/)</p>
+		</keyboard>
+	</global>
+	<FullscreenVideo>
+		<keyboard>
+			<escape>Stop</escape>
+		</keyboard>
+	</FullscreenVideo>
+</keymap>
+
+# Metadata file naming
+# Kodi media database export uses:
+video-file-name.nfo
+video-file-name-thumb.jpg
+# if "Movies are in separate folders that match the movie title" option is enabled you can use generic names to make updating video files easier
+movie.nfo
+thumb.jpg
+fanart.jpg
+poster.jpg
+
+
+
+# External subtitles files
+video-file-name.Eng.srt
+# Official docs:
+https://kodi.wiki/view/Subtitles
+Video File: The Matrix.avi
+ Subtitle 1: The Matrix.English.srt
+ Subtitle 2: The Matrix.French.srt
+ Subtitle 3: The Matrix.German.srt
+
+# Using Forced Subtitles
+# Many movies have subtitles encoded for secondary languages spoken during the film – when these are added to the movie, they are known as forced subtitles and are always visible (despite not being hard encoded). 
+# Kodi (since v13 Gotham) recognizes and respects the forced flag for showing subtitles (even if subtitles are turned off by default, the forced flag will trigger them being turned on). 
+*** This requires that the user have set the default languages in Settings in order to function properly. ***
+# If there are multiple forced subtitles, Kodi will select the forced subtitles that match the default playback language.
+#External Forced Subtitles
+Movie Name (2006).English.Forced.srt
+Movie Name (2006).en.forced.srt
+Movie Name (2006).Eng.forced.srt
+
+# Using Built-in Functions from keymap.xml
+# To bind a built-in function to a particular key, you just add the built-in command to the appropriate section and button in keymap.xml
+# RunScript is for python scripts; System.Exec(script.sh) for shell scripts
+<keyboard>
+    <key-to-press>RunScript(script.myscript)</key-to-press>
+</keyboard>
+
+# Using Built-in Functions from python
+# To run a built-in Kodi function from within a python script, you just need to call executebuiltin() with the function name. For example,
+xbmc.executebuiltin('RunScript(script.myscript)')
+
+# Window IDs
+# keymap.xml uses the Window name.
+# ActivateWindow() should use the Window name.
+Name            Definition              Window ID       source XML file
+----            ----------              ---------       ---------------
+home            WINDOW_HOME             10000           Home.xml
+settings        WINDOW_SETTINGS_MENU    10004           Settings.xml
+videos          WINDOW_VIDEO_NAV        10025           MyVideoNav.xml
+videoplaylist   WINDOW_VIDEO_PLAYLIST   10028           MyPlaylist.xml
+
+
+# Two built-in functions allows executing bash scripts:
+System.Exec(exec)
+# Execute shell commands. The full path to the script has to be placed inside the parentheses.
+System.ExecWait(exec)
+#keymap to run shell script
+<keymap>
+  <global>
+    <keyboard>
+      <a mod=shift,ctrl>System.ExecWait(script.sh)</a>
+    </keyboard>
+  </global>
+</keymap>
+# - keymap is the overall description of the file and should not be changed.
+# - global refers to which window the link can be available (global is a fallback if the shortcut is not used in the current specific window)
+# - keyboards refers to the keyboard shortcuts (you can add gamepad, mouse, etc.)
+# - a is the key activating the shortcut, here with the modifiers shift+ctrl (that can be dropped for a single key shortcut, but beware of conflicts with existing shortcuts). Don't forget to also modify it at the end of the line.
+# - script.sh is your script name (full path if not in the user $PATH) that must be executable, as goes for all shell scripts.
+
+
+# nfo scraping
+Does date field affect auto scraping for existing/edited files?
+
+
+
+# (optional?) creat local user
+mysql> CREATE USER 'kodi'@'localhost' IDENTIFIED BY 'kodi';
+# Enable remote user access 
+mysql> GRANT ALL PRIVILEGES ON *.* TO 'kodi' IDENTIFIED BY 'kodi';
+$ then can remotely connect
+❯ mysql -h 192.168.0.111 -u kodi -pkodi  # this is how Kodi will connect via userdata/advancedsettings.xml
+# Kodi v19 created Kodi-music82 & Kodi-video119
+
+# Shared db with mariadb (community fork of mysql)
+see mariadb cheatsheet for openmediavault/portainer setup
+kodi / kodi vua userdata/advancedsettings.xml
+
+# Adding new Kodi devices to the MySQL (mariadb) setup
+Since the database has now been set up on the MySQL server, all you need to do for any additional Kodi devices, is to copy a small number of files/folders.
+Copy the MySQL connections section for video and/or music databases into the advancedsettings.xml file on the other Kodi client(s). If you have identical Kodi devices, simply copy the whole advancedsettings.xml file from the initially setup Kodi device.
+Copy from the same userdata root folder the files, such as "favourites.xml", "sources.xml", "mediasources.xml", "passwords.xml" (if present).
+# To have the other Kodi client(s) also benefit from the already downloaded/cached art thumbnails:
+Copy the Textures13.db file from the userdata/Database folder to the other Kodi client(s).
+Copy the full Thumbnails subfolder from the userdata folder to other Kodi client(s). (This subfolder may contain several megabytes of small files when dealing with large video/music collections)
+You don't need to do any of the other steps, such as rescanning or reimporting. Any fanart not already cached will be downloaded shortly after. If this method works on one device, it should work on all of them, as they are basically sharing the same database for the video/music metadata.
+
+# Hide mouse pointer in XBMC/Kodi
+# https://www.tvaddons.co/forums/kodi-tweaks/25998-hide-mouse-pointer-xbmc.html
+# Add this to userdata/keymaps as mouse.xml....
+Code:
+<keymap>
+  <global>
+    <mouse>
+            <mousemove>noop</mousemove>
+            <leftclick>Select</leftclick>
+            <rightclick>Back</rightclick>
+            <middleclick>noop</middleclick>
+            <doubleclick>noop</doubleclick>
+            <wheeldown>noop</wheeldown>
+            <wheelup>noop</wheelup>
+            <mousedrag>noop</mousedrag>
+    </mouse>
+  </global>
+</keymap>
+
+
+
+# check Kodi nfo files
+$ ggrep -oPm1 "(?<=<title>)[^<]+" **/*.nfo | sed 's/:/\t/'  | python3 ~/scripts/python/check_nfo_title.py
+ 
+# more echo test examples with str replacement for file rename
+$ f="Tex Avery's Wolf.xsp"; for n in "Southern Wolf" "George and Junior" "Droopy" "Screwy Squirrel" "Spike"; do cp "$f" "${f/Wolf/$n}"; sed -i '' "s/Wolf/$n/g"  "${f/Wolf/$n}"; done
+for f in *.mkv; do echo mkvextract "$f" tracks 3:"${f/.mkv/.sup}"; done
+
+#  quick generate kodi nfo files
+$ i=1; for f in *.mp4; do echo '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<episodedetails>\n  <title>'"${f%.*}"'</title>\n<genre>Vietnam</genre>\n<season>1</season>\n<episode>'$i'</episode>\n</episodedetails>'  >  "${f%.*}.nfo"; ((i++)); done

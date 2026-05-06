@@ -1,0 +1,25 @@
+# Disable auto subtitles in IINA
+# https://unix.stackexchange.com/questions/279884/play-subtitles-automatically-with-mpv#292618
+Preferences > Advanced > Enable Advanced Settings
+Additional mpv options add:
+Name: sub-auto
+Value: no
+
+
+# alternately use ~/.config/mpv (Doesn't work IINA)
+echo "sub-auto=no" >> ~/.config/mpv/mpv.conf
+# docs:
+man mpv
+# --sub-auto=<no|exact|fuzzy|all>, --no-sub-auto
+#       Load additional subtitle files matching the video filename. The
+#       parameter specifies how external subtitle files are matched.
+#       exact is enabled by default.
+# 
+#       no     Don't automatically load external subtitle files.
+# 
+#       exact  Load the media filename with subtitle file extension
+#              (default).
+# 
+#       fuzzy  Load all subs containing media filename.
+# 
+#       all    Load all subs in the current and --sub-paths directories.

@@ -1,0 +1,140 @@
+# Task Manager
+# Ctl-Shift-Escape to launch Task Manager from Win Logon process (basically guaranteed to launch)
+# Ctl-Shift-Escape can launch another Task Manager porcess if the first is locked
+# Hold Ctrl to pause updating 
+# Shift or Control (?) & click run new task -> command with admin rights (if launched with Win Logon)
+
+# Windows 11 local account (NRObypass removed in 25H2 to force Microsoft online account)
+# press F10 for command prompt
+start ms-cxh:localonly
+
+# Windows 11 remove unsupported hardware watermark
+reg add "HKEY_CURRENT_USER\Control Panel\UnsupportedHardwareNotificationCache" /v SV1 /t REG_DWORD /d 0 /f
+
+# Run this from an admin command prompt and then reboot:
+# restore the proper right-click context menu
+reg add "HKCU\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32" /ve /d "" /f
+
+# Read/display/retrieve your current Windows 10 product key
+wmic path softwareLicensingService get OA3xOriginalProductKey
+
+# Powershell (from BIOS)
+(Get-WmiObject -query &apos;select * from SoftwareLicensingService&apos;).OA3xOriginalProductKey 
+# Registry File: 
+Computer\HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\SoftwareProtectionPlatform\BackupProductKeyDefault
+
+
+# Bypass Windows 10/11 online account requirement to create a local account 
+# https://www.ghacks.net/2022/05/13/how-to-bypass-the-microsoft-account-requirement-during-windows-setup/
+# 1. Use a banned email account:
+# a@a.com OR no@thankyou.com  AND  any password. 
+# It'll error and then let you create local account.
+# Alternately
+Shift-F10 
+# to break into a command prompt during OOBE and run this command: 
+OOBE\BYPASSNRO
+
+# Restore the old Context Menu in Windows 11
+# https://answers.microsoft.com/en-us/windows/forum/all/restore-old-right-click-context-menu-in-windows-11/a62e797c-eaf3-411b-aeec-e460e6e5a82a
+reg.exe add "HKCU\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32" /f /ve
+# Restart File Explorer or your computer for the changes to take effect.
+
+# The easiest and most foolproof workaround to get a local account is to attempt to use a banned account.
+"no@thankyou.com"
+# if you attempt to log in with it (use anything for the password, you're not actually 
+# trying to succeed in logging in) it'll dump you straight to the local account screen 
+# since they don't want a disabled user to create a new account.
+
+# Debloat Windows without tools
+# Start Menu > Shell:Startup
+#     AppData > Roaming > Microsoft > Windows > Start Menu > Programs > Startup
+# Start Menu > Shell:Common Startup
+    C: > ProgramData > Microsoft > Windows > Start Menu > Programs > Startup
+# Regedit > 
+    Computer\HKEY_CURRENT_USER_SOFTWARE\Microsoft Windows\CurrentVersion\Run
+    Computer\HKEY_LOCAL_MACHINE_SOFTWARE\Microsoft\Windows\CurrentVersion\Run
+# Ctl-Shift-Escape -> Task Manager
+#     Goto Startup Tab and Disable unwanted processes
+# Task Scheduler > Task Scheduler (Local)\Task Scheduler Library in Left Pane Tree
+#     Disable unwanted (deleting could cause reinstall and Enable)
+# Start Menu > appwiz.cpl (Old Unistall or change a program interface: Win 7)
+#     Unistall Unwanted
+#     Click on "Turn off Windows Features" and uncheck/disable unwanted
+# Can uninstall Windows Store Apps by right clicking in Start Menu
+# or Windows App Store\Library for bulk review/uninstall
+# https://christitus.com/windows-tool/
+# Elevated (Run as Administrator) PowerShell prompt >
+    iwr -useb https://christitus.com/win | iex
+    Essential Tweaks & Security Updates only
+# https://christitus.com/one-tool-for-everything/
+# One Tool for Everything
+irm christitus.com/win | iex
+
+# Block hardware auto-installers
+# https://christitus.com/block-razer-bloatware/
+WIN+R (run): sysdm.cpl    
+Device Installation Settings > No
+# Disable driver auto-install via registry from https://github.com/ChrisTitusTech/block-razer/blob/main/block.ps1
+Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\DriverSearching" -Name "SearchOrderConfig" -Type DWord -Value 0
+Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Device Installer" -Name "DisableCoInstallers" -Type DWord -Value 1
+# Remove and lock install directory
+$RazerPath = "C:\Windows\Installer\Razer"
+Remove-Item $RazerPath -Recurse -Force
+New-Item -Path "C:\Windows\Installer\" -Name "Razer" -ItemType "directory"
+$Acl = Get-Acl $RazerPath
+$Ar = New-Object System.Security.AccessControl.FileSystemAccessRule("NT AUTHORITY\SYSTEM", "Write", "ContainerInherit,ObjectInherit", "None", "Deny")
+$Acl.SetAccessRule($Ar)
+Set-Acl $RazerPath $Acl
+# oprgb.org for opensource RGB control for many different HW
+# OR JUST RUN
+irm https://raw.githubusercontent.com/ChrisTitusTech/block-razer/main/block.ps1 | iex
+
+# Fix Corrupted Windows Install
+# https://christitus.com/fix-corrupt-windows-install/
+DISM /Online /Cleanup-Image /CheckHealthDISM /Online /Cleanup-Image /CheckHealth
+# Command to Fix From Windows ISO
+# Download the Windows ISO from https://www.microsoft.com/en-us/software-download/windows10ISO
+# Mount the ISO and note the drive letter (ex. E:)
+# Run DISM with sources flag
+# DISM /Online /Cleanup-Image /RestoreHealth /Source:E:\Sources\install.wim
+# Note: install.wim is known as ESD in some downloads install.esd
+sfc /scannow
+
+
+# Filename: MAS Windows Activation.cmd
+irm https://massgrave.dev/get | iex
+
+
+# Filename: Active WinXP.cmd
+@echo off && cd /d "."
+# :: the windows reg key used to activate process in this bat/cmd read/write/delete ::  
+set "_wpaKey=HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\WPAEvents"
+reg query  "%_WPAKey%" | find /i "OOBETimer"                & rem/ output key value in screen
+reg export "%_WPAKey%" ".\PAEvents_SAVE_Original.Reg"       & rem/ save original value in file
+reg delete "%_WPAKey%" /v "OOBETimer" /f >nul               & rem/ remove the key/value
+reg add    "%_wpaKey%" /v OOBETimer /t REG_BINARY /f        & rem/ recreate the key/value
+timeout /t -1 2> nul                                        & rem/ time out to see the results
+cd /d "C:\WINDOWS\system32\oobe"                            & rem/ goto to drive/folder C:\WINDOWS\system32\oobe\
+start "" /realtime C:\WINDOWS\system32\oobe\msoobe.exe /a   & rem/ start the activate windows interface 
+echo/:: sample key !! --^>  ISAY-REIN-STAT-EMO-NICA^!       & rem/ if need put some windows key to view/copy/paste   
+echo/:: gif used --^>  QWQQQ-QQQQQ-QQQQQ-QQQQQ
+pause >nul                                                  & rem/ pause to keep console windows 
+
+
+# CLean Windows11 install
+https://christitus.com/windows-11-perfect-install/
+# - Choose Time and currency format: "English (World)"" in inintial Windows Setup dialog to disable crapware stub installs and Miscosoft Store (can retore later)
+# - Will get error OOBEREGION and timeout for 1-2  mins. then skip
+# - Use work or school for offline account?
+# - Use blank password to skip security questions
+# - Settings/Region to fix Microsoft Store
+
+# Disable MS Office key mapping: Alt+Shift+Ctrl+Win ("Hyper" key)
+REG ADD HKCU\Software\Classes\ms-officeapp\Shell\Open\Command /t REG_SZ /d rundll32
+# After this command is completed, the Office app shortcut will be disabled and the Hyper key will not open it again. 
+
+
+# To +Windows -Cortana
+  reg add HKCU\Software\Microsoft\Windows\CurrentVersion\Search /v BingSearchEnabled /t REG_DWORD /d 0 /f
+
+  reg add HKCU\Software\Microsoft\Windows\CurrentVersion\Search /v CortanaConsent /t REG_DWORD /d 0 /f

@@ -1,0 +1,31 @@
+#!/usr/bin/env python3
+
+import sys
+from pathlib import Path
+
+
+skip = ["a", "an", "the", "and", "but", "or", "nor", "at", "by", "for", "from", "in", "into", "of", "off", "on", "onto", "out", "over", "to", "up", "with", "as"]
+replace = [["(", "["], [")", "]"], ["{", "["], ["}", "]"]]
+
+def titlecase(name):
+    for item in skip:
+        name = name.replace(" "+item.title()+" ", " "+item.lower()+" ")
+    # on request of OP, added a replace option for parethesis etc.
+    for item in replace:
+        name = name.replace(item[0], item[1])
+    return name
+
+for f in sys.argv[1:]:
+    old = Path(f)
+    parent = old.parent
+    if old.is_file():
+        ext = old.suffix.lower()
+        name = old.stem.lower().title()
+        name = titlecase(name)
+        new = f"{name}{ext}"
+    else:
+        new = old.name.lower().title()
+
+    new = parent.joinpath(new)
+    old.rename(new)
+

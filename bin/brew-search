@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+repo="$(brew --repo)/Library/Taps/homebrew/homebrew-core/Formula"
+cd "$repo" || exit 1
+{
+  rg "^  desc .*$1" --glob '*.rb' --files-with-matches;
+  fd --strip-cwd-prefix --extension rb "$1";
+} |
+sort -u |
+while read -r FILE; do
+  DESC=$(sed -En 's/^  desc "(.*)".*$/\1/p' "$FILE")
+  echo "${FILE%.rb}: $DESC"
+done

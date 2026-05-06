@@ -1,0 +1,47 @@
+# STEAMDECK RECOVERY DRIVE
+[SteamOS Installation and Repair]
+(https://help.steampowered.com/en/faqs/view/65B4-2AA3-5F37-4227)
+[SteamOS-Holo Recovery Images]
+(https://store.steampowered.com/steamos/download/?ver=steamdeck&snr=100601___)
+
+Note: BalenaEtcher failed to flash image, switched to `dd`
+
+```bash
+$ diskutil list
+/dev/disk4 (external, physical):
+   #:                       TYPE NAME                    SIZE       IDENTIFIER
+   0:      GUID_partition_scheme                        *30.8 GB    disk4
+   1:                        EFI EFI                     209.7 MB   disk4s1
+   2:                 Apple_APFS Container disk5         30.6 GB    disk4s2
+$ diskutil unmountDisk /dev/disk4
+
+# on mac, `dd` should use raw disk device (e.g., /dev/rdisk4 for disk4)
+# optional: add `status=progress` to show progess
+$ bzcat steamdeck-repair-20250521.10-3.7.7.img.bz2 | sudo dd if=/dev/stdin of=/dev/rdisk4 oflag=sync status=progress bs=128M status=progress
+
+# eject after complete
+$ diskutil eject /dev/disk4
+```
+
+
+- Shut down your Steam Deck or other device if it isn't already off. 
+- On Steam Deck, hold `Volume Up` and click the `Power Button`
+- When you hear the chime, let go of the `Volume` Up button, and you'll be
+  booted into the Boot Menu. 
+- Use the dpad and A button to select the Boot Manager.
+- In the Boot Manager, boot from the `EFI USB Device` (your USB key)
+- The screen will go dark while it's booting - give it a minute.
+- Once booted you will be in a desktop environment, you can navigate 
+  using trackpad and trigger, touchscreen, or mouse.
+
+
+Repair and Recovery options
+
+- `Re-image Device` - This performs a full factory reset - all user info, 
+  installed games, applications, or operating systems will be wiped and 
+  replaced with stock SteamOS.
+- `Repair SteamOS` - This will reinstall SteamOS on the Steam Deck or other 
+  device, while attempting to preserve your games and personal content.
+- `Recovery tools` - This opens a prompt with the ability to make changes to 
+  the device's boot partition.
+

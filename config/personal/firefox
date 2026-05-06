@@ -1,0 +1,27 @@
+# I use these settings to clear all visual clutter. Basically looks like Librewolf then. For privacy related settings I check Arkenfox user.js and add the ones I find useful and don't cause breakage manually (but going thoroughly through settings already does most of it).
+
+# Remove FF sync:
+identity.fxaccounts.enabled
+# Remove recommendations in Extensions:
+extensions.htmlaboutaddons.recommendations.enabled
+# Remove recommendations Side panel in Extensions:
+extensions.getAddons.showPane (add +set to false)
+# Remove VPN Promo and More from Mozilla in Settings:
+browser.vpn_promo.enabled
+browser.preferences.moreFromMozilla
+# Remove Pocket:
+extensions.pocket.enabled
+# Remove Focus promo in private tabs:
+browser.promo.focus.enabled
+# Remove persistent topsites (facebook, amazon, etc.):
+browser.newtabpage.activity-stream.default.sites (clear)
+# Bonus:
+# Pinch to zoom only:
+mousewheel.with_control.action (1)
+# Full screen video like Safari:
+full-screen-api.macos-native-full-screen
+# Calculator in tab bar:
+browser.urlbar.suggest.calculator
+
+# If you start fresh, https://ffprofile.com makes it easy to create a profile file without the bloat.
+https://ffprofile.com

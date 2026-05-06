@@ -1,0 +1,20 @@
+---
+syntax: bash
+tags: [ mac ]
+---
+
+# Remove 3D Dock (OS VERSION??)
+defaults write com.apple.dock no-glass -boolean YES; killall Dock
+
+# Disable automatic play during import in iTunes (VERSION??)
+defaults write com.apple.iTunes play-songs-while-importing -bool FALSE
+
+# Disable the Genre column in the iTunes (VERSION??)
+defaults write com.apple.iTunes show-genre-when-browsing -bool FALSE
+
+# Disable iTunes store arrow links in iTunes 8 
+defaults write com.apple.iTunes show-store-arrow-links -bool FALSE
+
+# Disable iTunes Genius sidebar (VERSION??)
+defaults write com.apple.iTunes disableGeniusSidebar [boolean]
+
