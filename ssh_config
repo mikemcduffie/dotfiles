@@ -19,5 +19,5 @@ Host m1max16
     User mike
 
 Host m1pro14
-    HostName M1-Pro-MBP14
+    HostName M1-Pro-MBP14.local
     User mike
