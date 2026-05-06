@@ -1,0 +1,103 @@
+# To print file metadata:
+❯ ffmpeg -i <file>
+
+# To convert all m4a files to mp3
+❯ for f in *.m4a; do ffmpeg -i "$f" -acodec libmp3lame -vn -b:a 320k "${f%.m4a}.mp3"; done
+
+# To convert video from .foo to .bar
+# -g : GOP, for searchability
+❯ ffmpeg -i input.foo -vcodec bar -acodec baz -b:v 21000k -b:a 320k -g 150 -threads 4 output.bar
+
+# To convert image sequence to video:
+❯ ffmpeg -r 18 -pattern_type glob -i '*.png' -b:v 21000k -s hd1080 -vcodec vp9 -an -pix_fmt yuv420p -deinterlace output.ext
+
+# To combine video and audio into one file
+❯ ffmpeg -i video.ext -i audio.ext -c:v copy -c:a copy output.ext
+
+# To add ass subtitle to the video
+❯ ffmpeg -i input_video.mp4 -vf ass=sub.ass output_video_subtitles.mp4
+
+# To convert webm to mp4
+❯ ffmpeg -i input_video.webm output_video.mp4
+
+# To convert mp4 to mov
+❯ ffmpeg -i input_video.mp4 -acodec copy -vcodec copy -f mov output_video.mov
+
+# To convert mov to mp4
+❯ ffmpeg -i input_video.mov -vcodec copy -acodec copy output_video.mp4
+
+# Listen to 10 seconds of audio from a video file
+#
+# -ss : start time
+# -t  : seconds to cut
+# -autoexit : closes ffplay as soon as the audio finishes
+❯ ffmpeg -ss 00:34:24.85 -t 10 -i path/to/file.mp4 -f mp3 pipe:play | ffplay -i pipe:play -autoexit
+
+# To combine audio and video from N files:
+# See also https://stackoverflow.com/questions/7333232/how-to-concatenate-two-mp4-files-using-ffmpeg
+❯ cat mylist.txt
+❯ file '/path/to/file1'
+❯ file '/path/to/file2'
+❯ file '/path/to/file3'
+    
+❯ ffmpeg -f concat -safe 0 -i mylist.txt -c copy output.mp4
+
+# JSON output (insteads of ffmpeg)
+❯ ffprobe -print_format json -show_format -show_streams example.mp4
+
+# Get length of video in seconds
+❯ ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 input.mp4
+
+# Get length of video in HH:MM:SS
+❯ mediainfo --Inform="General;%Duration/String3%" input.mp4
+
+
+# Screenshot/Thumbnail every 10 seconds
+❯ ffmpeg -i inputvideo.mp4 -vf "select='not(mod(n,300))',setpts='N/(30*TB)'" -f image2 thumbnail%03d.jpg
+
+# Screenshot/Thumbnail at timestamp
+❯ ffmpeg -ss 00:00:03 -i inputvideo.mp4 -frames:v 1 -q:v 2 foobar.jpeg
+# -ss is the seek command and it can be used to seek to the right position. For accurate seeking, you need to use output seeking and not input seeking (i.e., putting -ss before the input sequence). The syntax for specifying the time is HH:MM:SS.MILLISECONDS. 
+# -frames:v 1 tells FFmpeg to take only 1 screenshot. --Note that, -vframes is deprecated.
+# output file = screenshot_10.jpg
+
+# ffmpeg single screenshot/thumbnail example
+❯ for f in *.mp4; do TD=$(mediainfo --Inform="General;%Duration/String3%" "$f");ffmpeg -ss ${TD%.*} -i "$f" -frames:v 1 -q:v 2 "${f%.*}-%03d.jpeg"; done
+
+# remove first n seconds from video/mp4 by leyframes (no re-encoding)
+# https://askubuntu.com/questions/977162/how-to-remove-a-few-seconds-from-mp4-file-using-ffmpeg
+❯ ffmpeg -ss 00:00:06.1 -i input.mp4 -map 0 -c copy output.mp4
+❯ for f in *.mp4; do ffmpeg -ss 00:00:06.1 -i "$f" -map 0 -c copy edited/"$f"; done
+
+# This avoids re-encoding, but you can only cut on key frames, so it may not choose the duration you want.
+# Create segments:
+❯ ffmpeg  -t 00:11:00 -i input.mp4 -map 0 -c copy segment1.mp4
+❯ ffmpeg -ss 00:11:10 -i input.mp4 -map 0 -c copy segment2.mp4
+Create input.txt (linux):
+❯ file 'segment1.mp4'
+❯ file 'segment2.mp4'
+Concatenate with the concat demuxer:
+❯ ffmpeg -f concat -i input.txt -map 0 -c copy output.mp4
+
+# if you need accuracy you'll need to re-encode:
+ffmpeg -i input.mp4 -filter_complex \
+  "[0:v]trim=end=660,setpts=N/FRAME_RATE/TB[v0]; \
+   [0:a]atrim=end=660,asetpts=N/SR/TB[a0]; \
+   [0:v]trim=start=670,setpts=N/FRAME_RATE/TB[v1]; \
+   [0:a]atrim=start=670,asetpts=N/SR/TB[a1]; \
+   [v0][a0][v1][a1]concat=n=2:v=1:a=1[v][a]" \
+  -map "[v]" -map "[a]" output.mp4
+# (a)trim will allow you to choose your clips.
+# (a)setpts resets timestamps.
+# concat concatenates the clips.
+
+# I think you have to cut the video to 2 parts then merge them together. 
+# first 'time-value' is starting point, second 'time-value' is length 
+# of video you want to cut. 
+# first cut starts at 00:00:00 and length is 11 minutes, 
+# second cut starts at 11 mins 10 sec, and length is 10 mins.
+# cutting:
+❯ ffmpeg -i test.mp4 -ss 00:00:00 -t 00:11:00 -acodec copy -vcodec copy test1.mp4
+❯ ffmpeg -i test.mp4 -ss 00:11:10 -t 00:10:00 -acodec copy -vcodec copy test2.mp4
+# merge:
+❯ cat test1.mp4 test2.mp4 >> test3.mp4

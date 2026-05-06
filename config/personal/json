@@ -1,0 +1,42 @@
+# JSON Cheat Sheet
+https://lzone.de/cheat-sheet/jq
+
+# Changing JSON values with jq
+# Merging/overwriting keys
+echo '{ "a": 1, "b": 2 }' |\
+jq '. |= . + {
+  "c": 3
+}'
+# Adding elements to lists
+echo '{ "names": ["Marie", "Sophie"] }' |\
+jq '.names |= .+ [
+   "Natalie"
+]'   
+# Delete values with jq
+jq 'del(.somekey)' input.json
+Merge JSON strings
+# For example merge three object lists:
+echo '[ {"a":1}, {"b":2} ]' | \
+jq --argjson input1 '[ { "c":3 } ]' \
+   --argjson input2 '[ { "d":4 }, { "e": 5} ]' \
+   '. = $input1 + . +  $input2'
+# Merge files (since jq 1.4)
+# The following command will merge “somekey” from both passed files
+jq -s '.[0] * .[1] | {somekey: .somekey}' <file1> <file2>
+
+
+# JSON jq: curl -s is equivalent to curl --silent, whereas jq -r means jq --raw-output i.e. without string quotes
+curl -s 'https://api.github.com/users/lambda' | jq -r '.name'
+
+# JSON Python 3:
+curl -s 'https://api.github.com/users/lambda' | \
+    python3 -c "import sys, json; print(json.load(sys.stdin)['name'])"
+# alternate method
+python -c "import requests;r=requests.get('api.github.com/users/lambda');print r.json()['name'];" 
+
+# JSON Python 2:
+export PYTHONIOENCODING=utf8
+curl -s 'https://api.github.com/users/lambda' | \
+    python2 -c "import sys, json; print json.load(sys.stdin)['name']"
+    
+    

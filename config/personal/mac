@@ -1,0 +1,897 @@
+# Automatic login
+System Preferences > Users & Groups > Login Options
+Automatic Login is disabled if Filevault is ON
+https://support.apple.com/en-us/HT201476
+
+
+# fn key 🌐 keyboard shorts (as of macOS Ventura 12.x)
+# Some can be edited in Settings > Keyboard > Keyboard Shortcuts... 
+fn+A = Move focus to Dock (navigate with arrow keys, or (shift+)tab, spacebar, enter)
+fn+D = Enable Dictation
+fn+F = Enter/Exit Full Screen on some apps (mostly Apple apps)
+fn+H = Show/Hide Desktop
+fn+E = Open Emoji/Character Chooser (see Note1 below to disable the annoying press 🌐 to open it)
+fn+C = Show/Hide Control Center
+fn+N = Show/Hide Notifications
+fn+M = Menubar (navigate with arrow keys, or (shift+)tab, spacebar, enter)
+fn+Q = Quicknotes
+fn+arrow up    = Page Up
+fn+arrow down  = Page Down
+fn+arrow left  = Home
+fn+arrow right = End
+# 
+# Note1: You can disable pressing fn 🌐 alone to bring up Emoji/Character Chooser in System Settings>Keyboard
+#        Use fn-E to intentional open Emoji/Character Chooser
+# Note2: It doesn't appear you can use fn key in custom keyboard shortcuts: System Settings>Keyboard>Keyboard Shortcuts...
+#        but BetterTouchTool supports fn key as liberally as any other modifier key in order trigger shortcuts/actions.
+
+
+##########################################################################################
+# Useful Mac keyboard shortcuts
+##########################################################################################
+# Deleting files and emptying trash in Finder
+⌘ + ⌫ (command-delete)                     = move selected file(s)/folder(s) to the Trash
+⌘ + ⇧ + ⌫ (command-shift-delete)           = empty the Trash (with confirmation popup) or
+⌘ + ⇧ + ⌥ +⌫ (command-shift-option-delete) = empty the Trash (without confirmation popup).
+# Show/hide hidden files in Finder and Open/Save dialogs
+⇧⌘. (shift-command-period)                 = Show/Hide hidden files in Finder/dialogs
+# Jump to folder/path in Finder and Open/Save dialogs
+⇧⌘G (shift-command-G)                      = Go to folder
+
+
+# Get default gateway and localip (ip address)
+❯ route -n get default
+   route to: default
+destination: default
+       mask: default
+    gateway: 10.5.0.2
+  interface: utun10
+      flags: <UP,GATEWAY,DONE,STATIC,PRCLONING,GLOBAL>
+ recvpipe  sendpipe  ssthresh  rtt,msec    rttvar  hopcount      mtu     expire
+       0         0         0         0         0         0      1420         0 
+# 
+❯ route -n get default | grep "interface:" | awk '{print $2}'
+utun10
+❯ route -n get default | grep "gateway:" | awk '{print $2}'
+10.5.0.2
+❯ route -n get default | egrep "gateway:|interface:" | awk '{print $2}'
+10.5.0.2
+utun10
+
+
+# DNS query IP address from name
+nslookup <host_name> 
+dig <hostname>
+dscacheutil -q host -a name setup.ubnt.com
+# DNS query name from IP address
+nslookup <ip_address>
+dig -x <ip_address>
+
+
+# Download macOS/OS X images (High Sierra 10.13, Mojave 10.14, Cataline 10.15, Big Sur 11, etc.)
+https://raw.githubusercontent.com/kholia/OSX-KVM/master/fetch-macOS-v2.py
+https://github.com/kholia/OSX-KVM/
+
+# Configs for older macOS/OS X VMs (Virtual Machines) on UTM
+https://github.com/adespoton/utmconfigs/tree/main
+
+# Access hidden/expert menu option in many system and Mac-first apps
+Hold ⌥ (option) while clicking on menu to access hidden/export mode
+
+# Copy filepath from the Finder
+Right-click on the file/folder in the Mac Finderand hold down the OPTION key to reveal
+the “Copy (item name) as Pathname” option, it replaces the standard Copy option
+
+
+# install X Code command line tools
+❯ xcode-select --install
+
+# check X Code installation
+❯ xcode-select -p
+ 
+# Show which files are open on any volume, use the command
+❯ sudo lsof /Volumes/myVol
+
+# Time Machine backup exclusions
+https://eclecticlight.co/2021/08/03/knowing-what-not-to-back-up-and-how/
+
+# App Switcher screen position
+Follows Dock (not menubar), so external screen on right --> dock on right
+
+# Check for available updates
+❯ softwareupdate -l --include-config-data
+
+# Remove duplicates in the “Open With” menu (also see `lscleanup` alias)
+/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user
+
+# Fix for the ancient UTF-8 bug in QuickLook (https://mths.be/bbo)
+# Commented out, as this is known to cause problems in various Adobe apps :(
+# See https://github.com/mathiasbynens/dotfiles/issues/237
+❯ echo "0x08000100:0" > ~/.CFUserTextEncoding
+
+# prevent Spotlight indexing on remote drive
+❯ touch .metadata_never_index_unless_rootfs
+
+# Remove/clean Apple metafiles:.DS_Store and ._ (dot under / AppleDouble) files
+# https://en.wikipedia.org/wiki/AppleSingle_and_AppleDouble_formats
+❯ fd -H '^\._' -x rm -v
+❯ fd -H '.DS_Store' -x rm -v
+❯ find . -name '.DS_Store' -exec rm -v {} \;
+❯ find . -name '^._*' -exec rm -v {} \;
+# Alternately 
+❯ dot_clean -m  # Always delete dot under / AppleDouble files.
+❯ dot_clean -n  # Delete AppleDouble file if there is no matching native file.
+
+
+# Repair corrupted exFAT on macOS (disk will not mount)
+❯ diskutil list # find the drive id, e.g. disk1s1
+❯ sudo fsck_exfat -d disk1s3
+# -d is debug so you'll see all your files output as they're processed.
+Main boot region needs to be updated. Yes/No?
+Y/YES
+Open Disk Utility and repair
+
+
+# Convert CD images from .bin/.cue to .iso/.cdr
+❯ bchunk <image.bin> <image.cue> <basename>
+❯ bchunk foo.bin foo.cue foo
+#   -v  Verbose mode
+#   -r  Raw mode for MODE2/2352: write all 2352 bytes from offset 0 (VCD/MPEG)
+#   -p  PSX mode for MODE2/2352: write 2336 bytes from offset 24
+#       (default MODE2/2352 mode writes 2048 bytes from offset 24)
+#   -w  Output audio files in WAV format
+#   -s  swabaudio: swap byte order in audio tracks
+
+
+# To compress a .app file in the Mac terminal, you can use the zip command. 
+# compress a .app file in the Mac terminal, zip might strip out CodeSigning information
+# To preserve this information, you can use the ditto command instead:
+❯ ditto -c -k --sequesterRsrc --keepParent src_directory archive.zip
+❯ fd .app$ -x ditto -c -k --sequesterRsrc --keepParent {} {.}.zip
+❯ fd -e app -e scptd -e qlgenerator -e workflow  -e prefpane -x ditto -V -c -k --sequesterRsrc --keepParent {} {}.zip 
+# alternate without original extension: 
+❯ fd -e app -e scptd -e qlgenerator -e workflow  -e prefpane -x ditto -V -c -k --sequesterRsrc --keepParent {} {.}.zip 
+# This command creates a PKZip archive similar to the Finder's Compress functionality
+❯ fd \
+-e app \
+-e scptd \
+-e qlgenerator \
+-e workflow  \
+-e prefpane \
+-x ditto -V -c -k --sequesterRsrc --keepParent {} {.}.zip 
+# Note `fd -x {}` handles quoting; no quotation marks  are needed
+
+
+#  compress a folder or file with the -X flag to exclude all annoying Mac OS hidden files:
+❯ zip -r -X archive.zip src_directory
+
+
+#Get path of front Finder window
+❯ osascript -e 'tell application "Finder" to get quoted form of POSIX path of (target of front Finder window as text)'
+
+#Mac equivalent of the file:// URL
+file:///URL
+
+#unhide User Library (otherwise you have hold option while choosing Go menu to see user Library in menu)
+❯ chflags nohidden ~/Library
+
+
+# hide file/folder
+❯ chflags hidden <item>
+# unhide file/folder
+❯ chflags unhidden <item>
+
+# Restart the OSX setup assistant
+❯ rm /var/db/.AppleSetupDone
+
+# Get the bundle identifier of a Mac application
+❯ osascript -e 'id of app "Finder"'
+
+# Get Mac model identifier
+❯ brew install neofetch
+❯ neofetch
+mike@MBP16-2021.m2
+OS: macOS 13.4.1 22F82 arm64 
+Host: MacBookPro18,2 
+...
+# Alternate method
+❯ silnite
+...
+MacModel = "MacBookPro18,2";
+...
+macOS = "Version 13.4.1 (Build 22F82)";
+# Alternately use SilentKnight GUI app
+
+# Check System Integrity Status
+❯ csrutil status
+   System Integrity Protection status: enabled.
+   
+# List all available full Mac OS macOS installers on apple servers
+❯ softwareupdate --list-full-installers
+# looks like only currently signed ones (bot much history)
+❯ softwareupdate -d --fetch-full-installer --full-installer-version 13.0
+
+# possible fix for Mac sound balance issue
+❯ https://apple.stackexchange.com/questions/333252/is-there-a-way-to-set-sound-balance-permanently-for-macbook
+❯ sudo mv /Library/Preferences/Audio/com.apple.audio.DeviceSettings.plist /Library/Preferences/Audio/com.apple.audio.DeviceSettings.plist.backup
+❯ sudo mv /Library/Preferences/Audio/com.apple.audio.SystemSettings.plist /Library/Preferences/Audio/com.apple.audio.SystemSettings.plist.backup
+# alternate Mac app kludge (Balance Lock)
+https://apps.apple.com/app/balance-lock/id1019371109?mt=12
+
+
+# Run Sudo Commands Using Touch ID (TouchID)
+# https://www.howtogeek.com/335238/how-to-run-sudo-commands-using-touch-id-on-macos/
+❯ sudo nano /etc/pam.d/sudo
+# Create a new line near the top of the editor and paste in the following:
+❯ auth       sufficient     pam_tid.so
+# file line insertion scripts:
+# script 1
+❯ sudo awk -i 'NR==2{print "auth       sufficient     pam_tid.so"}1' /etc/pam.d/sudo
+# script 2
+❯ sudo sed '1a\
+❯ auth       sufficient     pam_tid.so
+' < /etc/pam.d/sudo
+# script 3 (ex from vim)
+❯ sudo ex /etc/pam.d/sudo <<eof
+2 insert
+auth       sufficient     pam_tid.so
+.
+xit
+eof
+# script 4 (insert is before line/text found)
+sudo ex /etc/pam.d/sudo <<eof
+/auth       sufficient     pam_smartcard.so/ insert
+auth       sufficient     pam_tid.so
+.
+xit
+eof
+
+# Remove “Sign into iCloud” Notification from System Preferences
+# https://osxdaily.com/2021/10/30/dont-use-icloud-how-to-remove-start-using-icloud-notifications-on-mac/
+❯ sudo launchctl bootout gui/501/com.apple.followupd
+❯ sudo launchctl disable gui/501/com.apple.followupd
+# Remove the Start Using iCloud Notification Badge in System Preferences on Mac
+❯ defaults delete com.apple.systempreferences AttentionPrefBundleIDs
+
+# Check internal SSD disk usage
+❯ brew install smartmontools && sudo smartctl --all /dev/disk0
+
+# Rebuild LaunchServices to Fix Duplicate Entries in OS X's 'Open With' Menu
+/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user
+
+#  check disk storage space
+❯ diskutil info /dev/disk4
+
+# format FAT32 with custom allocation block size 
+# -c 128 example assumes Device Block Size: 512 Bytes
+❯ diskutil list
+❯ diskutil unmount /dev/disk6s1
+❯ sudo newfs_msdos -F 32 -c 128 -v SDCARD /dev/disk6s1
+❯ diskutil mount /dev/disk6s1
+❯ diskutil info /dev/disk6s1
+...
+ Allocation Block Size:     65536 Bytes
+...x rxxv
+
+### Advanced macOS Command-Line Tools
+# https://saurabhs.org/advanced-macos-commands
+caffeinate  # set Mac sleep behavior
+# Running caffeinate with no flags or arguments prevents your Mac from going to sleep as long as the command continues to run.
+❯ caffeinate -u -t <seconds> # prevents sleep for the specified number of seconds.
+# Adding the -d flag also prevents the display from going to sleep.
+# Specifying an existing process with -w <pid> automatically exits the caffeinate command once the specified process exits.
+# Passing a command with caffeinate <command> starts the given command in a new process and will prevent sleep until that process exits.
+
+textutil # document file converter
+# textutil can convert files to and from Microsoft Word, plain text, rich text, and HTML formats.
+❯ textutil -convert html journal.doc converts journal.doc into journal.html.
+# The possible values for -convert are: txt, html, rtf, rtfd, doc, docx.
+
+mdfind # search with Spotlight
+❯ mdfind <query> #performs a keyword-based Spotlight search with the given query.
+❯ mdfind kMDItemAppStoreHasReceipt=1 # finds all apps installed from the Mac App Store.
+❯ mdfind -name <name> searches for all files matching the given name.
+# The -onlyin <dir> flag restricts the search to the given directory.
+
+# Rebuild Spotlight
+❯ sudo mdutil -E /
+# Rebuild Spotlight on any drive
+❯ sudo mdutil -E /Volumes/[DriveName]
+
+# Troubleshoot/fix Spotlight
+# Remove the Spotlight index
+❯ sudo mdutil -X /   
+# alt:
+❯ sudo mdutil -X /Volumes/YourVolumeName
+# Re-enable indexing:
+❯ sudo mdutil -Ea
+# For external volumes:
+❯ sudo mdutil -E /Volumes/YourVolumeName
+# May take 10-15 min. Check status with:
+❯ mdutil -s /
+
+
+networkQuality # measure Internet speed
+# Run networkQuality to run an Internet speed test from your Mac.
+# Add the -v flag to view more detailed information.
+# Use the -i flag to run the network test on a specific network interface.
+
+❯ screencapture # take screenshots
+❯ screencapture -c # takes a screenshot and copies it to the clipboard.
+❯ screencapture <file> # takes a screenshot and saves it to the given file.
+# Add the -T <seconds> flag to take the screenshot after the given delay in seconds.
+
+❯ pbcopy, pbpaste # interact with system clipboard
+<command> | pbcopy # copies the output of the command to the clipboard.
+❯ pbpaste outputs the contents of the clipboard to stdout.
+
+taskpolicy # control scheduling of processes
+❯ taskpolicy -b <command> # starts executing the given command in the background. On Apple silicon Macs, the process will only run on the efficiency cores.
+❯ taskpolicy -b -p <pid> # downgrades an existing process to run in the background.
+❯ taskpolicy -B -p <pid> # removes the specified process from running in the background. On Apple silicon Macs, the process may now run on the efficiency or performance cores. Note that this only works on processes that have been downgraded to the background, and not processes that started in the background.
+❯ taskpolicy -s <command> # starts the given command in the suspended state. This is useful to allow a debugger to attach to the process right at the start of execution.
+
+❯ say # text-to-speech engine
+❯ say <message> # announces the given message.
+❯ say -f input.txt -o output.aiff # will create an audiobook from the given text file.
+
+❯ sips #  image manipulation
+❯ sips -z <height> <width> <image> # resizes the specified image, ignoring the previous aspect ratio.
+❯ sips -Z <size> <image> # resizes the largest side of the specified image, preserving the aspect ratio.
+❯ sips -r <degrees> <image> # rotate the image by the specified degrees.
+
+❯ open #  open files and applications
+❯ open -a <app> <file> # opens the given file with the specified application.
+❯ open . # opens the current directory in a new Finder window.
+# Open a new instance of the application even if one is already running.
+❯ open -na <app> <file> # opens the given file with the specified application.
+
+❯ pmset #  configure power management
+❯ pmset -g # prints all available power configuration information.
+❯ pmset -g # assertions displays information about power-related assertions made by other processes. This can be useful for finding a process that is preventing your Mac from going to sleep.
+❯ pmset -g # thermlog displays information about any processes that have been throttled (useful when running benchmarks).
+❯ pmset displaysleepnow # immediately puts the display to sleep without putting the rest of the system to sleep.
+❯ pmset sleepnow # immediately puts the entire system to sleep.
+
+❯ networksetup #  configure network settings
+❯ networksetup -listnetworkserviceorder # prints a list of available network services.
+❯ networksetup -getinfo <networkservice> # prints information about the specified network service.
+❯ networksetup -getdnsservers <networkservice> # prints the DNS servers for the specified network service.
+❯ networksetup -setairportnetwork <device> <network> [password] # joins the specified Wi-Fi network. (In most cases, the <device> argument should be "en0".)
+
+❯ qlmanage #  manage Quick Look
+❯ qlmanage -p <file> # opens a Quick Look preview window of the given file.
+❯ qlmanage -m # prints status information about the Quick Look server process.
+❯ qlmanage -r # restarts the Quick Look server process.
+❯ qlmanage -r cache # resets the Quick Look thumbnail cache.
+
+❯ softwareupdate #  manage OS updates
+❯ softwareupdate --list # prints out available software updates.
+❯ sudo softwareupdate -ia # installs all available updates.
+❯ softwareupdate --fetch-full-installer --full-installer-version <version> # tries to download the full installer of the specified macOS version to /Applications.
+
+# Find Apple Lossless (ALAC) m4a files
+❯ brew install media-info
+❯ mediainfo <file> | grep 'Apple Lossless Audio Codec'
+Audio
+ID                                       : 1
+Format                                   : ALAC
+Codec ID                                 : alac
+Codec ID/Info                            : Apple Lossless Audio Codec
+
+# Find Apple Music Matched files
+❯ m4a_info |  grep  "Apple audio with iTunes info"
+Format                                   : MPEG-4
+Format profile                           : Apple audio with iTunes info
+Codec ID                                 : M4A  (M4A /mp42/isom)
+
+
+# disable the In-Apps Ratings & Reviews setting in the App Store app:
+# https://derflounder.wordpress.com/2023/07/20/disabling-in-app-review-requests-for-apps-installed-from-the-macos-app-store/
+/usr/bin/defaults write com.apple.appstore InAppReviewEnabled -bool false
+
+# setup command line tool for VSCode/VSCodium
+vscodium () { VSCODE_CWD="$PWD" open -n -b "com.vscodium" --args $* ;}
+alias code=vscodium
+if [ -f "/Applications/Visual Studio Code.app" ]; then
+    vscode () { VSCODE_CWD="$PWD" open -n -b "com.microsoft.VSCode" --args $* ;}
+else
+    alias vscode=vscodium
+fi
+
+
+
+
+
+
+##########################################################################################
+# https://web.archive.org/web/20130518040546/http://lri.me/keybindings.html
+##########################################################################################
+My DefaultKeyBinding.dict
+{
+	"~w" = selectWord:;
+	"~f" = (selectWord:, cut:);
+	"~g" = (selectWord:, copy:);
+	"~h" = (selectWord:, paste:);
+	"~j" = (selectWord:, delete:);
+
+	"~l" = selectParagraph:;
+	"~z" = (selectParagraph:, deleteBackward:);
+	"~x" = (selectParagraph:, cut:);
+	"~c" = (selectParagraph:, copy:);
+
+	"~s" = (moveToBeginningOfParagraphAndModifySelection:, moveToEndOfParagraphAndModifySelection:);
+	"~y" = (moveToBeginningOfParagraphAndModifySelection:, moveToEndOfParagraphAndModifySelection:, deleteBackward:);
+	"~q" = (moveToBeginningOfParagraphAndModifySelection:, moveToEndOfParagraphAndModifySelection:, cut:);
+	"~m" = (moveToBeginningOfParagraphAndModifySelection:, moveToEndOfParagraphAndModifySelection:, copy:);
+
+	"~u" = (moveToBeginningOfParagraphAndModifySelection:, cut:);
+	"~k" = (moveToEndOfParagraphAndModifySelection:, cut:);
+	"~a" = (moveToBeginningOfParagraphAndModifySelection:, copy:);
+	"~e" = (moveToEndOfParagraphAndModifySelection:, copy:);
+	"~i" = (moveToBeginningOfParagraph:, deleteBackward:);
+	"~o" = (moveToEndOfParagraph:, deleteForward:);
+
+	"~v" = (delete:, setMark:, paste:, selectToMark:);
+
+	"~d" = (moveToBeginningOfParagraphAndModifySelection:, moveToEndOfParagraphAndModifySelection:, setMark:, deleteToMark:, yank:, insertNewlineIgnoringFieldEditor:, yank:);
+
+	"~-" = (lowercaseWord:, moveForward:);
+	"~=" = (uppercaseWord:, moveForward:);
+	"~." = (capitalizeWord:, moveForward:);
+
+	"$\r" = (moveToBeginningOfParagraph:, insertNewline:, moveBackward:);
+	"@\r" = (moveToEndOfParagraph:, insertNewlineIgnoringFieldEditor:, deleteToBeginningOfParagraph:);
+
+	"~\UF700" = (moveUp:, moveUp:, moveUp:, moveUp:);
+	"~\UF701" = (moveDown:, moveDown:, moveDown:, moveDown:);
+	"~$\UF700" = (moveUpAndModifySelection:, moveUpAndModifySelection:, moveUpAndModifySelection:, moveUpAndModifySelection:);
+	"~$\UF701" = (moveDownAndModifySelection:, moveDownAndModifySelection:, moveDownAndModifySelection:, moveDownAndModifySelection:);
+
+	"^\UF700" = (selectParagraph:, setMark:, deleteToMark:, moveBackward:, moveToBeginningOfParagraph:, setMark:, yank:, moveBackward:, selectToMark:);
+	"^\UF701" = (selectParagraph:, setMark:, deleteToMark:, moveToEndOfParagraph:, moveForward:, setMark:, yank:, moveBackward:, selectToMark:);
+
+	"@\UF728" = deleteToEndOfLine:;
+}
+Notes
+Key combinations that enter dead key states can't be reassigned.
+
+setMark:, selectToMark: removes anchoring so that methods for modifying a selection expand the selection.
+
+delete: (⌧ / clear) doesn't delete anything if there is no selection. deleteBackward: (⌫ / delete) doesn't add deleted selections to the kill ring. delete: doesn't do anything in iWork applications.
+
+deleteBackward: doesn't add single character selections to the kill ring but setMark:, deleteToMark: does.
+
+scrollPageDown: (⇟) doesn't move the caret but pageDown: (⌥⇟) does. pageDown: and ⌥⇟ don't do anything in web views or iWork applications.
+
+moveToBeginningOfParagraphAndModifySelection:, moveToEndOfParagraphAndModifySelection: doesn't work for selecting a line without a newline in TextMate, Sublime Text, or BBEdit. You can use selectParagraph:, moveForwardAndModifySelection:, moveBackwardAndModifySelection:, moveBackwardAndModifySelection:, moveToEndOfParagraphAndModifySelection: instead.
+
+Shortcut strings
+tab \U0009 \011 \t
+enter \U000A \012 \n
+return \U000D \015 \r
+escape \U001B \033
+delete \U007F \177
+up \UF700
+down \UF701
+left \UF702
+right \UF703
+F1 \UF704
+F2 \UF705
+F3 \UF706
+F4 \UF707
+F5 \UF708
+F6 \UF709
+F7 \UF70A
+F8 \UF70B
+F9 \UF70C
+F10 \UF70D
+F11 \UF70E
+F12 \UF70F
+F13 \UF710
+F14 \UF711
+F15 \UF712
+F16 \UF713
+F17 \UF714
+F18 \UF715
+F19 \UF716
+F20 \UF717
+forward delete \UF728
+home \UF729
+end \UF72B
+page up \UF72C
+page down \UF72D
+clear \UF739
+
+control ^
+option ~
+shift $
+command @
+numpad #
+http://www.unicode.org/Public/MAPPINGS/VENDORS/APPLE/CORPCHAR.TXT
+
+Selectors
+http://www.hcs.harvard.edu/~jrus/site/selectors.html
+http://svn.gna.org/svn/gnustep/apps/gorm/tags/Gorm-0_1_0/ClassInformation.plist
+NSApplication, NSDocument, NSTextView, NSWindow
+
+NSResponder
+moveBackward: moveForward:
+moveLeft: moveRight:
+moveUp: moveDown:
+moveBackwardAndModifySelection: moveForwardAndModifySelection:
+moveLeftAndModifySelection: moveRightAndModifySelection:
+moveUpAndModifySelection: moveDownAndModifySelection:
+
+moveWordBackward: moveWordForward:
+moveWordLeft: moveWordRight:
+moveWordBackwardAndModifySelection: moveWordForwardAndModifySelection:
+moveWordLeftAndModifySelection: moveWordRightAndModifySelection:
+
+moveToBeginningOfLine: moveToEndOfLine:
+moveToLeftEndOfLine: moveToRightEndOfLine:
+moveToBeginningOfLineAndModifySelection: moveToEndOfLineAndModifySelection:
+moveToLeftEndOfLineAndModifySelection: moveToRightEndOfLineAndModifySelection:
+moveToBeginningOfParagraph: moveToEndOfParagraph:
+moveToBeginningOfParagraphAndModifySelection: moveToEndOfParagraphAndModifySelection:
+moveParagraphBackwardAndModifySelection: moveParagraphForwardAndModifySelection:
+
+moveToBeginningOfDocument: moveToEndOfDocument:
+moveToBeginningOfDocumentAndModifySelection: moveToEndOfDocumentAndModifySelection:
+
+deleteBackward: deleteForward:
+deleteWordBackward: deleteWordForward:
+deleteToBeginningOfLine: deleteToEndOfLine:
+deleteToBeginningOfParagraph: deleteToEndOfParagraph:
+deleteBackwardByDecomposingPreviousCharacter:
+
+insertText:
+insertNewline: insertTab: insertBacktab:
+insertNewlineIgnoringFieldEditor: insertTabIgnoringFieldEditor:
+insertSingleQuoteIgnoringSubstitution: insertDoubleQuoteIgnoringSubstitution:
+
+scrollLineUp: scrollLineDown:
+scrollPageUp: scrollPageDown:
+scrollToBeginningOfDocument: scrollToEndOfDocument:
+pageUp: pageDown:
+pageUpAndModifySelection: pageDownAndModifySelection:
+
+selectWord: selectLine: selectParagraph: selectAll:
+
+lowercaseWord: uppercaseWord: capitalizeWord:
+
+setMark: swapWithMark: selectToMark: deleteToMark: yank:
+
+transpose:
+centerSelectionInVisibleArea:
+Other classes
+cut: copy: paste: delete:
+pasteAsPlainText: pasteAsRichText:
+yankAndSelect:
+undo: redo:
+TextMate
+Many of TextMate's default shortcuts are defined in /Applications/TextMate.app/Contents/Resources/KeyBindings.dict. It's overridden by ~/Library/Application Support/TextMate/KeyBindings.dict. TextMate 2 also uses ~/Library/Application Support/TextMate/KeyBindings.dict.
+
+{
+	// the menu items don't apply to whole lines when lines are selected partially
+	// moveSelectionLineUp: and moveSelectionLineDown: don't work in TextMate 2
+	// "^\UF700" = (selectHardLine:, moveSelectionLineUp:);
+	// "^\UF701" = (selectHardLine:, moveSelectionLineDown:);
+	"^\UF702" = (selectHardLine:, shiftLeft:);
+	"^\UF703" = (selectHardLine:, shiftRight:);
+
+	// capitalizeWord: applies to selection or paragraph
+	"~." = (selectWord:, capitalizeWord:);
+
+	// selectParagraph: selects multiple unwrapped lines in some scopes
+	"~l" = selectHardLine:;
+	"~x" = (selectHardLine:, cut:);
+	"~c" = (selectHardLine:, copy:);
+	"~v" = (selectHardLine:, paste:);
+	"~z" = (selectHardLine:, delete:);
+	"~s" = (selectHardLine:, moveForwardAndModifySelection:, moveBackwardAndModifySelection:, moveBackwardAndModifySelection:, moveToEndOfParagraphAndModifySelection:);
+	"~q" = (selectHardLine:, moveForwardAndModifySelection:, moveBackwardAndModifySelection:, moveBackwardAndModifySelection:, moveToEndOfParagraphAndModifySelection:, cut:);
+	"~m" = (selectHardLine:, moveForwardAndModifySelection:, moveBackwardAndModifySelection:, moveBackwardAndModifySelection:, moveToEndOfParagraphAndModifySelection:, copy:);
+	"~y" = (selectHardLine:, moveForwardAndModifySelection:, moveBackwardAndModifySelection:, moveBackwardAndModifySelection:, moveToEndOfParagraphAndModifySelection:, delete:);
+
+	// these are required for the shortcuts to work in TextMate 1
+	// "@\UF702" = moveToBeginningOfLine:;
+	// "@\UF703" = moveToEndOfLine:;
+	// "$@\UF702" = moveToBeginningOfLineAndModifySelection:;
+	// "$@\UF703" = moveToEndOfLineAndModifySelection:;
+	// "@\U007F" = deleteToBeginningOfLine:;
+}
+StandardKeyBinding.dict
+Modified from the output of plutil -convert xml1 /System/Library/Frameworks/AppKit.framework/Resources/StandardKeyBinding.dict -o - | pl | ruby -pe '$_.gsub!(/[^ -~\n]/,"\\U%04x"%$0.unpack("U*")[0])'.
+
+{
+	"\r" = insertNewline:;
+	"\n" = insertNewline:;
+	"\U0003" = insertNewline:;
+	"\t" = insertTab:;
+	"\U0019" = insertBacktab:;
+	"^\r" = insertLineBreak:;
+	"^\n" = insertLineBreak:;
+	"^\U0003" = insertLineBreak:;
+	"^'" = insertSingleQuoteIgnoringSubstitution:;
+	"^\"" = insertDoubleQuoteIgnoringSubstitution:;
+	"^/" = insertRightToLeftSlash:;
+	"~\r" = insertNewlineIgnoringFieldEditor:;
+	"~\n" = insertNewlineIgnoringFieldEditor:;
+	"~\U0003" = insertNewlineIgnoringFieldEditor:;
+	"~\t" = insertTabIgnoringFieldEditor:;
+
+	"\U007F" = deleteBackward:;
+	"\b" = deleteBackward:;
+	"\UF728" = deleteForward:;
+	"\UF739" = delete:;
+	"~\U007F" = deleteWordBackward:;
+	"~\b" = deleteWordBackward:;
+	"^~\U007F" = deleteWordBackward:;
+	"~\UF728" = deleteWordForward:;
+	"@\U007F" = deleteToBeginningOfLine:;
+	"^\U007F" = deleteBackwardByDecomposingPreviousCharacter:;
+
+	"\UF700" = moveUp:;
+	"\UF701" = moveDown:;
+	"\UF702" = moveLeft:;
+	"\UF703" = moveRight:;
+	"$\UF700" = moveUpAndModifySelection:;
+	"$\UF701" = moveDownAndModifySelection:;
+	"$\UF702" = moveLeftAndModifySelection:;
+	"$\UF703" = moveRightAndModifySelection:;
+
+	"~\UF702" = moveWordLeft:;
+	"~\UF703" = moveWordRight:;
+	"~$\UF702" = moveWordLeftAndModifySelection:;
+	"~$\UF703" = moveWordRightAndModifySelection:;
+
+	"@\UF702" = moveToLeftEndOfLine:;
+	"@\UF703" = moveToRightEndOfLine:;
+	"^\UF702" = moveToLeftEndOfLine:;
+	"^\UF703" = moveToRightEndOfLine:;
+	"@$\UF702" = moveToLeftEndOfLineAndModifySelection:;
+	"@$\UF703" = moveToRightEndOfLineAndModifySelection:;
+	"^$\UF702" = moveToLeftEndOfLineAndModifySelection:;
+	"^$\UF703" = moveToRightEndOfLineAndModifySelection:;
+	"~\UF700" = (moveBackward:, moveToBeginningOfParagraph:);
+	"~\UF701" = (moveForward:, moveToEndOfParagraph:);
+	"~$\UF700" = moveParagraphBackwardAndModifySelection:;
+	"~$\UF701" = moveParagraphForwardAndModifySelection:;
+
+	"\UF72c" = scrollPageUp:;
+	"\UF72d" = scrollPageDown:;
+	"^\UF700" = scrollPageUp:;
+	"^\UF701" = scrollPageDown:;
+	"~\UF72c" = pageUp:;
+	"~\UF72d" = pageDown:;
+	"$\UF72c" = pageUpAndModifySelection:;
+	"$\UF72d" = pageDownAndModifySelection:;
+
+	"\UF729" = scrollToBeginningOfDocument:;
+	"\UF72b" = scrollToEndOfDocument:;
+	"@\UF700" = moveToBeginningOfDocument:;
+	"@\UF701" = moveToEndOfDocument:;
+	"$\UF729" = moveToBeginningOfDocumentAndModifySelection:;
+	"$\UF72b" = moveToEndOfDocumentAndModifySelection:;
+	"$@\UF700" = moveToBeginningOfDocumentAndModifySelection:;
+	"$@\UF701" = moveToEndOfDocumentAndModifySelection:;
+
+	"^a" = moveToBeginningOfParagraph:;
+	"^b" = moveBackward:;
+	"^d" = deleteForward:;
+	"^e" = moveToEndOfParagraph:;
+	"^f" = moveForward:;
+	"^h" = deleteBackward:;
+	"^k" = deleteToEndOfParagraph:;
+	"^l" = centerSelectionInVisibleArea:;
+	"^n" = moveDown:;
+	"^o" = (insertNewlineIgnoringFieldEditor:, moveBackward:);
+	"^p" = moveUp:;
+	"^t" = transpose:;
+	"^v" = pageDown:;
+	"^y" = yank:;
+	"^A" = moveToBeginningOfParagraphAndModifySelection:;
+	"^B" = moveBackwardAndModifySelection:;
+	"^E" = moveToEndOfParagraphAndModifySelection:;
+	"^F" = moveForwardAndModifySelection:;
+	"^N" = moveDownAndModifySelection:;
+	"^P" = moveUpAndModifySelection:;
+	"^V" = pageDownAndModifySelection:;
+	"^~b" = moveWordBackward:;
+	"^~f" = moveWordForward:;
+	"^~B" = moveWordBackwardAndModifySelection:;
+	"^~F" = moveWordForwardAndModifySelection:;
+
+	"@\U0020" = cycleToNextInputScript:;
+	"~@\U0020" = cycleToNextInputKeyboardLayout:;
+	"^@\U0020" = togglePlatformInputSystem:;
+	"^@\UF701" = makeBaseWritingDirectionNatural:;
+	"^@\UF703" = makeBaseWritingDirectionLeftToRight:;
+	"^@\UF702" = makeBaseWritingDirectionRightToLeft:;
+	"^~@\UF701" = makeTextWritingDirectionNatural:;
+	"^~@\UF703" = makeTextWritingDirectionLeftToRight:;
+	"^~@\UF702" = makeTextWritingDirectionRightToLeft:;
+
+	"\U001B" = cancelOperation:;
+	"@." = cancelOperation:;
+	"\UF708" = complete:;
+	"~\U001B" = complete:;
+	"^\U0019" = selectPreviousKeyView:;
+	"^\t" = selectNextKeyView:;
+}
+
+##########################################################################################
+# SOFTWAREUPDATE
+##########################################################################################
+# https://eclecticlight.co/2023/09/06/taking-manual-control-of-macos-updates-with-softwareupdate/
+# Neither the man page for softwareupdate nor its current usage information are complete or accurate
+# List available updates
+❯ softwareupdate -l
+❯ softwareupdate -la
+# will list available macOS updates, as well as some others, but results ***OMIT SECURITY DATA UPDATES***
+# such as those to MRT (e.g. MRTConfigData_10_15-1.93), XProtect (e.g. XProtectPlistConfigData_10_15-2169), 
+# and XProtect Remediator (e.g. XProtectPayloads_10_15-109).
+# 
+# FULL LIST OF AVAILABLE UPDATES:
+❯ softwareupdate -l --include-config-data
+Finding available software
+Software Update found the following new or updated software:
+* Label: MRTConfigData_10_15-1.93
+Title: MRTConfigData, Version: 1.93, Size: 4595KiB, Recommended: YES,
+* Label: XProtectPlistConfigData_10_15-2169
+Title: XProtectPlistConfigData, Version: 2169, Size: 975KiB, Recommended: YES,
+* Label: XProtectPayloads_10_15-109
+Title: XProtectPayloads, Version: 109, Size: 18241KiB, Recommended: YES,
+* Label: macOS Ventura 13.5.1-22G90
+Title: macOS Ventura 13.5.1, Version: 13.5.1, Size: 1520555KiB, Recommended: YES, Action: restart,
+# 
+# Note that the labels given for security data updates contain no spaces, whereas that for the macOS update contains two spaces.
+# 
+# Downloading updates
+❯ softwareupdate -d --include-config-data [label]
+# Downloaded security data updates are then saved to folders inside /Library/Updates, 
+# but macOS updates are carefully hidden, and can only be installed using Software Update or softwareupdate with its install option.
+##########################################################################################
+# Installing updates
+# ########################################################################################
+# If no macOS update is available, install all available updates using the command
+❯ softwareupdate -ia --include-config-data
+# 
+# Installing individual security data updates that are available can be performed using the command
+softwareupdate -i --include-config-data [label]
+# 
+# Other useful options
+# 
+# list available macOS installers:
+❯ softwareupdate --list-full-installers
+Ventura 13.5.1, 13.5, 13.4.1, 13.4, 13.3.1, 13.3
+Monterey 12.6.8, 12.6.7, 12.6.6, 12.6.5, 12.6.4
+Big Sur 11.7.9, 11.7.8, 11.7.7, 11.7.6, 11.7.5, 11.6.6, 11.6.5, 11.6.4, 11.6.3, 11.6.2, 11.6.1, 11.5.2
+Catalina 10.15.7 Build 19H15, 10.15.7 Build 19H2, 10.15.6
+Mojave 10.14.6
+High Sierra 10.13.6
+# download the installer
+❯ sudo softwareupdate --fetch-full-installer --full-installer-version 11.7.7
+
+
+# softwareupdate: disable nag/nags/nagging notifications
+defaults write com.apple.SoftwareUpdate UserNotificationDate -date  "2045-12-31 02:44:24 +0000"
+defaults write com.apple.SoftwareUpdate MajorOSUserNotificationDate -date "2035-01-01 00:00:00 +0000"
+
+# disable .DS_Store 
+defaults write com.apple.desktopservices DSDontWriteUSBStores -bool true   
+defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true   
+
+# check .DS_Store defaults
+defaults read com.apple.desktopservices DSDontWriteUSBStores
+defaults read com.apple.desktopservices DSDontWriteNetworkStores
+
+# Install Rosetta 2 on Apple silicon Macs
+sudo softwareupdate --install-rosetta --agree-to-license
+
+
+/usr/bin/osascript -e 'mount volume "smb://media@media-server.local/media2"' 
+
+
+# open app based on id
+open -n -b "com.vscodium"
+
+# open file(s) with app and set needed env vars
+# -b          Opens with the specified application bundle identifier.
+# -n, --new   Open a new instance of the application even if one is already running.
+vscodium () {
+	VSCODE_CWD="$PWD" 
+	open -n -b "com.vscodium" --args $*
+}
+
+
+# Removing unwanted apps from Open With menu (LaunchServices)
+lsregister -R -f -u pathname
+# where pathname is the path and name of the app.
+
+# Resetting the database: Open With menu (LaunchServices)
+lsregister -kill -r -v -apps u
+# to affect just the user domain, or
+lsregister -kill -r -v -apps u,s,l
+# to widen its coverage to other domains.
+
+# iTunes/Apple Music playlist tips
+- hold Option and click elipses to add/enable all AND any criteria
+- drag criteria to organize in any/all groups
+
+# wine-crossover supports running 32-bit & 64-bit windows binaries.
+# 
+# wine-crossover does not support creating a 32-bit wine prefix.
+# 
+# To enable noflicker set the following registry key in your prefix:
+[HKCU\Software\Wine\Mac Driver]
+"ForceOpenGLBackingStore"="y"
+
+
+https://apple.stackexchange.com/questions/427277/avoid-changes-to-etc-pam-d-sudo-across-macos-updates
+# You can prevent Apple's Updates from performing a "reset to default" with the chflags command. Open a terminal, and make the following entry:
+sudo chflags simmutable /etc/pam.d/sudo 
+# This sets the system-level immutable flag on the named file; synonyms for simmutable are schg and schange.
+# See man chflags for details and options. Importantly, understand that when you need to edit /etc/pam.d/sudo again, you must first clear the immutable flag as follows:
+sudo chflags nosimmutable /etc/pam.d/sudo 
+# To list/show the flags, use:
+ls -lO.
+
+# prevent disk automount
+diskutil info "volume name"
+# which will generate a lot of information about the disk—including its Volume UUID, a long string of characters.
+# edit the file /etc/fstab and add a line that specifically tells the system not to mount this particular drive
+UUID=[long UUID of the disk] none apfs rw,noauto
+# This configuration line tells the system not to automount a disk with that UUID.
+# 
+# Notes:
+# I've tested this on my Ventura system during my recent update to ver 13.6, and it (finally) prevented Apple's OS Update from reverting (resetting to default) my /etc/auto_master file - as it had done during two previous updates. Consequently, I believe it will work on all /etc files, and perhaps others that are similarly reverted during Apple's macOS Updates. However: Updates are rather infrequent, so feedback from others who use chflags is appreciated.
+# 
+# The chflags utility has been around since about 1994 (BSD 4.4). However, man chflags has a 2018 date, possibly suggesting that the utility has been recently updated. Also, man chflags states there are only a few utilities that are "chflags-aware" - including install and restore.
+# 
+# The flags that are set/cleared by chflags are stored in file metadata in a structure that is very similar to the structures containing ownership and mode data. Each structure is manipulated by its own utility: chown for ownership, chmod for mode/permissions and chflags for flags.
+# 
+# flags are similar to mode/permissions, but apply different types of permissions across all user classes. Whereas mode/permissions are set for each class of user (owner, group, everyone), a flag applies to all users - even root! For example, the simmutable flag means no changes may be made to the file by anyone; even the owner must remove the flag before making a change to it. This feature can create confusion, for example, when a user cannot change a file even with sudo. Note that the ls -lO command may be used to reveal flag settings.
+# 
+# I learned of the chflags utility from @ArjanVlaanderen in an answer he posted to another question. I posted a question similar to this one recently which was closed as a duplicate. I was not satisfied with the accepted answer to this question, and so this is my attempt to answer.
+# 
+# Following are a few references on chflags:
+# 
+# How to Use File Flags to Modify File Behavior in macOS
+# 
+# Apple's Documentation Archive
+# 
+# POSIX standard flags defined in stat.h; from this answer in Apple SE.
+# 
+# Locking and Unlocking Files, from 'Mac OSX Hacks' by O'Reilly.
+# 
+# Changing file permissions on macOS (and using flags)
+# 
+# Python os.chflags() Method - for Python programmers :)
+# 
+# chattr - Wikipedia article comparing Linux chattr to Apple/BSD chflags.
+
+# Keymaster is a small binary written in Swift that allows scripts to access the Mac Keychain guarded by TouchID.
+https://github.com/johnthethird/keymaster
+
+
+
+# Cleanup dock after new install (removes all persistent app icons
+defaults delete com.apple.dock persistent-apps &&  killall Dock
+
+
+# Meaning of @ symbol in file list
+The @ symbol at the end of a file or directory's permission string
+indicates that the file has extended attributes. 
+These extended attributes are additional metadata stored alongside the
+file, which can include information like Finder icon settings, file
+encoding, security status (such as quarantine data), or custom
+user-defined data. 
+The presence of the @ symbol is specific to macOS and is not used in
+standard Unix/Linux systems.
+
+
+
+
+

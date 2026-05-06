@@ -1,0 +1,36 @@
+# config.py located at:
+/Users/mike/Library/Application Support/ptpython/config.py
+
+# Show function signature (bool). <-- display expected args for function
+    repl.show_signature = True
+
+# Highlight matching parethesis.
+    repl.highlight_matching_parenthesis = True
+
+# Mouse support.
+    repl.enable_mouse_support = False
+# Leave off (False) or it breaks copying text in Terminal
+
+
+# Show docstring (bool).
+    repl.show_docstring = True
+
+ 
+# Complete while typing. (Don't require tab before the
+# completion menu is shown.)
+repl.complete_while_typing = True
+
+# Vi mode.
+repl.vi_mode = False
+
+# History Search.
+# When True, going back in history will filter the history on the records
+# starting with the current input. (Like readline.)
+# Note: When enable, please disable the `complete_while_typing` option.
+#       otherwise, when there is a completion available, the arrows will
+#       browse through the available completions instead of the history.
+repl.enable_history_search = False
+
+ 
+F3 = show history (arrow/pg keys to navigate)
+

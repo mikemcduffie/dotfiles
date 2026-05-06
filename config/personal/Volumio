@@ -1,0 +1,38 @@
+# Volumio_Settings.txt 
+General Playback Options:
+- Output Device: ST400 Dac (PCM5122) - Amp
+- I2S DAC: ON
+- DAC Model: ST400 Dac (PCM5122) - Amp
+
+- DSD Playback Mode: DSD Direct
+- DSD Auto Volume Level: ON
+- Volume Normalization: ON
+- Audio Buffer Size: 2MB
+- Buffer before play: 10%
+- Persistent Queue: ON (retain on reboot)
+
+- Mixer Type: Hardware
+- Mixer Control Name: Digital
+- Default Startup Volume: Disabled (keep same after reboot)
+- Volume Curve Level: Natural
+
+- Audio Sampling: OFF
+
+
+Plugins
+-------
+Autostart Settings:
+- Play From Last Position: ON
+- Delay Before Music Starts: 10000 (milliseconds)
+
+GPIO Buttons:
+- Play/Pause: GPIO17 (Pin 11)
+- Shutdown:   GPIO04 (Pin 7)
+
+Rotary Encoder:
+-
+
+
+
+LED: GPIO18 (pin 12 - PCM_CLK)
+

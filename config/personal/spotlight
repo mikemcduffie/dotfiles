@@ -1,0 +1,61 @@
+---
+syntax: bash
+tags: [ mac ]
+---
+
+# Global Spotlight and Local Spotlight can accept a simple form of query language
+name:"target"*cdw
+filename:"target"*cdw
+# Performs the equivalent of the Matches operator in a Find window. These
+# use English terms for the attributes to be used, like name and filename,
+# including some of those listed here for Core Spotlight. However, limited
+# information is available and this doesn’t appear to be extensive enough
+# to use at scale. Operators available are also limited within those
+# listed for Core Spotlight.
+# 
+# Modifiers available in current macOS include
+c for case-insensitivity,
+d to ignore diacritics such as accents,
+w to match on word boundaries, as marked by space, underscore _, hyphen – and changes of case used in CamelCase.
+# The asterisk * can be used as a wildcard to match substrings, and the backslash \ acts as an escape character, for example \" meaning a ” literal. In theory, simple predicates can be combined using && as AND, and || as OR.
+# In theory, simple predicates can be combined using && as AND, and || as OR.
+# In practice, getting these to work is tricky, and rarely worth the effort of trying.
+
+
+# Spotlight raw queries. 
+# Confusingly, these use different names for attributes, such as
+# kMDItemDisplayName instead of name. Otherwise these are more reliable
+# than those used in search boxes. For example, when searching for the
+# string target
+kMDItemDisplayName = "*target*"
+is the equivalent of Contains, and
+kMDItemDisplayName = "target*"w
+# appears functionally identical to Matches.
+# These appear to be an option of last resort, and need documentation.
+
+
+# mdfind: Spotlight Query Language CLI TOOL
+mdfind -name "target"
+# Query strings take the general form
+# attribute operator value[modifiers]
+# where attribute is a kMD… name defined as a metadata attribute key,
+# operator can take a formal version such as ==, or may be abbreviated to just =, which appear to be identical in effect,
+# value can be a string containing wildcards or escapes, or those detailed for special cases such as numbers and dates,
+# modifiers include those given above.
+# Simple examples are
+mdfind "kMDItemDisplayName = '*target*'"
+# or
+mdfind "kMDItemDisplayName == '*target*'"
+
+# raw queries. 
+# Confusingly, these use different names for attributes, such as kMDItemDisplayName instead of name. Otherwise these are more reliable than those used in search boxes. For example, when searching for the string target,
+kMDItemDisplayName = "*target*"
+# is the equivalent of Contains, and
+kMDItemDisplayName = "target*"w
+# appears functionally identical to Matches.
+# These appear to be an option of last resort, and need documentation.
+https://developer.apple.com/documentation/coreservices/file_metadata/mditem/common_metadata_attribute_keys
+# Kind is Image All is represented by the query
+(((** = "target*"cdw)) && (_kMDItemGroupId = 13))
+kMDItemKind = "public.image"
+

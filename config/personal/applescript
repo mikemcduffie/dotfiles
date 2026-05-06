@@ -1,0 +1,112 @@
+---
+tags: [ mac ]
+---
+
+# Send notification from terminal with applescript
+❯ osascript -e "display notification \"No need to clean $filename.$ext\" with title \"Clean filename for PC\""
+
+# display alert from terminal with applescript
+❯ osascript -e 'display alert "Alert title" message "Your message text line here."'
+
+
+https://apple.stackexchange.com/questions/406941/applescript-and-music
+# Applescript Music Data
+# AppleScript can interact with the Music app on macOS to access various
+# data fields associated with tracks. For example, you can retrieve
+# properties such as the artist, album, genre, year, duration, and more.
+# To explore the available properties, you can use the Script Editor to
+# check the Library or query the properties of the current track using
+# AppleScript code.
+# Some of the data fields that can be accessed include:
+Artist: The name of the artist associated with the track.
+Album: The name of the album the track belongs to.
+Genre: The genre of the track.
+Year: The year the track was released.
+Duration: The length of the track in seconds.
+Track Number: The position of the track within the album.
+Album Artist: The artist of the album, which may differ from the track artist.
+Composer: The composer of the track.
+Bit Rate: The bit rate of the audio file.
+Sample Rate: The sample rate of the audio file.
+Size: The file size of the track.
+Date Added: The date the track was added to the library.
+Time: The duration of the track in a formatted string.
+# Additionally, there are other fields such as 
+comment, EQ, kind, media kind, modification date, enabled, start,
+finish, played count, skipped count, compilation, rating, bpm, grouping,
+bookmarkable, bookmark, shufflable, lyrics, category, description,
+episode number, unplayed, sort name, sort album, sort artist, sort
+composer, sort album artist, loved, disliked, album loved, album
+disliked, cloud status, work, movement, movement number, movement count,
+and location
+
+tell application "Music" to get properties of current track
+
+{
+class:file track,
+id:136807,
+index:11774,
+name:"Devil Inside",
+persistent ID:"392B11BCE8D0B780",
+database ID:36533,
+date added:date "Tuesday,
+April 18,
+2023 at 13:06:39",
+time:"5:15",
+duration:315.079986572266,
+artist:"INXS",
+album artist:"",
+composer:"",
+album:"INXS - The Very Best",
+genre:"Rock",
+bit rate:1034,
+sample rate:44100,
+track count:0,
+track number:10,
+disc count:0,
+disc number:0,
+size:40783461,
+volume adjustment:0,
+year:2011,
+comment:"Re-issue",
+EQ:"",
+kind:"Apple Lossless audio file",
+media kind:song,
+modification date:date "Saturday,
+July 12,
+2025 at 17:32:36",
+enabled:true,
+start:0.0,
+finish:315.079986572266,
+played count:8,
+played date:date "Thursday,
+November 21,
+2024 at 16:24:15",
+skipped count:0,
+compilation:false,
+rating:70,
+bpm:0,
+grouping:"",
+bookmarkable:false,
+bookmark:0.0,
+shufflable:true,
+lyrics:"",
+category:"",
+description:"",
+episode number:0,
+unplayed:false,
+sort name:"",
+sort album:"",
+sort artist:"",
+sort composer:"",
+sort album artist:"",
+favorited:false,
+disliked:false,
+album favorited:false,
+album disliked:false,
+cloud status:matched,
+work:"",
+movement:"",
+movement number:0,
+movement count:0,
+location:alias "Transcend:Music:Music:INXS:INXS - The Very Best:10 Devil Inside.m4a"}

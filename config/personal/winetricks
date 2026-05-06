@@ -1,0 +1,15 @@
+### Winetricks for Hidden Expedition Titanic ###
+- Game doesn't save "Play in Window setting"
+- Fulscreen doesn't scale properly making mouse position off
+# Need to set Winetricks (via Proton Tricks>default prefix>change settings):
+vd=800x600 (enable virtual desktop, set size to 800 x 600)
+winxp
+# to match 800x600 fixed resolution of this game and Win XP compatibility
+# 
+# Can clean up Desktop that shows by deleting links in C:\users\<user>\Desktop
+# Can set a wallpaper for a splash screen (or black for blank) with 
+"HKCU\Control Panel\Desktop" 
+    key: Wallpaper
+    Value: C:\wallpaper.jpg
+    
+    

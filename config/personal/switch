@@ -1,0 +1,8 @@
+# clone Nintendo Switch SD Card
+# https://blog.jaimyn.dev/the-fastest-way-to-clone-sd-card-macos/
+diskutil list
+# on MBP 16 SD card reader usually uses disk6
+sudo diskutil unmountDisk /dev/disk6
+sudo gdd if=/dev/rdisk6 of=sd_backup.dmg status=progress bs=16M
+# adjust chunk size to improve copy speed; bs=4M is another common option
+# needs 512GB or so of storage space with exFAT or similar modern filesystem for large files

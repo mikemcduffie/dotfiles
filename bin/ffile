@@ -1,0 +1,11 @@
+#!/usr/bin/env osascript
+# Get the path to the first item which is selected in the
+# frontmost Finder window.
+
+tell application "Finder"
+  try
+    get POSIX path of first item of (selection as alias list)
+  on error
+    log "Error: Cannot get selected item in Finder."
+  end try
+end tell

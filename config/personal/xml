@@ -1,0 +1,13 @@
+#invalid XML Character to Replaced With
+"<" to "&lt;"
+">" to "&gt;"
+"\"" to "&quot;"
+"'" to "&apos;"
+"&" to "&amp;"
+
+# Newline/line break in XML
+LF: "&#xA;"
+CR: "&#xD;"
+LF:    Unix
+CR:    Mac OS up to version 9
+CR+LF: Windows, DOS

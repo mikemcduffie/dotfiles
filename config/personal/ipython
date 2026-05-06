@@ -1,0 +1,66 @@
+# ipython: Interactive computing in Python
+#     A Python shell with automatic history (input and output), dynamic object
+#     introspection, easier configuration, command completion, access to the
+#     system shell and more.
+- syntax highlighting
+- enter/edit multi-line code blocks contigously
+- inspect object: "my_object?" or "?my_object"
+- search for vars/objects: "?*file*" or "?my_var*"
+- autocomplete previous code line from history  (press right arrrow to finish)
+- run shell commands e.g. !ls
+- change working directory: %cd
+- %rerun ~1/ #rerun all the commands from the previous session
+
+
+# See https://ipython.readthedocs.io/en/stable/interactive/reference.html
+
+## MAGIC FUNCTIONS ###
+
+%cd /path/to/new/working/dir
+# Note that !cd doesn’t work for this purpose because the shell where !command runs is immediately discarded after executing ‘command’.
+
+%edit
+# %edit magic function
+# open default editor (set with the $EDITOR environment variable) and edit your code.
+# When you save and close this file, IPython will automatically execute it.
+# default EDITOR is usually vi, Set favorite editor with this shell command. 
+# Add to ~/.zshrc to make permanent.
+export EDITOR=/opt/homebrew/bin/bbedit
+
+
+# Shell commands in ipython (commands run in a temporary subshell)
+# Any command that works at the command-line can be used in IPython by prefixing it with the ! character. 
+# For example, the ls, pwd, and echo commands can be run as follows:
+# Note that !cd doesn’t work for this purpose because the shell where !command runs is immediately discarded after executing ‘command’.
+In [1]: !ls
+myproject.txt
+# 
+In [2]: !pwd
+/home/jake/projects/myproject
+# 
+In [3]: !echo "printing from the shell"
+printing from the shell
+# --------------------------------------
+# Passing Values to and from the Shell
+In [1]: %cd /System/Library/Sounds
+In [2]: files = !ls
+In [3]: for sound in files:
+            print(sound)
+            !afplay /System/Library/Sounds/$sound
+Basso.aiff
+Blow.aiff
+Bottle.aiff
+Frog.aiff
+Funk.aiff
+Glass.aiff
+Hero.aiff
+Morse.aiff
+Ping.aiff
+Pop.aiff
+Purr.aiff
+Sosumi.aiff
+Submarine.aiff
+Tink.aiff
+
+
+# 25 tips for ipython: https://switowski.com/blog/25-ipython-tips-for-your-next-advent-of-code/

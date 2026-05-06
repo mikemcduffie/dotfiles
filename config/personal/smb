@@ -1,0 +1,56 @@
+# list SMB resources on specified host
+❯ smbutil view -G //omv.local
+Share                                           Type    Comments
+-------------------------------
+Movies                                          Disk    
+media1                                          Disk    
+media3                                          Disk    
+media2                                          Disk    
+TV_Shows                                        Disk    
+Movies_Sets                                     Disk    
+media4                                          Disk    
+Chi_Backup                                      Disk    
+IPC$                                            Pipe    IPC Service (omv server)
+Music                                           Disk    
+Kodi_Music                                      Disk    
+
+11 shares listed
+
+
+# Mount SMB share with applescript
+❯ /usr/bin/osascript -e 'mount volume "smb://media@media-server.local/media2"' 
+
+# List shares active on Mac 
+# https://apple.stackexchange.com/questions/405658/list-and-define-smb-shares-from-command-line
+❯ sharing -l
+            List of Share Points
+name:       mike’s Public Folder
+path:       /Users/mike/Public
+    smb:    {
+            name:   mike’s Public Folder
+            shared: 1
+            guest access:   1
+            read-only:  0
+            sealed: 0
+    }
+# 
+To create a share:
+sudo sharing -a /Volumes/SomeDisk 
+# or, for example to share only over SMB (not AFP), and give the share a different name (here "X_SomeDisk") :
+sudo sharing -a /Volumes/SomeDisk -S X_SomeDisk -n X_SomeDisk -s 001
+# To remove the share created above:
+sudo sharing -r X_SomeDisk
+
+
+# mount SMB network shares && cd
+comics()  { [[ -r /Volumes/media3  ]] || /usr/bin/osascript -e 'mount volume "smb://media@omv.local/media3"';   cd /Volumes/media3/comics }
+data()    { [[ -r /Volumes/data    ]] || /usr/bin/osascript -e 'mount volume "smb://media@omv.local/data"';     cd /Volumes/data }
+media1()  { [[ -r /Volumes/media1  ]] || /usr/bin/osascript -e 'mount volume "smb://media@omv.local/media1"';   cd /Volumes/media1 }
+media2()  { [[ -r /Volumes/media2  ]] || /usr/bin/osascript -e 'mount volume "smb://media@omv.local/media2"';   cd /Volumes/media2 }
+media3()  { [[ -r /Volumes/media3  ]] || /usr/bin/osascript -e 'mount volume "smb://media@omv.local/media3"';   cd /Volumes/media3 }
+media4()  { [[ -r /Volumes/media4  ]] || /usr/bin/osascript -e 'mount volume "smb://media@omv.local/media4"';   cd /Volumes/media4 }
+movies()  { [[ -r /Volumes/media1  ]] || /usr/bin/osascript -e 'mount volume "smb://media@omv.local/media1"';   cd /Volumes/media1/Movies }
+music()   { [[ -r /Volumes/media3  ]] || /usr/bin/osascript -e 'mount volume "smb://media@omv.local/media3"';   cd /Volumes/media3/Music }
+roms()    { [[ -r /Volumes/media3  ]] || /usr/bin/osascript -e 'mount volume "smb://media@omv.local/media3"';   cd /Volumes/media3/Emulation/roms }
+switch()  { [[ -r /Volumes/media3  ]] || /usr/bin/osascript -e 'mount volume "smb://media@omv.local/media3"';   cd /Volumes/media3/Emulation/roms/switch }
+tvshows() { [[ -r /Volumes/media2  ]] || /usr/bin/osascript -e 'mount volume "smb://media@omv.local/media2"';   cd /Volumes/media2/TV_Shows }

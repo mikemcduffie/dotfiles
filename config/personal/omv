@@ -1,0 +1,54 @@
+## SSH to media and use bash as shell
+
+# On omv.local server:
+
+    # added media to _ssh group on omv.local (per allowed groups in /etc/ssh/sshd_config)
+    sudo usermod -a -G _ssh media
+    # or if ssh to root
+    usermod -a -G _ssh media
+    
+    # switch user to media when ssh to root
+    su media
+    
+    # added .ssh dir for user media 
+    mkdir ~/.ssh & chmod 700 ~/.ssh
+
+# On Mac
+    ssh-keygen -t rsa -b 4096 -C "media@omv.local"
+    ssh-copy-id -i .ssh/id_rsa.pub media@omv.local
+
+    # ssh with key
+    ssh -i .ssh/id_rsa 'media@omv.local'
+
+## TIP
+    # omv uses sh for users by default, change to bash
+    chsh -s /bin/bash
+    bash --version | head -1
+    
+    # Need to add media to sudo group
+    sudo adduser media sudo
+
+
+
+
+# https://forum.openmediavault.org/index.php?thread/43750-afp-on-omv-6/
+# ------------------------------------------------------------------------
+apt install netatalk" # install all the necessary packages
+nano /etc/netatalk/afp.conf" # create the configuration file. 
+# Example config file
+;
+; Netatalk 3.x configuration file
+;
+
+[Global]
+; Global server settings
+
+; [Homes]
+; basedir regex = /xxxx
+
+; [My AFP Volume]
+; path = /path/to/volume
+
+; [My Time Machine Volume]
+; path = /path/to/backup
+; time machine = yes

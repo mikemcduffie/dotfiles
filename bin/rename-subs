@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+
+DEBUG=false
+TRACK=2
+LANG='English'
+NAME='English'
+
+usage() {
+	local prog=${0##*/}  # greedy remove to last '/'
+	cat <<-EOF
+	Usage: $prog [options] 
+
+	Rename English srt files from the 'Subs' directory and move to parent directory.
+
+	Options:
+     -d          enable debug
+     -h          print this message and exit
+     -l <lang>   language in OUTPUT filenames, e.g. 'SDH'; default is 'English'
+     -n <name>   language used in INPUT filenames; default is 'English'
+     -t <num>    track num used in INPUT filenames; default is 2
+	EOF
+}
+
+debug() {
+    if $DEBUG; then
+        echo "$*" >&2
+    fi
+}
+
+main() {
+    local opt OPTIND OPTARG
+    while getopts 'dht:l:n:' opt; do
+        case "$opt" in
+            d) DEBUG=true;;
+            h) usage; return 0;;
+            t) TRACK=$OPTARG;;
+            l) LANG=$OPTARG;;
+            n) NAME=$OPTARG;;
+            *) usage >&2; return 1;;
+        esac
+    done
+    shift "$((OPTIND - 1))"
+
+    if  [[ $PWD != *"/Subs" ]]; then
+        if  [[ -d "./Subs" ]]; then
+            echo "Changing to Subs directory..." >&2
+            cd "Subs" || exit 1
+        else
+            echo "Must be run in Subs directory" >&2
+            exit 1
+        fi
+    fi
+
+    local i=0
+    for d in */; do
+        OLD="${d}${TRACK}_${NAME}.srt"
+        NEW="../${d/\//}.${LANG}.srt"
+        debug "Trying: $OLD –> $NEW"
+        if [ -f "$OLD" ]; then
+            mv -i -v "$OLD" "$NEW"
+            ((i++))
+        else
+            echo "file not found: $OLD" >&2
+        fi
+    done
+
+    echo "Processed $i srt files."
+}
+
+main "$@"
+

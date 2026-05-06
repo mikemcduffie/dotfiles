@@ -17,9 +17,11 @@ ln $args ~/.dotfiles/.rarregkey               ~/.rarregkey
 ln $args ~/.dotfiles/gitconfig/.gitconfig     ~/.gitconfig
 ln $args ~/.dotfiles/gitconfig/.gitignore     ~/.gitignore
 ln $args ~/.dotfiles/.tidyrc                  ~/.tidyrc
-ln $args ~/.dotfiles/.zprofile                ~/.zprofile
-ln $args ~/.dotfiles/.zshrc                   ~/.zshrc
-ln $args ~/.dotfiles/dot_zshenv               ~/.zshenv
+if ! command -v zsh &> /dev/null; then
+    ln $args ~/.dotfiles/.zprofile                ~/.zprofile
+    ln $args ~/.dotfiles/.zshrc                   ~/.zshrc
+    ln $args ~/.dotfiles/dot_zshenv               ~/.zshenv
+fi
 
 [ -d ~/.ssh ] || mkdir ~/.ssh
 ln $args ~/.dotfiles/ssh_config               ~/.ssh/config
@@ -41,7 +43,13 @@ if ! brew tap | grep -qFz "homebrew/cask"; then
 fi
 
 
-#cmas
+# mas
+
+
+# disable password ssh
+#  sudo vim ~/etc/ssh/sshd_config.d/ key-only.conf
+#  PasswordAuthentication no
+#  ChallengeResponseAuthentication no
 
 
 # Oh My Posh

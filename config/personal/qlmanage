@@ -1,0 +1,30 @@
+# qlmanage
+# 
+#   QuickLook server tool.
+#   More information: https://keith.github.io/xcode-man-pages/qlmanage.1.html.
+# 
+#   Display QuickLook for one or multiple files:
+$ qlmanage -p path/to/file1 path/to/file2 ...
+#   Compute 300px wide PNG thumbnails of all JPEGs in the current directory and put them in a directory:
+$ qlmanage *.jpg -t -s 300 path/to/directory
+#   Reset QuickLook:
+$ qlmanage -r
+
+# show the full list of filetype -> qlgenerator assignments/registrations
+$  qlmanage -m
+
+
+# The qlmanage -g command is used to specify a particular generator for
+# Quick Look to use when generating previews or thumbnails for a file.
+# This can be useful when you have multiple generators that claim to
+# handle the same file type and you want to force the use of a specific
+# one.
+# 
+# For example, if you want to force the use of a generator located at
+# /System/Library/QuickLook/Office.qlgenerator for a file named myDoc, you
+would use the following command:
+$ qlmanage -p -g /System/Library/QuickLook/Office.qlgenerator myDoc
+# x
+# This command tells qlmanage to use the specified generator for
+# generating a preview of myDoc.
+

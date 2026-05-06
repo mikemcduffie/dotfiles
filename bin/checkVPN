@@ -1,0 +1,166 @@
+#!/usr/bin/env bash
+
+set -e
+
+
+# Color       #define       Value     RGB
+# black     COLOR_BLACK       0       0, 0, 0
+# red       COLOR_RED         1       max,0,0
+# green     COLOR_GREEN       2       0,max,0
+# yellow    COLOR_YELLOW      3       max,max,0
+# blue      COLOR_BLUE        4       0,0,max
+# magenta   COLOR_MAGENTA     5       max,0,max
+# cyan      COLOR_CYAN        6       0,max,max
+# white     COLOR_WHITE       7       max,max,max
+
+# portability: tput will output blank code if color not supported
+RED=$(tput setaf 1)
+GREEN=$(tput setaf 2)
+MAGENTA=$(tput setaf 5)
+RESET=$(tput sgr0)
+CLEAR_START='\e[2K\e[0E'
+
+KILL_TRANSMISSION() {
+    if killall Transmission; then
+        osascript -e "display alert \"VPN is OFF\" message \"Terminating Transmission...\"" >/dev/null &
+    else
+        osascript -e "display alert \"VPN is OFF\" message \"Transmission not running.\"" >/dev/null &
+    fi
+    afplay /System/Library/Sounds/Sosumi.aiff &
+}
+
+trap "KILL_TRANSMISSION" ERR
+
+
+cleanup() {
+    tput cnorm  # show cursor, alt: tput cvvis
+}
+
+# trap ensures the cursor is restored even if the command is interrupted (e.g., via Ctrl+C)
+trap cleanup EXIT
+
+
+if [[ "$1" == "-e" ]]; then
+    code "$0"
+    exit
+else
+    # alt check: [[ $- == *i* ]]
+    # [ -z "$PS1" ] ||
+    tput civis  # hide cursor
+fi
+
+# check for valid IPv4 or IPv6 address
+VALID_IP() {
+    if python3 -c \
+        "import ipaddress; ipaddress.ip_address('${IP_ADDR}')" 2>/dev/null; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+update_status() {
+    if ! [[ -t 1 ]]; then
+        return
+    fi
+    local line=$1
+    shift
+    printf "$CLEAR_START$line" "$@"
+}
+
+# Startup Notification
+osascript -e "display notification \"$0\" with title \"VPN check daemon started.\"" &
+afplay /System/Library/Sounds/Glass.aiff &
+
+
+while true; do
+     for X in '–' '\' '|' '/'; do
+#    for X in '⠋' '⠙' '⠹' '⠸' '⠼' '⠴' '⠦' '⠧' '⠇' '⠏'; do
+        if [[ $(route -n get default | grep "interface:") == *"utun"* ]]; then
+                update_status 'VPN %sON %s%s%s' "$GREEN" "$MAGENTA" "$X" "$RESET"
+        elif [[ $(pgrep Transmission) ]]; then
+            KILL_TRANSMISSION
+            update_status 'VPN %sOFF! %sKilling Transmission...\n' "$RED" "$RESET"
+        else
+            update_status '\e[2K\e[0EVPN %sOFF %s%s%s' "$RED" "$MAGENTA" "$X" "$RESET" 
+        fi
+        sleep 1
+    done
+done
+
+# ========================================================================================
+
+### NOTES
+
+# NordVPN uses 10.5.0 subnet and utunX interface
+# ❯ route get default
+#    route to: default
+# destination: default
+#        mask: default
+#     gateway: 10.5.0.2
+#   interface: utun10
+#       flags: <UP,GATEWAY,DONE,STATIC,PRCLONING,GLOBAL>
+#  recvpipe  sendpipe  ssthresh  rtt,msec    rttvar  hopcount      mtu     expire
+#        0         0         0         0         0         0      1420         0
+
+
+
+# IP_ADDR="UNKNOWN"
+
+# while true; do
+#     if [[ $(route -n get default | grep "interface:") != *"utun"* ]]; then
+#          echo "VPN OFF! Killing Transmission..."
+#          KILL_TRANSMISSION
+#     fi
+#     sleep 1
+# done
+
+#   killall Transmission && \
+#   osascript -e \
+#   "display alert \"VPN is OFF\" message \"IP: $IP_ADDR.\nTerminating Transmission...\""
+
+# while true; do
+#   if [[ $(pgrep Transmission) ]]; then
+#       if [[  -z $(pgrep NordVPN) || -z $( ifconfig |  grep '\-\->')  ]]; then
+#          echo VPN OFF
+#          KILL_TRANSMISSION
+#       fi
+#
+#   else
+#       echo "Transmission not running. VPN check skipped."
+#   fi
+#   sleep 1
+# done
+
+# This version of the script has no external server dependencies:
+# only NordVPN tunnnel includes string "-->" e.g.
+# 	 inet 10.5.0.2 --> 10.5.0.2 netmask 0xffff0000
+
+# Old implementation:
+#   if [[ $(pgrep Transmission) ]]; then
+#       IP_ADDR=$(curl http://ipecho.net/plain  2>/dev/null)
+#       echo "$IP_ADDR"
+#       printf '%s: ' "$(date +%c)"
+# Joink is 168
+#       if VALID_IP  && [[ $IP_ADDR != "168."* ]]; then
+#          echo VPN ON
+#       [[ -z $(pgrep Transmission) ]] && open -a Transmission
+
+# Alternate implementation using ipinfo.io allows 2 checks
+# public_ip { printf '%b' "$(curl -s ipinfo.io)\n" }
+
+# json="$(public_ip)"
+# {
+#
+#   "ip": "168.92.100.233",
+#   "city": "Indianapolis",
+#   "region": "Indiana",
+#   "country": "US",
+#   "loc": "39.6782,-86.1976",
+#   "org": "AS32709 Joink, LLC",
+#   "postal": "46217",
+#   "timezone": "America/Indiana/Indianapolis",
+#   "readme": "https://ipinfo.io/missingauth"
+# }
+# echo $json | jq '.ip'   # "168.92.100.233"        # 168.*
+# echo $json | jq '.org'  # "AS32709 Joink, LLC"    # Joink

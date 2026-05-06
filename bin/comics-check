@@ -1,0 +1,4 @@
+curl "https://booksdl.org/comics0/_0DAY/" --output /tmp/comics0.html \
+  && diff  /tmp/comics0.html ~/comics0day.html \
+     && echo 'No new comics' \
+     || (terminal-notifier -message "http://booksdl.org//comics0/_0DAY/" -title "New Comics Found" -sound "Submarine" -group "org.booksdl.comics0" -execute 'open "http://booksdl.org//comics0/_0DAY/"'; mv ~/comics0day.html ~/comics0day.html.bak; mv /tmp/comics0.html  ~/comics0day.html; open -a 'Microsoft Edge' "http://booksdl.org//comics0/_0DAY/")

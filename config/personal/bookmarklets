@@ -1,0 +1,115 @@
+// <p><p>
+// <!-- Kill sticky -->
+// <a href=https://trevorfox.com/2020/06/how-to-highlight-text-on-a-page-with-scroll-to-text-fragments/"></a>
+// <a href="https://paul.kinlan.me/scroll-to-text-bookmarklet/"></a>
+// <a href="javascript:(function()%7Bdocument.querySelectorAll("body *").forEach(function(node)%7Bif(%5B"fixed"%2C"sticky"%5D.includes(getComputedStyle(node).position))%7Bnode.parentNode.removeChild(node)%7D%7D)%3Bdocument.querySelectorAll("html *").forEach(function(node)%7Bvar s%3DgetComputedStyle(node)%3Bif("hidden"%3D%3D%3Ds%5B"overflow"%5D)%7Bnode.style%5B"overflow"%5D%3D"visible"%7Dif("hidden"%3D%3D%3Ds%5B"overflow-x"%5D)%7Bnode.style%5B"overflow-x"%5D%3D"visible"%7Dif("hidden"%3D%3D%3Ds%5B"overflow-y"%5D)%7Bnode.style%5B"overflow-y"%5D%3D"visible"%7D%7D)%3Bvar htmlNode%3Ddocument.querySelector("html")%3BhtmlNode.style%5B"overflow"%5D%3D"visible"%3BhtmlNode.style%5B"overflow-x"%5D%3D"visible"%3BhtmlNode.style%5B"overflow-y"%5D%3D"visible"%7D)()%3B%0A" >Kill Sticky</a>
+// <p><p>
+// <!-- Scroll to Text Link Creator -->
+// <a href="javascript:(function(){const selectedText = getSelection().toString();const newUrl = new URL(location);newUrl.hash = `:~:text=${encodeURIComponent(selectedText)}`;window.open(newUrl);})()" >Scroll to Text Link Creator</a>
+// <p><p>
+javascript:(function(){const selectedText = getSelection().toString();const newUrl = new URL(location);newUrl.hash = `:~:text=${encodeURIComponent(selectedText)}`;window.open(newUrl);})()
+
+// get rid of fixed headers on a page
+javascript:(function()%20{%20var%20s,e,i,ee=document.getElementsByTagName('*');%20for(i=0;%20e=ee[i];%20i++)%20{%20s=getComputedStyle(e);%20if%20(s%20&&%20s.position%20==%20'fixed')%20e.style.position='static';%20}%20})();
+// modified to include sticky
+javascript:var ni%3Ddocument.createNodeIterator(document.documentElement,NodeFilter.SHOW_ELEMENT,function(node)%7Breturn document.defaultView.getComputedStyle(node,null).getPropertyValue("position").match(/sticky|fixed/) %3F NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT%3B%7D)%3Bwhile(currentNode%3Dni.nextNode())%7Bconsole.log(currentNode.remove())%3B%7D
+
+// isitup?
+javascript:location.href='https://isitup.org/'+encodeURIComponent(window.location.hostname)
+javascript:void(open('https://isitup.org/'+window.location.hostname))
+
+// paywall bypass
+javascript:location.href='https://archive.is/?run=1&url=%27+encodeURIComponent(document.location.href)
+
+// ALT paywall bypass (open in new tab)
+javascript:void(open('http://archive.today/?run=1&url=%27'+encodeURIComponent(document.location)))
+
+// increment page
+javascript:(function()%7B var e,s; IB=1; function isDigit(c) %7B return ("0" <= c && c <= "9") %7D L = location.href.split('?%27)[0]; LL = L.length; for (e=LL-1; e>=0; --e) if (isDigit(L.charAt(e))) %7B for(s=e-1; s>=0; --s) if (!isDigit(L.charAt(s))) break; break; %7D ++s; if (e<0) return; oldNum = L.substring(s,e+1); newNum = "" + (parseInt(oldNum,10) + IB); while (newNum.length < oldNum.length) newNum = "0" + newNum; location.href = L.substring(0,s) + newNum + L.slice(e+1); %7D)();
+
+//  SciHubIfy:
+javascript:location.href="https://sci-hub.se/"+location.href;
+
+// <!-- Scroll to Text Link Creator -->
+javascript:(function(){const selectedText = getSelection().toString();const newUrl = new URL(location);newUrl.hash = `:~:text=${encodeURIComponent(selectedText)}`;window.open(newUrl);})()
+
+// <!-- WayBack Machine -->
+javascript:location.href='https://web.archive.org/web/*/'+location.href
+javascript:location.href='https://web.archive.org/web/*/'+encodeURIComponent(location.href)
+
+
+// <!-- Increment URL -->
+javascript:(function()%7B var e,s; IB=1; function isDigit(c) %7B return ("0" <= c && c <= "9") %7D L = location.href.split('?%27)[0];%20LL%20=%20L.length;%20for%20(e=LL-1;%20e%3E=0;%20--e)%20if%20(isDigit(L.charAt(e)))%20%7B%20for(s=e-1;%20s%3E=0;%20--s)%20if%20(!isDigit(L.charAt(s)))%20break;%20break;%20%7D%20++s;%20if%20(e%3C0)%20return;%20oldNum%20=%20L.substring(s,e+1);%20newNum%20=%20%22%22%20+%20(parseInt(oldNum,10)%20+%20IB);%20while%20(newNum.length%20%3C%20oldNum.length)%20newNum%20=%20%220%22%20+%20newNum;%20location.href%20=%20L.substring(0,s)%20+%20newNum%20+%20L.slice(e+1);%20%7D)();
+
+// <!-- Decrement url -->
+javascript:(function()%7B var e,s; IB=-1; function isDigit(c) %7B return ("0" <= c && c <= "9") %7D L = location.href; LL = L.length; for (e=LL-1; e>=0; --e) if (isDigit(L.charAt(e))) %7B for(s=e-1; s>=0; --s) if (!isDigit(L.charAt(s))) break; break; %7D ++s; if (e<0) return; oldNum = L.substring(s,e+1); newNum = "" + (parseInt(oldNum,10) + IB); while (newNum.length < oldNum.length) newNum = "0" + newNum; location.href = L.substring(0,s) + newNum + L.slice(e+1); %7D)();
+
+// <!-- Eyedropper -->
+javascript:(function(){const e = new EyeDropper(); e.open().then(d => { alert(d.sRGBHex); }).catch(console.error);})()
+
+
+// <!-- download all images on a page with the File System API -->
+https://paul.kinlan.me/bookmarklet-to-download-all-images-on-a-page-with-the-file-system-api/
+
+const run = async () => {
+  const dirHandle = await window.showDirectoryPicker();
+  const imgs = document.querySelectorAll("img");
+  let i = 0;
+
+  imgs.forEach(async (img) => {
+    const url = img.src;
+    const name = `img-${i}.png`;
+    i++;
+
+    try {
+      console.log(`Fetching ${url}`);
+      const response = await fetch(url);
+
+      console.log(`Saving to ${name}`);
+
+      const file = await dirHandle.getFileHandle(name, { create: true });
+      const writable = await file.createWritable();
+      await response.body.pipeTo(writable);
+    } catch (err) {
+      console.log(err);
+    }
+  });
+};
+
+run();
+
+
+// Rotate images 90° clockwise:
+javascript:(()=>{var imgs = document.getElementsByTagName("img");for (var img of imgs){img.setAttribute("style","transform:rotate(90deg);");}})();
+
+
+// Make webpage fullscreen:
+javascript:(()=>{b=document.createElement("button");b.onclick=()=>{document.documentElement.requestFullscreen();b.remove()};b.style="all:reset;position:fixed;z-index:9999;left:0%;top:0%;width:100%;height:100%;background-color:lightpink";b.innerText="Full Screen";document.body.appendChild(b)})()
+
+// "Don't mess with paste" - for when signup forms expect you to hand-type your email address twice. 
+javascript:void ["contextmenu","copy","paste","selectstart"].map(e=>document.addEventListener(e,e=>e.stopPropagation(),true))
+
+// "Nebula no-alt-#" - Nebula's video viewer annoying captures e.g. alt-3 to do the same as plain 3 (seek to 3/10 of the video currently playing), but I expect it to switch to the 3rd browser tab instead. YouTube doesn't do this. Luckily I can just activate this bookmarklet: 
+javascript:void document.addEventListener("keydown",(e)=>void(e.altKey&&!isNaN(+e.key)&&e.stopPropagation()))
+
+// "canvas DL" - when playing skribbl.io and someone has made a nice drawing, this lets you download the current drawing as a PNG. 
+javascript:var w=window.wdq||(window.wdq=document.createElement("a"));var p=/The word was '([^']*)'/g,pp=/<span>([^<>]+) is drawing now!/g,tt=document.body.innerHTML;var mm,nn,xx;while(mm=p.exec(tt))nn=mm;while(mm=pp.exec(tt))xx=mm;w.download=location.host+"_"+(nn?nn[1]+"_":"")+(xx?xx[1]+"_":"")+new Date().toISOString().replace(/:/g,"_");w.href=document.querySelector("canvas").toDataURL();w.click();
+
+// boost text size when my eyes are tired
+javascript:var%20p=document.getElementsByTagName('*');for(i=0;i%3Cp.length;i++)%7Bif(p%5Bi%5D.style.fontSize)%7Bvar%20s=parseInt(p%5Bi%5D.style.fontSize.replace(%22px%22,%22%22));%7Delse%7Bvar%20s=12;%7Ds+=8;p%5Bi%5D.style.fontSize=s+%22px%22%7D
+
+// foodmarklet / plain old recipe
+// https://github.com/kevlened/foodmarklet
+javascript:void((()=>{let js=document.createElement('script');js.src="//unpkg.com/foodmarklet";document.head.appendChild(js)})());
+
+
+
+https://news.ycombinator.com/item?id=38014069
+
+https://www.squarefree.com/bookmarklets/zap.html
+
+https://github.com/marcobiedermann/awesome-bookmarklets
+
+
+https://web.archive.org/web/20221105120849/http://slayeroffice.com/?c=/content/tools/modi.html
+https://web.archive.org/web/20221105091756/http://slayeroffice.com/tools/modi/v2.0/modi_help.html

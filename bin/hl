@@ -1,0 +1,91 @@
+#!/usr/bin/env perl
+use 5.006;
+use strict;
+use warnings;
+use List::Util 'first';
+use Term::ANSIColor 'color';
+use Getopt::Std 'getopts';
+
+sub paint_string {
+	my ( $line, @region ) = @_;
+	return $line unless @region;
+
+	my @char = $line =~ /(.)/g;
+	my $prev_color;
+	my $out = '';
+
+	for my $i ( 0 .. $#char ) {
+		my $r = first { $_->{'start'} <= $i and $_->{'end'} >= $i } @region;
+		my $color = $r && $r->{'color'};
+
+		$out .= color 'reset' if $prev_color and not ( $color and $prev_color eq $color );
+		$out .= color $color if $color;
+		$out .= $char[$i];
+
+		$prev_color = $color;
+	}
+
+	$out .= color 'reset' if $prev_color;
+
+	return $out;
+}
+
+sub regions {
+	my ( $s, $e, @color ) = @_;
+	map +{ start => $s->[$_], end => $e->[$_] - 1, color => $color[$_] || $color[0] },
+	grep { defined( $s->[$_] && $e->[$_] ) }
+	0 .. $#$s;
+}
+
+getopts( 'xc:' ) && ( my $rx = shift )
+	or die "usage: $0 [ -c color ] [ -x ] pattern [ file... ] [ < input ]\n", <DATA>;
+
+my @color = split /\s*,\s*/, our $opt_c || $ENV{'HILIGHT_COLORS'} || 'bold green';
+
+$rx = eval { qr/$rx/ }
+	or die map { s/ at \S+ line \d+.*//; $_ } my $copy = $@;
+
+while ( <> ) {
+	chomp;
+	my @region;
+	push @region, regions \@-, \@+, @color while m{$rx}g;
+	next if our $opt_x and not @region;
+	print paint_string( $_, reverse @region ), "\n";
+}
+
+__END__
+
+ The pattern is a Perl regular expression which will
+ be applied to each line of input, repeatedly (using
+ the /g flag), after removing the newline.
+
+ The -x switch suppresses lines without any matches.
+
+ The -c switch specifies the colour to highlight the
+ matched portion(s) of the line. By default this is
+ bold green.
+
+ Capture groups in the pattern can be used to highlight
+ individual areas in each match. Pass a comma-separated
+ list of colours to -c to use this feature. The second
+ colour will be used to highlight the first capture,
+ the third colour for the second capture, etc. If there
+ are more captures than colours, the extra captures are
+ highlighted in the same colour as the overall match.
+
+ You can set the HILIGHT_COLORS environment variable to
+ your favorite colors to avoid having to pass -c every
+ time. E.g., in your .bashrc:
+
+ export HILIGHT_COLORS='cyan, green, yellow, magenta,'\
+ 'blue, red, blue on_yellow, red on_white, bold green'
+
+ Passing -c explicitly will override the environment.
+
+ Note: in case of multiple matches, later matches paint
+ over earlier ones. This is only really relevant if you
+ use look-around assertions that contain capture groups,
+ which can allow a capture to highlight a region outside
+ the part of the string matched by that iteration of the
+ pattern.
+

@@ -1,0 +1,449 @@
+# Find current shell
+echo $0
+
+# Get default BASH version
+bash --version
+
+# get current running bash version
+echo ${BASH_VERSION}
+
+# Get zsh version
+zsh --version
+
+# Change default shell e.g. switch bash to zsh
+chsh -s $(which zsh)
+
+# show all installed shells
+cat /etc/shells
+
+# get WAN/public IP address
+# see mac cheatsheet for mac specific default gateway/localip
+function public_ip { printf '%b' "$(curl -s ipinfo.io)\n" }
+❯ public_ip
+{
+  "ip": "168.92.100.233",
+  "city": "Indianapolis",
+  "region": "Indiana",
+  "country": "US",
+  "loc": "39.6782,-86.1976",
+  "org": "AS32709 Joink, LLC",
+  "postal": "46217",
+  "timezone": "America/Indiana/Indianapolis",
+  "readme": "https://ipinfo.io/missingauth"
+}
+# with NordVPN
+{
+  "ip": "185.172.53.119",
+  "city": "St. Louis",
+  "region": "Missouri",
+  "country": "US",
+  "loc": "38.6273,-90.1979",
+  "org": "AS147049 PacketHub S.A.",
+  "postal": "63101",
+  "timezone": "America/Chicago",
+  "readme": "https://ipinfo.io/missingauth"
+}
+
+
+# test if in terminal or background
+if tty -s; then
+    echo "I am on a TTY"
+else
+    echo "I am NOT on a TTY"
+fi
+
+
+
+
+# print colors
+function print_error { printf '%b' "\e[31m${1}\e[0m\n" >&2 }
+function print_green { printf '%b' "\e[32m${1}\e[0m\n" 2>&1 }
+
+function check_command { command -v "$1" &>/dev/null }
+#-------------------------------------------------------------------
+check_command curl  || { print_error 'curl not found. install it with `brew install curl`'; return 1; }
+check_command jq    || { print_error 'jq not found. install it with `brew install jq`'; return 1; }
+check_command tr    || { print_error 'tr not found'; return 1; }
+check_command pkill || { print_error 'pkill not found. install it with `brew install proctools`'; return 1; }
+sudo pkill openvpn &>/dev/null \
+
+
+# Find duplicate files
+rdfind -dryrun true /home/user
+rdfind -deleteduplicates true /home/user
+# Find duplicate files and replace with hard links
+rdfind -makehardlinks true /home/user
+
+# filename, directory & path operation from full filename
+DIR=$(dirname "$fullfile")
+FILENAME=$(basename "$fullfile")
+EXTENSION="${filename##*.}"
+FILENAME="${filename%.*}"
+# basename specifying extension to remove
+basename filename.gz .gz
+
+# Download multiple incrementally named files with curl
+curl -O http://ftp.gnu.org/gnu/Licenses/fd1-1[1-3].txt
+
+# Download multiple incrementally named files with curl
+curl 'http://spacegirl.travischarestgallery.com/9889/[01-55].jpg' -o "spacegirl#1.jpg"
+
+# Delete empty folders
+alias rmempty="find . -type d -empty -delete"
+
+# wrap text to column width
+# -s (space) wraps by words 
+<stdout> | fold -w 80 -s
+fold -w 80 -s <textfile>
+
+# Create a soft link in the present working directory
+ln -s /Applications Applications
+
+# Ignore types of files when you tab from the command line
+export FIGNORE=$FIGNORE:.hi:.pyc:.o
+
+# BASH shell Redirect Output and Errors To /dev/null
+❯ /dev/null 2>&1
+
+# Install Xcode Command Line Tools 
+xcode-select --install
+
+# Using Ditto to Merge Directories & Folder Contents
+ditto source destination
+
+# Recursively Create a Nested Directory Structure
+mkdir -p /path/to/make/
+
+# List attached USB devices
+ioreg -p IOUSB
+
+# Download series of files
+for i in {25..200}; do wget -U 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.77 Safari/537.36' "https://web.archive.org/web/20060305213303/http://www.dars.org/jimz/manuals/tir33_$i.tif"; [[ $? -ne 0 ]] && break; done
+
+# Generate a proofsheet/contact sheet (grid) of images
+montage -tile 4x14 -resize 500x7500 -geometry +40+3  *.jpg covers.jpg
+
+# Avoid intermediate files with process substitution
+comm -3 <(sort listA.txt) <(sort -u listB.txt)
+
+# Parallel processing example 
+find -type f -iname "*.jpg" | parallel --bar convert-im6 -quality 65 {} {.}.heic
+
+# Test run: use echo on potentially destructive commands (dry run); remove "echo" for final run
+echo <commands>
+for snap in `zfs list -rt snap pool/set | awk '{print $1}' | grep -v 2021-08` ; do echo zfs destroy $snap ; done
+
+# Find files by modification (mtime) or creation (ctime) range in days
+find . -name ""*report*.pdf" -mtime -60
+
+# Convert command output to JSON via pipe:
+brew install jc
+ifconfig | jc --ifconfig
+
+# Output the value of a given key of each element in a JSON text from stdin:
+brew install jq
+cat file.json | jq 'map(.key_name)'
+
+# Remove xattr com.apple.quarantine from multiple files (-0 handles special chars)
+find . -iname '*.webarchive' -print0 | xargs -0 xattr -d com.apple.quarantine
+
+# remove xattr com.apple.quarantine from cli binary
+xattr -d com.apple.quarantine "$(which unrar)"
+
+# fix zsh compinit: insecure directories
+compaudit | xargs chmod g-w
+
+# for loop (bash/zsh)
+for ((i = 0 ; i < 9 ; i++ )); do echo "$i"; done
+
+# for loop (alternate)
+for i in {1..9}; do echo $i; done
+
+# for loop: iterate over list
+for w in word1 word2 word3; do echo $w; done
+
+# fix persmission for brew (homebrew) kegs
+sudo chown -R "$(whoami)" /opt/homebrew/Cellar/python@3.9/3.9.7_1
+
+# change ownership on all files and folders (e.g. on OpenMediaVault/OMV)
+chown -R media:users *
+# likely changed with rsync via admin or root credentials (use media)
+
+# Run a shell script that can live beyond the terminal (TSR, stay resident, No Hangup)
+nohup path/to/script.sh &
+
+# Run a process that can live beyond the terminal (TSR, stay resident, No Hangup)
+nohup command command_arguments &
+
+# Add a timestamp to the beginning of each line:
+some_command | ts
+
+# Add timestamps with microsecond precision:
+some_command | ts "%b %d %H:%M:%.S"
+
+# Add [i]ncremental timestamps with microsecond precision, starting from zero:
+some_command | ts -i "%H:%M:%.S"
+
+# Convert existing timestamps in a text file (eg. a log file) into [r]elative format:
+cat path/to/file | ts -r
+
+# Unhide hidden extension
+SetFile -a e filename(s)
+
+# Hide extension
+SetFile -a E filename(s)
+
+# print0 conversion
+| tr "\n" "\0"
+
+# List directories and their sizes
+# http://superuser.com/questions/542502/ddg#542506
+du -hs *
+
+# remove JellyFin nfo files
+egrep -Lir --include="*.nfo" 'id>' . | tr "\n" "\0" | xargs -0 rm -v
+
+# remove JellyFin thumbnail jpg files newer than date
+fd -e jpg --newer 2020-01-01 'thumb' | tr "\n" "\0" | xargs -0 rm -v
+
+# Print error string if arg missing, otherwise assign
+readonly arg1=${1:?"No args provided."}
+
+# delete files from all rar comic archives in pwd
+for f in *.cbr; do rar d "$f" '**/* 00.jpg'; done
+
+# delete file(s) from rar archive
+rar d <arcname> '**/* 00.jpg' … <filenameN>
+
+# rename file(s) in rar archive
+rar rn <arcname> <srcname1> <destname1> … <srcnameN> <destnameN>
+
+# 7z list bare (no header/footers) for archive
+7z l -ba
+
+# 7z rename files in archive.
+7z rn <archive_name> <src_file_1> <dest_file_1> [ <src_file_2> <dest_file_2> ... ]
+
+# awk print range of columns: https://linuxhint.com/print-columns-awk/
+awk '{for(i=6;i<=NF;i++) printf $i" "; print ""}'
+
+# filter for dupes (duplicates)
+<output> | sort | uniq -d
+
+# find files without extensions (-E exclude)
+fd -tf -E '*.*'
+
+# first try to pull a native MP4 version off YouTube, and failing that, transcode to MP4 immediately after downloading
+yt-dlp -S res,ext:mp4:m4a --recode mp4 https://www.youtube.com/watch?v=dQw4w9WgXcQ
+
+# Loop/Iterate through multiline string line by line
+exa -1 --sort=date | tail -5 | while IFS= read -r LINE
+do
+ bat "$LINE"
+done
+# one-liner
+exa -1 --sort=date | tail -5 | while IFS= read -r LINE; do bat "$LINE"; done   
+
+# More tips in the TRICKS cheat file
+
+# supress error messages from stderr
+some_command 2> /dev/null
+
+# add edit option to shell script
+if [[ "$1" == "-e" ]]; then
+   bbedit "$0"
+   exit
+fi
+
+# heredoc 
+cat << BLOCK
+	Hello world
+	Today date is $(date +%F)
+	My home directory = ${HOME}
+BLOCK
+# - Suppress tabs (but not spaces)
+cat <<- BLOCK
+This line has no whitespace.
+  This line has 2 white spaces at the beginning.
+    This line has a single tab.
+        This line has 2 tabs.
+            This line has 3 tabs.
+BLOCK
+# https://www.tecmint.com/use-heredoc-in-shell-scripting/
+# https://www.baeldung.com/linux/heredoc-herestring
+
+# herestring
+# https://www.baeldung.com/linux/heredoc-herestring
+COMMAND <<< $VAR
+cat <<< "This is a string"
+cat <<< "Welcome! ${USER}"
+cat <<< 'Display special characters: $ ` \'
+
+
+
+
+
+
+
+# Check File Existence in Bash To test if one of multiple files exists in
+# bash or zsh, you can use various methods depending on your specific
+# requirements. Here are some approaches:
+# Using [[ -f ... ]] with logical OR (||): You can check if any of the
+# files exist using the [[ -f ... ]] condition with the logical OR
+# operator. For example:
+if [[ -f file1 || -f file2 || -f file3 ]]; then
+    echo "At least one file exists."
+else
+    echo "No files exist."
+fi
+# This method checks if any of the specified files exist.
+# Using glob patterns with [[ -n ... ]]: If you want to check for files
+# matching a pattern, you can use glob patterns with the [[ -n ... ]]
+# condition. For example:
+if [[ -n *.abc || -n *.bak || -n *.tmp || -f tmpout.wrk ]]; then
+    echo "At least one file exists."
+else
+    echo "No files exist."
+fi
+# This method checks if any files with the specified extensions or a
+# specific file name exist. Using arrays and checking the array length:
+# You can create an array of files matching a pattern and check the length
+# of the array. For example:
+files=(*.abc *.bak *.tmp)
+if (( ${#files[@]} > 0 )); then
+    echo "At least one file exists."
+else
+    echo "No files exist."
+fi
+# This method checks if there are any files matching the specified
+# patterns. Using nullglob to handle no matches: If you want to avoid
+# error messages when no files match, you can use the nullglob option.
+# For example:
+shopt -s nullglob
+files=(*.abc *.bak *.tmp)
+if (( ${#files[@]} > 0 )); then
+    echo "At least one file exists."
+else
+    echo "No files exist."
+fi
+# This method ensures that the array is empty if no files match, avoiding
+# error messages. Using find command: You can use the find command to
+# check if any of the files exist. For example:
+if find . -maxdepth 1 -type f $ -name "*.abc" -o -name "*.bak" -o -name "*.tmp" -o -name "tmpout.wrk" $ -print -quit | grep -q .; then
+    echo "At least one file exists."
+else
+    echo "No files exist."
+fi
+
+
+
+
+
+
+
+
+# colorize / highlight text
+# https://news.ycombinator.com/item?id=38109646
+cat <file> | grep -E --color "<regex>|$"
+tail -f access.log | rg --passthru '\.jpg'
+cat <file>  | less -p ".jpg"
+
+# ebook cli utilities
+epy : ebook reader (aliased as ebook)
+https://github.com/wustho/epy
+- Epub (.epub, .epub3)
+- FictionBook (.fb2)
+- Mobi (.mobi)
+- AZW3 (.azw, .azw3)
+- URL
+# read Moby Dick from Gutenberg
+epy https://www.gutenberg.org/files/2701/2701-h/2701-h.htm
+# --------------------
+epr: epub reader
+https://github.com/wustho/epr
+# --------------------
+utils from calibre:
+ebook-convert  ebook-device   ebook-edit     ebook-meta     ebook-polish   ebook-viewer
+# --------------------
+epub-tools (looks to be linux only, written in Haskell, port?)
+https://github.com/dino-/epub-tools
+epubmeta, epubname, epubzip
+
+# test if command line tool is installed or if function is defined
+if ! command -v git 1>/dev/null 2>&1; then
+  echo "pyenv: Git is not installed, can't continue." >&2
+  exit 1
+fi
+
+
+# ripgrep, but also search in PDFs, E-Books (epub, etc.), Office documents, zip, tar.gz, etc.
+https://phiresky.github.io/blog/2019/rga--ripgrep-for-zip-targz-docx-odt-epub-jpg/
+# Ripgrep wrapper with rich file type searching capabilities.
+https://github.com/phiresky/ripgrep-all
+# Search recursively for a pattern in all files in the current directory:
+    rga regular_expression
+# List available adapters:
+    rga --rga-list-adapters
+# Change which adapters to use (e.g. ffmpeg, pandoc, poppler etc.):
+    rga --rga-adapters=adapter1,adapter2 regular_expression
+# Search for a pattern using the mime type instead of the file extension (slower):
+    rga --rga-accurate regular_expression
+ 
+ 
+ 
+# Homebrew terminology
+https://docs.brew.sh/Formula-Cookbook
+term	    description/example
+formula	    Homebrew package definition that builds from upstream sources	
+            e.g. /opt/homebrew/Library/Taps/homebrew/homebrew-core/Formula/f/foo.rb
+
+cask	    Homebrew package definition that installs macOS native applications
+            e.g. /opt/homebrew/Library/Taps/homebrew/homebrew-cask/Casks/b/bar.rb
+
+prefix	    path in which Homebrew is installed
+            e.g. /opt/homebrew
+
+keg	        installation destination directory of a given formula version
+            e.g. /opt/homebrew/Cellar/foo/0.1
+
+rack	    directory containing one or more versioned kegs
+            e.g.  /opt/homebrew/Cellar/foo
+
+keg-only	a formula is keg-only if it is not symlinked into Homebrew’s prefix
+            e.g. the openjdk formula
+
+opt prefix	a symlink to the active version of a keg
+            e.g. /opt/homebrew/opt/foo
+
+Cellar	    directory containing one or more named racks
+            e.g. /opt/homebrew/Cellar
+
+Caskroom	directory containing one or more named casks
+            e.g. /opt/homebrew/Caskroom
+
+external    brew subcommand defined outside of the Homebrew/brew GitHub repository	
+command     e.g. brew alias
+
+tap	        directory (and usually Git repository) of formulae, casks and/or external commands	
+            e.g. /opt/homebrew/Library/Taps/homebrew/homebrew-core
+
+bottle	    pre-built keg poured into a rack of the Cellar instead of building from upstream sources
+            e.g. t--6.5.1.ventura.bottle.tar.gz
+
+tab	        information about a keg, e.g. whether it was poured from a bottle or built from source
+            e.g. /opt/homebrew/Cellar/foo/0.1/INSTALL_RECEIPT.json
+
+Brew 	    a declarative interface to Homebrew
+Bundle      e.g. brew 'myservice', restart_service: true
+
+Brew 	    the Homebrew command to manage background services
+Services    e.g. brew services start myservice
+
+
+To create or edit formulae locally, you’ll need to first tap
+homebrew/core if you haven’t previously. This clones the
+Homebrew/homebrew-core Git repository to $(brew --repository
+homebrew/core). As you’re developing, you’ll also need to set
+HOMEBREW_NO_INSTALL_FROM_API=1 in your shell environment or before any
+install, reinstall or upgrade commands to force brew to use the local
+repository instead of the API.

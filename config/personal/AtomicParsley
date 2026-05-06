@@ -1,0 +1,8 @@
+Fix m4a (AAC) files that fail to apply new album art
+
+```bash
+for f in *.m4a; do
+    AtomicParsley "$f" --artwork REMOVE_ALL --overWrite      
+    AtomicParsley "$f" --artwork cover.jog  --overWrite      
+ done
+```

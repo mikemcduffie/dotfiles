@@ -1,0 +1,12 @@
+# Use the Git clone URL, not the browser URL with /tree/master/. 
+
+# Instead of:
+
+git clone 'https://github.com/CoreyMSchafer/dotfiles/tree/master/'
+
+# Use:
+
+git clone 'https://github.com/CoreyMSchafer/dotfiles.git'
+
+
+

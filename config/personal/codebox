@@ -1,0 +1,94 @@
+---
+syntax: bash
+tags: [ mac ]
+---
+
+Codebox Hidden Features
+https://web.archive.org/web/20150713214828/http://www.shpakovski.com/codebox/hidden-features
+
+
+Tips and Tricks
+
+# CodeBar command modifiers
+You can define keyboard modifiers for all commands in the CodeBar. Go to the CodeBar Preferences pane and click the button Modifier Keys to customize shortcuts for Browse, Copy, Paste and Edit Code commands. For example, you can assign Shift-Enter combination to immediately Paste the selected snippet into an active application.
+
+# Keyboard navigation in CodeBar
+If you use a specific Keyboard and arrow buttons are far right from the basic layout, press the (Shift-)Tab key to select the (previous) next item in the menu. Vim shortcuts (Control-H, J, K , L) are also supported.
+
+# Shift Left & Shift Right
+In CodeBox, You can shift blocks of selected text. Use menu commands or shortcuts “Command-[” and “Command-]” to change code indentation.
+
+# Web link assets
+You can keep as many URLs related to the snippet as you wish. Copy HTTP link and select New Asset From Clipboard command to create the new web link asset.
+
+# Smart groups for syntaxes
+If you like to group snippets by file type, create Smart Group with a condition like “Name of Asset contains .css”.
+
+# Delimiters for abbreviations
+You may want to have a custom Key that will “confirm” abbreviations. For example, you can have a Tab delimiter Key, so code will be expanded only when you type its abbreviation and hit the Tab key. In CodeBox, you define such delimiter using the ShortcutFormat preference in Terminal.app:
+
+# defaults write com.shpakovski.mac.codebar ShortcutFormat -string "%@"$'\t'
+# To define Space as delimiter
+defaults write com.shpakovski.mac.codebar ShortcutFormat -string "%@ "
+# To reset default behavior
+defaults delete com.shpakovski.mac.codebar ShortcutFormat
+
+# Sounds on text expanding
+When CodeBar expands an abbreviation into code, a custom AppleScript can be executed. Using this feature, you can ask CodeBar to play the sound on text expanding. Try the following in Terminal.app:
+
+# If the sound is at /Users/Shared/Water Sound.wav
+defaults write com.shpakovski.mac.codebar ShortcutScript -string "do shell script \"afplay '/Users/Shared/Water Sound.wav'\""
+# To reset default behavior
+defaults delete com.shpakovski.mac.codebar ShortcutScript
+
+# Always edit placeholders
+# If a snippet has defined placeholders and you paste or copy this snippet, placeholders will be automatically replaced with their default values. # If you want open Edit panel automatically to change placeholder values before using code, then enter the following command into Terminal.app:
+defaults write com.shpakovski.mac.codebar AutoEditPlaceholders -bool YES
+# Later you can reset default behavior using this line
+defaults delete com.shpakovski.mac.codebar AutoEditPlaceholders
+
+# Show code size
+# Execute the following command in Terminal to display code size in the right bottom corner of the library window:
+defaults write com.shpakovski.mac.codebox ShowAssetSize -bool YES
+# Later you can reset default behavior
+defaults delete com.shpakovski.mac.codebox ShowAssetSize
+
+# Spaces instead of Tabs
+# Execute the following command in Terminal to make CodeBox editor insert spaces instead of tabs:
+defaults write com.shpakovski.mac.codebox TabWidth 8
+# Later you can reset default tab width
+defaults delete com.shpakovski.mac.codebox TabWidth
+
+# Size of text in Folders and Tags
+# If you prefer large text size for source views Folders and Tags, please execute the following command in Terminal:
+defaults write com.shpakovski.mac.codebox SourceTextSize 1
+# Later you can reset default size
+defaults delete com.shpakovski.mac.codebox SourceTextSize
+
+# Custom title for multiple assets
+# CodeBar displays the number of assets in snippet like “Snippet name ⇢ N”. You can customize this title by defining a new format via Terminal.app:
+defaults write com.shpakovski.mac.codebar FormatForSnippetWithMultipleAssets "%2\$d • %1\$@"
+# Later you can reset default behavior using this line
+defaults delete com.shpakovski.mac.codebar FormatForSnippetWithMultipleAssets
+
+Exclude Snippets From Groups# 
+If you want to delete a Group, but this Group includes valuable snippets, then you can exclude snippets from the Group by dragging them into the All Snippets item in the Sources view.
+
+# Always center the CodeBar editor on the screen
+# By default, the command Edit Code will open an editor panel using the same position and size as the last time. If you want the code editor to always appear in the center of the screen, then type the following command in Terminal:
+defaults write com.shpakovski.mac.codebar AlwaysCenterEditor -bool YES
+# To restore default behavior
+defaults delete com.shpakovski.mac.codebar AlwaysCenterEditor
+
+# Display snippets containing any of the selected Tags
+# View Tags command will show all known tags. If you select a tag, then all snippets with this tag will be displayed in the table view. If you select multiple tags using Command or Shift key, then the table will contain a set of snippets each one of which has all selected tags. However, if you want to see the snippets that have at least one of the selected tags, enter this command in Terminal:
+defaults write com.shpakovski.mac.codebox SnippetsShouldContainAllSelectedTags -bool YES
+# To restore default selection mode
+defaults delete com.shpakovski.mac.codebox SnippetsShouldContainAllSelectedTags
+
+# How to disable antialiasing in the code editor
+# If you prefer an antialiased text in the code editor, CodeBox has a hidden preference for this:
+defaults write com.shpakovski.mac.codebox EditorAntialiasingDisabled -bool YES
+# To restore antialiasing in the code editor
+defaults delete com.shpakovski.mac.codebox EditorAntialiasingDisabled
+

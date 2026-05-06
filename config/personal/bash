@@ -1,0 +1,256 @@
+# disable history expansion (ignore "!")
+❯ set +H 
+
+# To implement a for loop:
+for file in *;
+do 
+    echo $file found;
+done
+
+# die "error msg"
+die() { echo "$*" 1>&2 ; exit 1; }
+❯ die "$0: Kaboom!"
+# die exit-staus "error msg"
+die() {
+  local rc=$1
+  shift
+  printf '%s\n' "$*" >&2
+  exit "$rc"
+}
+# Alt version
+function die () {
+  local message=$1
+  [ -z "$message" ] && message="Died"
+  echo "$message (at ${BASH_SOURCE[1]}:${FUNCNAME[1]} line ${BASH_LINENO[0]}.)" >&2
+  exit 1
+}
+# trap command to catch errors and invoking the die() function
+trap die ERR
+# check if a file exists and calls the die() function with an error message if it does not.
+[ ! -f "$file" ] && die "$0: File $file not found."
+
+# To implement a case command:
+case "$1"
+in
+    0) echo "zero found";;
+    1) echo "one found";;
+    2) echo "two found";;
+    3*) echo "something beginning with 3 found";;
+esac
+
+# To turn on debugging:
+❯ set -x
+# To turn off debugging:
+❯ set +x
+
+# Exit immediately if a command exits with a non-zero status.
+❯ set -e
+
+# Retrieve N-th piped command exit status:
+❯ printf 'foo' | fgrep 'foo' | sed 's/foo/bar/'
+❯ echo ${PIPESTATUS[0]}  # replace 0 with N
+
+# To create a lockfile:
+❯ ( set -o noclobber; echo > my.lock ) || echo 'Failed to create lock file'
+
+# Convert multiline string to array
+❯ names="Netgear
+    Hon Hai Precision Ind. Co.
+    Apple"
+❯ readarray -t <<<$names
+❯ printf "0: ${MAPFILE[0]}\n1: ${MAPFILE[1]}\n2: ${MAPFILE[2]}\n"
+
+# print each command before executing
+❯ set -o xtrace
+❯ bash -x myscript.sh
+
+# remove/clean AppleDouble files (xargs speeds up operation as opposed to removing each file found)
+❯ find . -name "._*" -print0 | xargs -0 rm -rf
+
+# search command history by typing starting characters and use up/down arrow keys: 
+# add to .inputrc (READLINE)
+# Arrow keys in keypad mode
+"\C-[OA": history-search-backward
+"\C-[OB": history-search-forward
+"\C-[OC": forward-char
+"\C-[OD": backward-char
+# Arrow keys in ANSI mode
+"\C-[[A": history-search-backward
+"\C-[[B": history-search-forward
+"\C-[[C": forward-char
+"\C-[[D": backward-char
+
+# add explicit exit statements at the possible failure points:
+❯ command || exit 1
+
+# stdout & stderr piped
+|&
+# shorthad for:
+2>&1 | 
+
+
+# shell function template: one-liner / in-line
+function_name () { command1; command2; }
+
+
+#  MORE COMAMANDS IN tricks CHEAT FILE
+
+# Run past command that began with (e.g. cat filename)
+❯ !cat
+# or
+❯ !c
+# run cat filename again
+
+# Bash globbing
+# '*' serves as a "wild card" for filename expansion.
+/etc/pa*wd    #/etc/passwd
+# '?' serves as a single-character "wild card" for filename expansion.
+/b?n/?at      #/bin/cat
+# '[]' serves to match the character from a range.
+❯ ls -l [a-z]*   #list all files with alphabet in its filename.
+# '{}' can be used to match filenames with more than one patterns
+❯ ls *.{sh,py}   #list all .sh and .py files
+
+# Some handy environment variables
+$0   :name of shell or shell script.
+$1, $2, $3,... :positional parameters.
+$#   :number of positional parameters.
+$?   :most recent foreground pipeline exit status.
+$-   :current options set for the shell.
+$$   :pid of the current shell (not subshell).
+$!   :is the PID of the most recent background command.
+$DESKTOP_SESSION    :current display manager
+$EDITOR             :preferred text editor.
+$LANG               :current language.
+$PATH               :list of directories to search for executable files (i.e. ready-to-run programs)
+$PWD                :current directory
+$SHELL              :current shell
+$USER               :current username
+$HOSTNAME           :current hostname
+
+#Variable substitution within quotes
+❯ foo=bar
+❯ echo $foo
+bar
+❯ echo "$foo"
+bar
+# single quotes cause variables to not be expanded
+❯ echo '$foo'
+$foo
+# single quotes within double quotes will not cancel expansion and will be part of the output
+❯ echo "'$foo'"
+'bar'
+# doubled single quotes act as double quotes making variables expand
+❯ echo ''$foo''
+bar
+
+# The braces are used to resolve ambiguity in expressions:
+❯ var=foo
+❯ echo $var
+foo
+❯ echo ${var}
+foo
+❯ echo $varbar
+       # Prints nothing because there is no variable 'varbar'
+❯ echo ${var}bar
+foobar
+
+# Get the length of variable
+❯ var="some string"
+❯ echo ${#var}
+11
+
+# Get the first character of the variable
+❯ var=string
+❯ echo "${var:0:1}"
+s
+
+# Remove chars from beginning of string variable
+❯ var="some string"
+❯ echo ${var:2}
+me string
+
+# Remove chars from end of string variable
+❯ echo ${var:0:-2}
+some stri
+
+# Replacement (e.g. remove the first leading 0 )
+❯ var="0050"
+❯ echo ${var[@]#0}
+050
+
+# Replacement (e.g. replace ‘a’ with ‘,’)
+{var/a/,}
+
+# Replace all (e.g. replace all ‘a’ with ‘,’)
+{var//a/,}
+
+# Grep lines with strings from a file (e.g. lines with ‘stringA or ‘stringB’ or ‘stringC’)
+❯ test="stringA stringB stringC"
+❯ grep ${test// /\\\|} file.txt
+# turning the space into 'or' (\|) in grep
+
+# To change the case of the string stored in the variable to lowercase (Parameter Expansion)
+# *** Requires Bash 5+ ***
+❯ var=HelloWorld
+❯ echo ${var,,}
+helloworld
+
+# test if home directory
+if [ "$PWD" = "$HOME" ]; then
+    ...
+# test for directory
+if [[ "$PWD" =~ somedir ]]; then
+    ...
+if [[ "$PWD" == *somedir* ]]; then
+    ...
+    
+
+# check for valid IPv4 or IPv6 address
+VALID_IP() {
+if python3 -c "import ipaddress; ipaddress.ip_address('${IP_ADDR}')" 2>/dev/null; then
+    return 0
+else
+    return 1
+fi
+}
+
+# Indeterminate ASCII progess spinner
+❯ while true; do for X in '-' '/' '\' '|' ; do printf "\033[0GProcessing... $X"; sleep 0.1; done; done
+❯ while true; do for X in '-' '/' '\' '|' ; do printf "\\b$X"; sleep 0.1; done; done
+
+
+# measure cpu processing time (works in bash not zsh)
+bash-5.2$ time { for i in {1..5}; do sleep 1; done }
+real	0m5.052s
+user	0m0.004s
+sys	0m0.016s
+# ----------------------------------------------------------------------------------------
+❯ bash -c 'time { for i in {1..5}; do sleep 1; done }'
+real	0m5.055s
+user	0m0.005s
+sys	0m0.016s
+# ----------------------------------------------------------------------------------------
+❯ bash -c 'time { for i in {1..10}; do for X in "-" "/" "\\" "|" ; do echo -en "\\b$X"; sleep 0.1; done; done }'
+|
+real	0m4.396s
+user	0m0.037s
+sys	0m0.113s
+# ----------------------------------------------------------------------------------------
+bash-5.2$ time { 
+for i in {1..20}; do 
+    for X in '-' '/' '\' '|' ; do 
+        if [[ $(route -n get default | grep "interface:") == *"utun"* ]]; then 
+            tty -s && printf "\033[0GVPN ON $X"
+        else printf "\nVPN OFF! Killing Transmission...\n"
+            KILL_TRANSMISSION
+        fi; 
+        sleep 0.1
+    done
+done 
+}
+VPN ON |
+real	0m9.774s
+user	0m0.258s
+sys	0m1.007s
+#  appears to be ~13    % (time, not load?)

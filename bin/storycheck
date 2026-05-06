@@ -1,0 +1,725 @@
+#!/usr/bin/env -S uv run --script
+# /// script
+# requires-python = ">=3.12"
+# dependencies = [
+#     "bs4>=0.0.2",
+#     "requests>=2.32.3",
+#     "rich>=14.0.0",
+#     "unidecode>=1.4.0",
+# ]
+# ///
+
+import itertools
+import os
+import random
+import re
+import shutil
+import subprocess
+import sys
+from collections import namedtuple
+from pathlib import Path
+from time import sleep
+from typing import Dict, Union, clear_overloads
+from urllib.parse import (
+    quote as urlquote,
+)
+from urllib.parse import (
+    unquote as urlunquote,
+)
+from urllib.parse import (
+    urljoin,
+    urlparse,
+    urlunparse,
+)
+
+import requests
+from bs4 import BeautifulSoup
+from rich.console import Console
+from rich.progress import (
+    BarColumn,
+    MofNCompleteColumn,
+    Progress,
+    TextColumn,
+    TimeElapsedColumn,
+    TimeRemainingColumn,
+    track,
+)
+
+global test_mode, headers, SCRAPED_DIR, LINKS_FILE, FOUND_LINKS_FILE
+test_mode = False
+
+# https://stackoverflow.com/questions/10606133/sending-user-agent-using-requests-library-in-python
+headers = requests.utils.default_headers()
+headers.update(
+    {
+    "User-Agent" : "Mozilla/5.0 (Windows NT 11.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.6998.166 Safari/537.36"
+    }
+)
+
+
+user_agents = [
+    "Mozilla/5.0 (Windows NT 11.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.6998.166 Safari/537.36"
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36"
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36"
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.1 Safari/605.1.15"
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 13_1) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.1 Safari/605.1.15",
+]
+
+# headers = {'User-Agent': random.choice(user_agents)}
+
+
+
+SCRAPED_DIR = Path.home() / "scraped" / "stories"
+LINKS_FILE = SCRAPED_DIR / "links.html"
+FOUND_LINKS_FILE = SCRAPED_DIR / "found_links.html"
+COMPLETED_LINKS_FILE = SCRAPED_DIR / "completed_links.html"
+
+# https://stackoverflow.com/questions/15799696/how-to-build-urls-in-python-with-the-standard-library
+# namedtuple to match the internal signature of urlunparse
+Components = namedtuple(
+    typename="Components",
+    field_names=["scheme", "netloc", "url", "path", "query", "fragment"],
+)
+
+if not Path.exists(SCRAPED_DIR):
+    os.makedirs(SCRAPED_DIR)
+for filepath in (LINKS_FILE, FOUND_LINKS_FILE, COMPLETED_LINKS_FILE):
+    if not filepath.is_file():
+        with open(filepath, "wt") as f:
+            f.write("")
+
+
+def add_link(url: str, links: list, filepath=LINKS_FILE) -> None:
+    if url_in_links(url, links):
+        print_error(f"URL already exists.", quit=True)
+    html = get_html(url)
+    soup = BeautifulSoup(html, "html.parser")
+    author = get_author(url, soup)
+    title = soup.title.text if soup.title else None
+    if not title:
+        print_error("Could not retrieve title.", quit=True)
+    if url.startswith("https://tags.literotica.com"):
+        cleaned_title = "Tag - " + title.replace(" - Literotica.com", "").capitalize()
+    else:
+        cleaned_title = clean_title(soup.title.text, author)
+    story_links = get_links(html, filter_str=r"/s/|/n/", parent_url=url)
+    new_filepath = SCRAPED_DIR.joinpath(cleaned_title).with_suffix(".html")
+    save_links(story_links, new_filepath)
+    new_link = build_link(url, cleaned_title)
+    links.append(new_link)
+    save_links(links, filepath=filepath)
+    print_ok(f"Added: {cleaned_title}")
+
+
+def applescript(script):
+    subprocess.run(["osascript", "-e", script], capture_output=True)
+
+
+def backup_file(file_path) -> None:
+    if test_mode:
+        exit()
+    if not Path.is_file(file_path):
+        console_print(f"[red]Backup: file not found:[/red][dim] {file_path}[/dim]")
+    else:
+        backup_path = file_path.with_suffix(file_path.suffix + ".bak")
+        os.rename(file_path, backup_path)
+
+
+def build_link(url: str, text: str):
+    """
+    Returns a link (bs4.element.Tag) from url and text strings.
+    """
+    return convert_to_link(f'<a href="{url}">{text}</a>')
+
+
+def clean_link(link):
+    """
+    Cleans a link (bs4.element.Tag) to only include href and text elements.
+    """
+    return convert_to_link(f'<a href="{link.get("href")}">{link.text}</a>')
+
+
+def clean_links(links):
+    return [clean_link(link) for link in links]
+
+
+def clean_title(title: str, author=None):
+    author_attrib = f"{author} - " if author else ""
+    # for regex examples see:
+    # https://gist.github.com/bgusach/a967e0587d6e01e889fd1d776c5f3729
+    # '(?P<name>.*) - (?P<tag>.*) - Literotica.com'  : r'Story - \g<name>',
+    replacements = {
+        "^Books by (?P<author>.*)": r"\g<author> - Books",
+        "Literotica.com - Members - ": "",
+        "(?P<name>.*) - Story Series - Literotica.com": r"Story - \g<name>",
+        " :": " -",
+        ":": " -",
+        "/": "-",
+        "Series of Stories": "Series",
+        "(?P<title>.*) - .* Story$": rf"{author_attrib}\g<title>",
+        " at Storiesonline": "",
+    }
+    cleaned_title = multireplace(replacements, title).strip()
+    if author and author not in cleaned_title and not title.startswith("Tag - "):
+        cleaned_title = f"{author} - {cleaned_title}"
+    return cleaned_title
+
+
+def color_format_link(link):
+    url = link.get("href")
+    domain = urlparse(url).netloc
+    match domain:
+        case "storiesonline.net":
+            title_color = CATEGORY_COLORS["sol"]
+        case "www.literotica.com":
+            title_color = CATEGORY_COLORS["lit"]
+        case "bookapy.com":
+            title_color = CATEGORY_COLORS["book"]
+        case _:
+            title_color = "white"
+    if len(sys.argv) < 1:
+        if webpage_url.startswith("https://tags."):
+            title_color = "white"
+        return f"[cyan1]{webpage_link.text}:[/cyan1] [{title_color}]{link.text}:[/{title_color}] [dim]{url}[/dim]"
+    else:
+        return f"[{title_color}]{link.text}:[/{title_color}] [dim]{url}[/dim]"
+
+
+def console_print(str):
+    prog_console.print(str)
+
+
+def convert_to_link(tag_string):
+    """
+    Returns a link (bs4.element.Tag) from HTML hyperlink string.
+    """
+    return BeautifulSoup(tag_string, "html.parser").find("a")
+
+
+def get_author(url, soup):
+    author = None
+    try:
+        domain = urlparse(url).netloc
+        match domain:
+            case "storiesonline.net":
+                author = (
+                    soup.find("a", {"rel": "author"}).text
+                    or "".join(
+                        soup.find(None, {"id": "auth-name"}).text.split(":")[:-1]
+                    ).strip()
+                )
+            case "www.literotica.com":
+                if soup.title.text.endswith("- Submissions"):
+                    author = soup.title.text.split(" - ")[2]
+                else:
+                    author = soup.find(attrs={"class": "y_eR"}).get("title")
+    except AttributeError:
+        author = None
+    return author
+
+
+def get_html(url: str):
+    if not validate_url(url):
+        console_print(f"[red]Invalid URL:[/red] [dim]{url}[/dim]")
+        exit(1)
+    status = -1
+    retries = 0
+    # OK is status code 200; list supported keys: dir(requests.status_codes.codes)
+    while status != requests.status_codes.codes.OK:
+        try:
+            response = requests.get(url, headers=headers)
+            status = response.status_code
+            contents = response.content
+        except KeyboardInterrupt:
+            raise KeyboardInterrupt
+        except:
+            retries += 1
+            if retries > 3:
+                console_print(f"[red]Could not retrieve url:[/red] [dim]{url}[/dim]")
+                return ""
+            console_print(f"[orange]Re-tring in 5 seconds:[/orange] [dim]{url}[/dim]")
+            sleep(5)
+        else:
+            if (
+                status == requests.status_codes.codes.NOT_FOUND
+                or status == 410  #  410 = removed story (storiesonline)
+            ):
+                console_print(
+                    f'[red]NOT FOUND:[/red] [dim]{url}[/dim]\n[yellow]Use "storycheck -r <url>" to remove link.[/yellow]'
+                )
+                status = requests.status_codes.codes.OK
+            elif status != requests.status_codes.codes.OK:
+                if status != -1:
+                    if status == 503:
+                        print("Status 503 Server Unavailable")
+                        print(response.content)
+                    console_print(
+                        f"[orange]Status code: {status}. [yellow]Sleep for 5 seconds:[/yellow] [dim]{url}[/dim]"
+                    )
+                sleep(5)
+
+            return response.content
+
+
+def get_links(html: str, filter_str="", parent_url=None):
+    """
+    Return cleaned list of links.
+
+    Extract href links from HTML using optional filter search string .e.g. "/s/ or /n/"
+    and optionally provide parent_url to resolve relative urls. Clean links before returning.
+    """
+    filter_str = r"^https?://.*(?<!comments)$" if not filter_str else filter_str
+    # (?<!a) is a negated lookbehind assertion that ensures, that before the end of the string (or row with m modifier), there is not the character "a".
+    # https://stackoverflow.com/questions/16398471/regex-for-string-not-ending-with-given-suffix
+    # https://regexr.com/34pe5
+    re_filter = re.compile(filter_str)
+    soup = BeautifulSoup(html, "html.parser")
+    links = [link for link in soup.find_all("a", attrs={"href": re_filter}) if link.text]
+    if not parent_url:
+        return clean_links(links)
+    elif (
+        "/a/" in parent_url
+    ):  # need to decide if this should be handled outside get_links()
+        author_filter = re.compile(r"^/a/")
+        author_links = soup.find_all("a", attrs={"href": author_filter})
+        additional_urls = sorted(list(set([l["href"] for l in author_links])))
+        for url in additional_urls:
+            page_num = url.split("/").pop()
+            if parent_url.endswith(url) or not page_num.isdigit():
+                continue
+            additional_html = get_html(urljoin(parent_url, url))
+            additional_soup = BeautifulSoup(additional_html, "html.parser")
+            links += [
+                l
+                for l in additional_soup.find_all("a", attrs={"href": re_filter})
+                if l.text
+            ]
+
+    processed_links = []
+    urls = []
+    for link in links:
+        url = link.get("href")
+        parsed = urlparse(url)
+        if parent_url.endswith(url) or parsed.fragment or parsed.query:
+            continue
+
+        relative_url = url if url.startswith(("/s/", "/n/")) else None
+        if relative_url:
+            parent = urlparse(parent_url)
+            domain_url = urlunparse(
+                Components(
+                    scheme=parent.scheme,
+                    netloc=parent.netloc,
+                    query="",
+                    path="",
+                    url="/",
+                    fragment="",
+                )
+            )
+
+            url = urljoin(domain_url, relative_url)
+            if url in urls:
+                continue
+            urls.append(url)
+            title = soup.title.text
+            if link.text.startswith(
+                ("Prologue", "Epilogue", "Chapter", "Ch.", "Part ", "Pt.")
+            ):
+                cleaned_title = f"{clean_title(title)} {link.text}"
+            else:
+                cleaned_title = link.text
+            full_link = build_link(url, cleaned_title)
+            if full_link not in processed_links:
+                processed_links.append(full_link)
+        else:
+            cleaned_link = clean_link(link)
+            if cleaned_link not in processed_links:
+                processed_links.append(cleaned_link)
+
+    return processed_links
+
+
+def interleave_links(links: list):
+    """
+    Interleave domains to increase time between accesses to help avoid lockouts.
+    Returns a list of interleaved links (hyperlinks).
+    """
+    links_book = [link for link in links if "bookapy.com" in link.get("href")]
+    links_mcs = [link for link in links if "mcstories.com" in link.get("href")]
+    links_sol = [link for link in links if "storiesonline.net" in link.get("href")]
+    links_lit = [link for link in links if "literotica.com" in link.get("href")]
+    interleaved_links = []
+    for s, l, m, b in itertools.zip_longest(
+        links_sol, links_lit, links_mcs, links_book, fillvalue=None
+    ):
+        if s:
+            interleaved_links.append(s)
+        if l:
+            interleaved_links.append(l)
+        if m:
+            interleaved_links.append(m)
+        if b:
+            interleaved_links.append(b)
+
+    return interleaved_links
+
+
+def list_links(filepath=LINKS_FILE, stories_only=False) -> None:
+    html = read_file(filepath)
+    links = get_links(html)
+    for link in links:
+        url = link.get("href")
+        if (
+            not stories_only
+            or "/s/" in url
+            or "/n/" in url
+            or ("literotica.com" in url and "Story - " in link.text)
+        ):
+            console_print(color_format_link(link))
+
+
+def multireplace(
+    table: Dict[str, str], string: str, flags: Union[int, re.RegexFlag] = 0
+):
+    patterns = {f"_g{n}": pattern for n, pattern in enumerate(table)}
+
+    def repl(match: re.Match):
+        repkey = None
+        groupkey = None
+
+        for key, value in match.groupdict().items():
+            if value is None:
+                continue
+
+            if key.startswith("_g"):
+                repkey = key
+            else:
+                groupkey, groupval = key, value
+
+        repval = table[patterns[repkey]]
+        return (
+            repval if groupkey is None else repval.replace(rf"\g<{groupkey}>", groupval)
+        )
+
+    regex = "|".join(rf"(?P<{group}>{rep})" for group, rep in patterns.items())
+    return re.sub(regex, repl, string, flags=flags)
+
+
+def multiple_replace(string, rep_dict):
+    pattern = re.compile(
+        "|".join([re.escape(k) for k in sorted(rep_dict, key=len, reverse=True)]),
+        flags=re.DOTALL,
+    )
+    return pattern.sub(lambda x: rep_dict[x.group(0)], string)
+
+
+def prepend_file(text, filepath):
+    with open(filepath, "r") as contents:
+        save = contents.read()
+    with open(filepath, "w") as contents:
+        contents.write(text)
+        contents.write(save)
+
+
+def prepend_links(links, filepath=FOUND_LINKS_FILE):
+    if test_mode:
+        exit()
+    html = f"<p>\n".join([str(l) for l in links]) + "<p>\n"
+    if Path.exists(filepath) and filepath != FOUND_LINKS_FILE:
+        backup_file(filepath)
+    prepend_file(html, filepath)
+
+
+def print_error(message: str, quit=False) -> None:
+    console_print(f"[red]{message}")
+    if quit:
+        exit(1)
+
+
+def print_ok(message: str) -> None:
+    console_print(f"[green]{message}")
+
+
+def print_warning(message: str) -> None:
+    console_print(f"[orange]{message}")
+
+
+def print_links(links):
+    for link in links:
+        console_print(color_format_link(link))
+
+
+def process_args():
+    sys.argv.pop(0)
+    if len(sys.argv) < 1:
+        return
+    match sys.argv:
+        case ["-h"]:
+            print("Usage: s[torycheck] [OPTIONS] [URLs | text]\nOptions:")
+            print("-a     Add urls")
+            print("-c     move urls to Completed")
+            print("-e     Edit script")
+            # cd is built-in command & is impossible to invoke from python script
+            print("-g     Goto scraped folder in new Terminal window")
+            print("-o     open scraped Folder in Finder")
+            print("-r     Remove urls")
+            print("-s     Search link titles for TEXT")
+            print("-l     List all non-completed links")
+            print("-lc    List Completed links")
+            print("-lf    List Found links")
+            print("-ls    List Story links")
+            print("-t     Test mode: run without updating scraped files")
+        case ["-t"]:
+            test_mode = True
+            print_warning("*** TEST MODE ENABLED ***")
+            return
+        case ["-e"]:
+            # editor bundles: com.microsoft.VSCode  com.jetbrains.pycharm.ce
+            subprocess.run(
+                [
+                    "open",
+                    "-n",
+                    "-b",
+                    "com.microsoft.VSCode",
+                    "--args",
+                    Path(__file__).parent,
+                ]
+            )
+        case ["-a" | "-c" | "-r", *urls]:
+            if not urls:
+                print_error("No URL provided.", quit=True)
+            option = sys.argv[0]
+            links = get_links(read_file(LINKS_FILE))
+            for url in urls:
+                if option == "-a":
+                    if not validate_url(url):
+                        print_error(f"[red]Invalid URL:[/red][dim] {url}[/dim]")
+                        exit(1)
+                    add_link(url, links)
+                elif option == "-r":
+                    remove_link(url, links)
+
+                elif option == "-c":
+                    completed_links = get_links(read_file(COMPLETED_LINKS_FILE))
+                    if [l for l in links if url == l.get("href")]:
+                        remove_link(url, links)
+                    elif not validate_url(url):
+                        console_print(f"[red]Invalid URL:[/red][dim] {url}[/dim]")
+                        exit(1)
+                    add_link(url, completed_links, COMPLETED_LINKS_FILE)
+                    print_ok("Link added to completed.")
+        case ["-l"]:
+            list_links()
+        case ["-lc"]:
+            list_links(COMPLETED_LINKS_FILE)
+        case ["-lf"]:
+            list_links(FOUND_LINKS_FILE)
+        case ["-ls"]:
+            list_links(stories_only=True)
+        case ["-o"]:
+            subprocess.run(["open", SCRAPED_DIR])
+        case ["-g"]:
+            applescript(f'tell application "Terminal" to do script "cd {SCRAPED_DIR}"')
+        case ["-s", search_str]:
+            links = get_links(read_file(LINKS_FILE))
+            found_links = search_links(search_str, links)
+            if found_links:
+                print_links(found_links)
+            completed_links = get_links(read_file(COMPLETED_LINKS_FILE))
+            found_links = search_links(search_str, completed_links)
+            if found_links:
+                print_warning("----- Completed stories -----")
+                print_links(found_links)
+        case _:
+            console_print(
+                f"[red]Unexpected or incomplete args:[/red] {''.join(sys.argv)}"
+            )
+            exit(1)
+    exit()
+
+
+def read_file(file_path):
+    with open(file_path, "r") as file:
+        contents = file.read()
+    return contents
+
+
+def remove_link(url: str, links: list) -> None:
+    new_links = [link for link in links if url != link.get("href")]
+    if new_links == links:
+        console_print(f"[red]URL not found:[/red][dim] {url}[/dim]")
+        exit(1)
+    else:
+        save_links(new_links)
+        print_ok("Link successfully removed.")
+
+
+def save_links(links: list, filepath=LINKS_FILE, mode="wt") -> None:
+    if test_mode:
+        exit()
+    html = f"<p>\n".join([str(l) for l in links]) + "<p>\n"
+    if Path.exists(filepath):
+        backup_file(filepath)
+    write_file(filepath, html, mode)
+
+
+def save_webpage(soup) -> None:
+    """
+    Save scraped HTML to file with filename based on cleaned title
+    from soup.
+    """
+    title = clean_title(soup.title.text, author)
+    file_path = SCRAPED_DIR.joinpath(title).with_suffix(".html")
+    if file_path.is_file:
+        backup_file(file_path)
+    write_file(file_path, str(soup))
+
+
+def search_links(string: str, links: list):
+    return [link for link in links if string.lower() in str(link).lower()]
+
+
+def url_in_links(url: str, links: list):
+    for link in links:
+        if link.get("href") == url:
+            return True
+    return False
+
+
+def validate_uri(uri: str) -> bool:
+    try:
+        result = urlparse(uri)
+        return all([result.scheme, result.netloc])
+    except TypeError:
+        return False
+
+
+def validate_url(url: str) -> bool:
+    return url.startswith("http") and validate_uri(url)
+
+
+def write_file(file_path, text: str, mode="wt") -> None:
+    if test_mode:
+        exit()
+    with open(file_path, mode) as file:
+        file.write(text)
+
+
+def write_to_clipboard(output):
+    process = subprocess.Popen(
+        "pbcopy", env={"LANG": "en_US.UTF-8"}, stdin=subprocess.PIPE
+    )
+    process.communicate(output.encode("utf-8"))
+
+
+prog_console = Console()
+
+CATEGORY_COLORS = {
+    "tag": "magenta",
+    "sol": "bright_green",
+    "lit": "deep_sky_blue4",
+    "book": "bright_yellow",
+}
+
+
+# sys.argv = [__file__, "-a", "https://www.literotica.com/s/words-on-skin"]
+
+if __name__ == "__main__":
+    process_args()
+    links = get_links(read_file(LINKS_FILE))
+    nontag_links = []
+    tag_links = []
+    for link in links:
+        url = link.get("href")
+        if url.startswith("https://tags."):
+            tag_links.append(link)
+        else:
+            nontag_links.append(link)
+    # reverse list for newer links first
+    nontag_links.reverse()
+    links = nontag_links + tag_links
+    previous_found_links = get_links(read_file(FOUND_LINKS_FILE))
+    new_links = []
+
+    # TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
+    progress_bar = Progress(
+        TextColumn("[yellow]Scraping..."),
+        BarColumn(),
+        MofNCompleteColumn(),
+        TextColumn("|"),
+        TimeElapsedColumn(),
+        TextColumn("|"),
+        TimeRemainingColumn(),
+        console=prog_console,
+        transient=True,
+    )
+    with progress_bar as p:
+        try:
+            for webpage_link in p.track(links):
+                webpage_url = webpage_link.get("href")
+                webpage_title = webpage_link.text
+                if "mcstories.com" in webpage_url:
+                    console_print(
+                        f"[red]Skipping mcstories link: [/red][yellow]{webpage_title}:[/yellow] [dim]{webpage_url}[/dim]"
+                    )
+                    continue
+                # if "storiesonline.net" in webpage_url:
+                #     continue
+
+                # # UPDATE LIT LINKS
+                # response = requests.get(webpage_url, headers=headers)
+                # if response.history:
+                #     # print("Request was redirected")
+                #     # for resp in response.history:
+                #     #     print(resp.status_code, resp.url)
+                #     # print("Final destination:")
+                #     # print(response.url)
+                #     print(build_link(response.url, webpage_link.text))
+                # else:
+                #     print(webpage_link)
+                # continue
+
+                # sleep(1)  # test for storiesonline 503 issue
+                webpage_html = get_html(webpage_url)
+                webpage_soup = BeautifulSoup(webpage_html, "html.parser")
+                webpage_author = webpage_title.split(" - ")[0]
+                if not webpage_author:
+                    webpage_author = get_author(webpage_url, webpage_soup)
+                current_links = get_links(
+                    webpage_html, filter_str=r"/s/|/n/", parent_url=webpage_url
+                )
+
+                if not current_links:
+                    console_print(
+                        f"[red]No story links found for: [/red][yellow]{webpage_title}:[/yellow] [dim]{webpage_url}[/dim]"
+                    )
+                    continue
+                # with_suffix method truncates names with '. ' e.g. 'A.A. Nemo - Stories'
+                webpage_filepath = SCRAPED_DIR.joinpath(webpage_title + ".html")
+                if webpage_filepath.is_file():
+                    previous_webpage_html = read_file(webpage_filepath)
+                    previous_webpage_links = get_links(
+                        previous_webpage_html, r"/s/|/n/", webpage_url
+                    )
+                    found_links = list(set(current_links) - set(previous_webpage_links))
+                else:
+                    p.console.print(
+                        f"\n[orange]No previous webscrape found:[/orange] [dim]{webpage_filepath}[/dim]"
+                    )
+                    found_links = current_links
+
+                if found_links:
+                    save_links(current_links, webpage_filepath)
+                for found_link in found_links:
+                    if (
+                            found_link not in new_links
+                            and found_link not in previous_found_links
+                    ):
+                        new_links.append(found_link)
+                        p.console.print(color_format_link(found_link))
+        except KeyboardInterrupt:
+            exit()
+
+        if new_links:
+            prepend_links(new_links, filepath=FOUND_LINKS_FILE)

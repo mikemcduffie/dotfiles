@@ -1,0 +1,29 @@
+---
+syntax: bash
+tags: [ mac ]
+---
+
+Use HEREDOC with osascript
+
+```bash
+osascript <<'END'
+set x to "a"
+say x
+END
+```
+
+
+Determine terminal application in python
+
+```python
+import os
+
+def applescript(script):
+    subprocess.run(["osascript", "-e", script], capture_output=True)
+
+term_program = os.getenv("TERM_PROGRAM")
+if term_program == "iTerm.app":
+    applescript(f'tell application "iTerm" to tell current session of current window to write text "cd {SCRAPED_DIR}"')
+elif term_program == "Apple_Terminal":
+    applescript(f'tell application "Terminal" to do script "cd {SCRAPED_DIR}"')
+```

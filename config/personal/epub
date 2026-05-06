@@ -1,0 +1,18 @@
+
+# List epub Description and Tags
+# A fresh terminal tab would make searches (⌘F) easier
+❯ rga 'Description:|Tags:' --glob '*.epub'
+
+# List only filenames for epub containing "nanintes|naomites|nano-bot|nanobot"
+❯ rga 'nanintes|naomites|nano-?bot' --files-with-matches  --glob '*.epub'
+
+# you can use xmlstarlet for robust XML manipulation
+# Modify the title
+❯ xmlstarlet ed -L -u '//dc:title' -v 'New Title' "$epub_file"
+# Note that the xmlstarlet command directly modifies the EPUB file, so ensure you have a backup before running it.
+# assumes that the OPF file is located at OEBPS/content.opf within the EPUB file. Adjust the paths as necessary for your specific EPUB structure.
+# Alternately, you can use exiftool to extract and modify metadata in EPUB files:
+# Extract the title
+❯ title=$(exiftool -Title "$epub_file")
+# Modify the title
+❯ exiftool -Title="New Title" "$epub_file"

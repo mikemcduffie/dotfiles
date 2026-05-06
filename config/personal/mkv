@@ -1,0 +1,156 @@
+# Get mkv file info
+❯ mkvmerge -i movie.mkv
+File ’movie.mkv’: container: Matroska
+Track ID 1: video (V_MS/VFW/FOURCC, DIV3)
+Track ID 2: audio (A_MPEG/L3)
+Track ID 3: audio (A_VORBIS)
+Track ID 4: subtitles (S_TEXT/UTF8)
+Track ID 5: subtitles (S_TEXT/UTF8)
+
+# Extract SRT from mkv file
+❯ mkvextract tracks movie.mkv 3:audio.ogg 4:subtitles.srt
+
+# Remove non-english tracks / subs
+for f in *.mkv
+do
+    mkvmerge --output "${f%.*}-eng.mkv" -a "eng" -s "eng" "$f"
+done
+# ----------------------------------------------------------------------------------------
+# https://forum.videohelp.com/threads/343271-BULK-remove-non-English-tracks-from-MKV-container/page2?s=39b1a6c8d16d26592a6bc4c998eddef1
+# ----------------------------------------------------------------------------------------
+# Pretty simple with current version of mkvmerge. Just tell it to copy only english audio/subtitle tracks to the new mkv file. For english, use eng. For any other language, refer to ISO639-2 language code
+# 
+# Using programming language agnostic concept . Variables are between {} :
+# 
+# Code:
+# set {audio} as any of these :
+# for english audio = -a "eng"
+# for english and french audio = -a "eng,fre"
+# 
+# set {subtitle} as any of these :
+# for english sub = -s "eng"
+# for english and french sub = -s "eng,fre"
+# for no sub (delete all) = --no-subtitles
+# 
+# to keep all subs, set variable empty.
+❯ mkvmerge --title "[filename|noext ]" --output "path\new file with english tracks only.mkv" {$audio} {$subtitle} "(" "file to process.mkv" ")"
+# 
+# See documentation and search the page for parenthesis to understand why I use them to handle file to process. 
+# It’s my own habit to prevent unwanted behavior. You’re not forced to use them.
+# 
+# To sum this up, the simplest command to use to keep english audio track only would be :
+# 
+❯ mkvmerge --output "path\new file with english tracks only.mkv" -a "eng" "file to process.mkv"
+# 
+# Language Codes:
+English language name                         | ISO639-2 code
+----------------------------------------------+---------------
+Afrikaans                                     | afr
+Arabic                                        | ara
+Australian languages                          | aus
+Baltic languages                              | bat
+Catalan; Valencian                            | cat
+Caucasian languages                           | cau
+Chinese                                       | chi
+Corsican                                      | cos
+Croatian                                      | hrv
+Czech                                         | cze
+Dutch; Flemish                                | dut
+English                                       | eng
+French                                        | fre
+Georgian                                      | geo
+German                                        | ger
+Greek, Modern (1453-)                         | gre
+Hebrew                                        | heb
+Hindi                                         | hin
+Hungarian                                     | hun
+Irish                                         | gle
+Italian                                       | ita
+Japanese                                      | jpn
+Javanese                                      | jav
+Korean                                        | kor
+Kurdish                                       | kur
+Norwegian                                     | nor
+Persian                                       | per
+Polish                                        | pol
+Portuguese                                    | por
+Romanian; Moldavian; Moldovan                 | rum
+Russian                                       | rus
+Serbian                                       | srp
+Spanish; Castillan                            | spa
+Swedish                                       | swe
+Thai                                          | tha
+Turkish                                       | tur
+Ukrainian                                     | ukr
+Vietnamese                                    | vie
+Walloon                                       | wln
+Yiddish                                       | yid
+
+
+# JSON formatted output media info
+❯ ffprobe -print_format json -show_format -show_streams example.mkv
+
+
+
+# Add srt subs with language and forced flag
+for file in *.mkv; do
+  base="${file%.mkv}"
+  mkvmerge -o "${base}_new.mkv" --default-track 0:yes --forced-track 0:yes --language 0:eng "$file" "${base}.srt"
+done
+
+
+# NEED TO TEST/VERIFY
+# Removing subtitles:
+❯ mkvmerge -o output.mkv -S input.mkv # remove all subtitle tracks, note the uppercase S before input.mkv
+❯ mkvmerge -o output.mkv input.mkv -s 3,4 # include only subtitle tracks 3 and 4
+❯ mkvmerge -o output.mkv input.mkv -s '!3' # include all subtitle tracks except 3
+❯ mkvmerge -i input.mkv # show track numbers
+# 
+# Adding subtitles:
+❯ mkvmerge -o output.mkv input.mkv subs.srt
+❯ mkvmerge -o output.mkv input.mkv --language 0:ger --track-name 0:German subs.srt
+# 
+# Extracting subtitles:
+❯ mkvextract tracks input.mkv 3:subs.srt
+# 
+for f in *.mkv; do
+  sub=$(mkvmerge -i "$f" | awk '$4=="subtitles"{print;exit}')
+  [[ $sub ]] || continue
+  [[ $sub =~ S_TEXT/ASS ]] && ext=ass || ext=srt
+  track=$(awk -F '[ :]' '{print $3}' <<< "$sub")
+  mkvextract tracks "$f" "$track:${f%mkv}$ext"
+done
+# mkvmerge and mkvextract can be installed with brew install mkvtoolnix.
+# 
+# Note that the above commands for adding subtitles also set the subtitles
+# as “enabled by default” when playing the file. (This flag can be
+# confirmed using the MKVMerge GUI.) To avoid this, use 
+--default-track '0:0'. –
+# 
+# The -s 3,4 now does the opposite, it preserves the tracks 3 and 4. 
+$ mkvmerge.exe --version 
+mkvmerge v43.0.0 ('The Quartermaster') 64-bit
+# 
+# Actually looks like it's been that way all this time. Would've been weird
+# to break default functionality.
+# 
+# With mkvmerge the -S option doesn't work unless it comes before the
+# filenames, at least on v31.0.0.
+# 
+# Yes, it doesn't work if the option is specified after filenames! That's
+# just stupid. Confirmed with "mkvmerge v56.1.0". The "-s" option keeps
+# those track numbers. Note: Get the track numbers from mkvinfo:
+"+ Track number: 2 (track ID for mkvmerge & mkvextract: 1)" 
+# Use the number in the parenthesis, not the one appearing outside.
+
+
+# merge .ass subtitles into similarly named MKV files
+find -E . -maxdepth 1 -type f -iregex '.*\.(ASS|SRT)$' |\
+  while read FILEPATH
+  do
+    DIRNAME=$(dirname "${FILEPATH}");
+    BASENAME=$(basename "${FILEPATH}");
+    FILENAME="${BASENAME%.*}";
+    EXTENSION="${BASENAME##*.}"
+    mkvmerge -o "$DIRNAME/${FILENAME}"-NEW.mkv "$DIRNAME/${FILENAME}".mp4 --language 0:eng --track-name 0:English "$DIRNAME/${FILENAME}"."${EXTENSION}"
+  done
