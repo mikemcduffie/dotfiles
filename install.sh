@@ -51,7 +51,10 @@ if ! command -v oh-my-posh &> /dev/null; then
 fi
 
 # uv installs (~/.local/bin/)
+#
 # uv tool install acefile
 #   executable: acefile-unace
 # uv tool install srt
 #   executables: srt, srt-deduplicate, srt-fixed-timeshift, srt-linear-timeshift, srt-lines-matching, srt-mux, srt-normalise, srt-play, srt-process
+# uv tool install webvtt-py
+#   executable: webvtt
