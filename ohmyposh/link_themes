@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+shopt -s nullglob
+
+# resolves for symlinks
+# SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"
+SCRIPT_DIR="$(realpath "$(dirname "${BASH_SOURCE[0]}")")"
+
+for t in *.{json,yaml}; do
+    ln -s "$SCRIPT_DIR/$t"  "$(brew --prefix oh-my-posh)/themes/$t"
+done
