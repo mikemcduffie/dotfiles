@@ -58,6 +58,13 @@ if ! command -v oh-my-posh &> /dev/null; then
     brew update && brew upgrade oh-my-posh
 fi
 
+# oh-my-posh upgrade is clobbering custom themes in default folder 
+for t in "${HOME}/ohmyposh/*.{json,yaml}"; do
+    ln -s "$t" "$(brew --prefix oh-my-posh)/themes/$t"
+done
+
+
+
 # uv installs (~/.local/bin/)
 #
 # uv tool install acefile
