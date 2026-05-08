@@ -140,5 +140,11 @@
 		<key>shortcut</key>
 		<string>teh</string>
 	</dict>
+	<dict>
+		<key>phrase</key>
+		<string>;daisy</string>
+		<key>shortcut</key>
+		<string>🌻</string>
+	</dict>
 </array>
 </plist>
