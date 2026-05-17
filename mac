@@ -19,7 +19,7 @@ looney()  { [[ -r /Volumes/media2  ]] || /usr/bin/osascript -e 'mount volume "sm
 
 alias hardware='system_profiler SPHardwareDataType'
 
-
+vhd2hda() { djjr convert to-volume "$1" "${1%.*}.hda" ;}
 
 paste2nfo() { pbpaste | fold -s > ~/Downloads/"$(pbpaste | pyp 'lines[0]').nfo" ;}
 paste2txt() { pbpaste | fold -s > ~/Downloads/"$(pbpaste | pyp 'lines[0]').txt" ;}
