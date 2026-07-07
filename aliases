@@ -34,7 +34,7 @@ alias asu='open "macappstore://showUpdatesPage"'
 alias fd-appstore-apps='mdfind kMDItemAppStoreHasReceipt=1'
 
 # homebrew
-alias balias='alias | grep brew'
+alias balias="alias | grep '=.*brew '"
 alias bd='brew desc'
 alias bdoc='brew doctor'
 alias bdeps='brew deps'
@@ -49,7 +49,7 @@ alias blc='brew list --cask'                       # List installed casks
 alias blv='brew list --versions'
 alias bn='brew info'
 alias bnfo='brew info'
-alias bo='brew update && brew outdated'
+alias bo='brew outdated'
 alias bs='brew search'
 alias bsw='brew switch'                            # switch/change version of package: brew switch git 2.5.0
 alias bu='brew upgrade'
@@ -58,6 +58,7 @@ alias bume='brew upgrade --force microsoft-edge'
 alias bui='brew uninstall'
 alias buiz='brew uninstall --zap'
 alias bupd='brew update'
+alias buo='brew update && brew outdated'
 alias buses='brew uses --installed'                 # list formula(s) that are used by [formula]
 alias bver='brew list --versions'
 alias bwf='brew which-formula'                      # determine which Homebrew formula installed a specific binary
