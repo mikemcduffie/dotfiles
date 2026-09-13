@@ -37,7 +37,7 @@ alias fd-appstore-apps='mdfind kMDItemAppStoreHasReceipt=1'
 alias balias="alias | grep '=.*brew '"
 alias bd='brew desc'
 alias bdoc='brew doctor'
-alias bdeps='brew deps'
+alias bdeps='brew list --no-installed-on-request'  # use in place of 'brew deps' 
 alias bgrep='brew list | grep'
 alias bh='brew home'                               # open homepage of package
 alias bi='brew install'
@@ -62,6 +62,9 @@ alias buo='brew update && brew outdated'
 alias buses='brew uses --installed'                 # list formula(s) that are used by [formula]
 alias bver='brew list --versions'
 alias bwf='brew which-formula'                      # determine which Homebrew formula installed a specific binary
+
+# Settings
+alias allow-in-background='open "x-apple.systempreferences:com.apple.LoginItems-Settings.extension"'
 
 alias dupes='czkawka'
 

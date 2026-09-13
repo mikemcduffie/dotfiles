@@ -5,6 +5,14 @@
 public_ip() { printf '%b' "$(curl -s ipinfo.io)\n" ;}
 public_ip_addr() { public_ip | jq '.ip' ;}
 
+bcdl () {
+	for c in "$@"
+	do
+		curl -s https://raw.githubusercontent.com/Homebrew/homebrew-cask/main/Casks/${c:0:1}/${c}.rb > $c.rb && bat $c.rb
+	done
+}
+
+
 lsd() { [[ -z $1 ]] && levels='1' || levels=$1; fd -td -d"$levels" ;}
 
 
@@ -139,6 +147,12 @@ bnc() {
 bfzf() { brew info --json --eval-all | jq -r '.[].name' | fzf --preview 'brew info {}' ;}
 
 bric() { "brew  reinstall --cask $(brew outdated --cask)" ;}
+
+bod() { 
+    brew outdated 2>/dev/null | while read line; do 
+        brew desc $line 2>/dev/null
+    done 
+}
 
 buex() {
     if [ "$#" -eq 0 ]; then

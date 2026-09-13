@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+# Description: Brew Tap(s) List Casks
+
+
+if (($# == 0)); then
+taps="$(brew tap | egrep -v '^homebrew/')"
+    readarray -t taps <<< "$taps"
+else
+    readarray -t taps <<< "$@"
+fi
+
+for t in "${taps[@]}"; do
+        printf "\n::${t}::\n"
+        brew tap-info "$t" --json | jq -r '.[] | .cask_tokens[]'
+done
+
