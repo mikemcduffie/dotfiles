@@ -37,7 +37,7 @@ alias fd-appstore-apps='mdfind kMDItemAppStoreHasReceipt=1'
 alias balias="alias | grep '=.*brew '"
 alias bd='brew desc'
 alias bdoc='brew doctor'
-alias bdeps='brew list --no-installed-on-request'  # use in place of 'brew deps' 
+alias bdeps='brew list --no-installed-on-request'  # use in place of 'brew deps'
 alias bgrep='brew list | grep'
 alias bh='brew home'                               # open homepage of package
 alias bi='brew install'
@@ -70,6 +70,8 @@ alias dupes='czkawka'
 
 alias ff='fastfetch -c $HOME/.config/fastfetch/config.json'
 alias ffa='fastfetch --config all'
+
+alias git-diff-since-commit='git log -p -1 -- '
 
 # -n flag: Open a new instance of the application even if one is already running.
 alias charm='open -na "PyCharm CE"'
