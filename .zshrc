@@ -20,66 +20,28 @@ if [[ "$(uname)" == "Darwin" ]]; then
 fi
 
 
-simple_peompt() {
+simple_prompt() {
     PS1="$ "
 }
 
-oh-my-posh-change-theme() {
-    local prog=${0##*/}  # greedy remove to last '/'
-    local themes=$(ls $(brew --prefix oh-my-posh)/themes | grep -v 'schema.json')
-    local theme_names=$(cat "$themes" | sed -E 's/.omp.(json|yaml)$//')
-    usage() {
-        cat <<-EOF
-        Usage: $prog [options]
 
-        Change Oh My Posh prompt theme and reset shell
-
-        Options:
-            -h    Print this message
-            -l    List avaiable themes
-EOF
-
-        local opt OPTIND OPTARG
-        while getopts 'hl' opt; do
-            case "$opt" in
-                h) usage; return 0;;
-                l) if tty -s; then
-                       echo "$theme_names" | column
-                   else
-                       echo "$theme_names"
-                   fi
-                   ;;
-                *) usage >&2; return 1;;
-            esac
-        done
-        shift "$((OPTIND - 1))"
-
-    }
-
-    if  [[ $1 == *"$theme_names"* ]]; then
-        export OMP_THEME=$1
-    else
-        echo "No theme named $1 found." >&2 && return 1
-    fi
-
-    if [[ $ZSH_VERSION ]]; then
-        current_shell='zsh'
-    elif [[ $BASH_VERSION ]]; then
-        current_shell='bash'
-    else
-        echo "Could not detrmine current shell." >&2 && return 1
-    fi
-    eval "$(oh-my-posh init zsh --config $(brew --prefix oh-my-posh)/themes/$OMP_THEME.omp.json)" && exec $current_shell 
-}
-
-eval "$(oh-my-posh init zsh --config $(brew --prefix oh-my-posh)/themes/$OMP_THEME.omp.json)"
 
 
 if [[ "$TERM" == "xterm-256color" ]]; then
     if command -v oh-my-posh &> /dev/null; then
+
         # NOTE: THIS SYNCS OH MY POSH THEME ACROSS SYSTEMS. NEED TO REWORK AS UNSYNCED FILE REF TO KEEP UNIQUE>
-        export OMP_THEME=bubbles
-        eval "$(oh-my-posh init zsh --config $(brew --prefix oh-my-posh)/themes/$OMP_THEME.omp.json)"
+        # custom themes get overwritten/deleted if stored in installed themes folder
+        # export OMP_THEME="~/.config/ohmyposh/mythemes/bubblesextra-ssh.omp.json"
+        # To use installed theme
+        # export OMP_THEME=$(brew --prefix oh-my-posh)/themes/bubblesextra.omp.json)
+
+        # selected-theme should be a soft link to a custom theme in ~/.config/ohmyposh/mythemes
+        # or to an installed theme in $(brew --prefix oh-my-posh)/themes/
+        # change via oh-posh-change-theme script
+        OMP_THEME="$HOME/.dotfiles/ohmyposh/selected-theme.omp.json"
+
+        eval "$(oh-my-posh init zsh --config $OMP_THEME)"
     elif command -v starship; then
         eval "$(starship init zsh)"
 #   else
@@ -178,6 +140,10 @@ source $(brew --prefix)/share/zsh-history-substring-search/zsh-history-substring
 # Safe way to append to PATH
 if [[ ":$PATH:" != *"${HOME}/.local/bin:"* ]]; then
     export PATH="${HOME}/.local/bin:$PATH"
+fi
+
+if [[ ":$PATH:" != *"${HOME}/.dotfiles/bin:"* ]]; then
+    export PATH="${HOME}/.dotfiles/bin:$PATH"
 fi
 
 remove_path_dupes
