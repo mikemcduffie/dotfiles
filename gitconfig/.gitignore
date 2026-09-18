@@ -35,6 +35,9 @@ Session.vim
 # git
 *.patch
 
+# github
+.github/
+
 # eslint
 .eslintcache
 

@@ -35,6 +35,7 @@ alias fd-appstore-apps='mdfind kMDItemAppStoreHasReceipt=1'
 
 # homebrew
 alias balias="alias | grep '=.*brew '"
+alias bcu='brew cu'
 alias bd='brew desc'
 alias bdoc='brew doctor'
 alias bdeps='brew list --no-installed-on-request'  # use in place of 'brew deps'
@@ -52,8 +53,8 @@ alias bnfo='brew info'
 alias bo='brew outdated'
 alias bs='brew search'
 alias bsw='brew switch'                            # switch/change version of package: brew switch git 2.5.0
-alias bu='brew upgrade'
-alias buf='brew upgrade --force'
+alias bu='brew update'
+alias buf='brew upgrade --formula'
 alias bume='brew upgrade --force microsoft-edge'
 alias bui='brew uninstall'
 alias buiz='brew uninstall --zap'
