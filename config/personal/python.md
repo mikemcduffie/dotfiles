@@ -816,7 +816,7 @@ Check website ISITUP / ISITDOWN (example only, isitup.org is defunct)
 import subprocess
 url = "http://checked-domain.org/more/path/"
 domain = urlparse(url).netloc
-result = subprocess.run(['/opt/homebrew/bin/is-up', domain], stdout=subprocess.PIPE)
+result = subprocess.run(['$HOMEBREW_PREFIX/bin/is-up', domain], stdout=subprocess.PIPE)
 if result.returncode == 0:
     print(f"ERROR: {domain} is UP per isitup.org but unreachable from this network.")
 else:

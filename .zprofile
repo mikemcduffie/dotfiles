@@ -3,8 +3,6 @@
 # typically used for setting environment variables such as $PATH without being overridden by macOS.
 
 
-eval "$(/opt/homebrew/bin/brew shellenv)"
-
 # [ -n $(tty -s) ] && [ -d ~/ ] && fastfetch -c $HOME/.config/fastfetch/config.json
 # Setting PATH for Python 3.13
 # The original version is saved in .zprofile.pysave

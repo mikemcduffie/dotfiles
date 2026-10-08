@@ -18,7 +18,7 @@ brew home git	                                # Open package homepage
 brew info git	                                # List versions, caveats, etc
 brew install --cask firefox	                    # Install the Firefox browser
 brew install git	                            # Install package(s)
-brew link git	                                # Link package(s) to /opt/homebrew/bin
+brew link git	                                # Link package(s) to $HOMEBREW_PREFIX/bin
 brew list	                                    # List installed
 brew list --cask	                            # List installed casks
 brew list --versions git	                    # List available versions
@@ -41,7 +41,7 @@ https://ailinykh.com/homebrew-formula-downgrade/
 # if FIRST TIME downgrading any package, create local tap
 ❯ brew tap-new $USER/local-git-lfs
 # >>> Created mike/local-git-lfs
-# /opt/homebrew/Library/Taps/mike/homebrew-local-git-lfs
+# $HOMEBREW_PREFIX/Library/Taps/mike/homebrew-local-git-lfs
 ❯ brew extract --version 4.2.6 cheat $USER/local-git-lfs
 ❯ brew install cheat@4.2.6
 
@@ -240,9 +240,9 @@ brew list | grep julia | xargs brew remove
 
 grep -R "fails_with :llvm" $(brew --cellar)
 
-git -C "/opt/homebrew/Library/Taps/homebrew/homebrew-cask" stash -u && git -C "${path}" clean -d -f
+git -C "$HOMEBREW_PREFIX/Library/Taps/homebrew/homebrew-cask" stash -u && git -C "${path}" clean -d -f
 
-/opt/homebrew/Cellar
+$HOMEBREW_PREFIX/Cellar
 
 brew list --full-name
 
@@ -251,7 +251,7 @@ sidneys/homebrew
 git -C $(brew --repo)/Library/Taps/homebrew/homebrew-core checkout Formula/$FORMULA_NAME.rb
 git -C $(brew --repo)/Library/Taps/homebrew/homebrew-cask checkout Casks/m/mkvtoolnix-app.r
 
-git -C "/opt/homebrew/Library/Taps/homebrew/homebrew-cask" stash -u && git -C "${path}" clean -d -f
+git -C "$HOMEBREW_PREFIX/Library/Taps/homebrew/homebrew-cask" stash -u && git -C "${path}" clean -d -f
 
 brew untap shivammathur/php
 
@@ -263,7 +263,7 @@ alias buses='brew uses --installed'
 
 brew install blogabe/xplanet/imagemagick --with-fftw
 
-rm -rf /opt/homebrew/Caskroom/fig
+rm -rf $HOMEBREW_PREFIX/Caskroom/fig
 
 
  

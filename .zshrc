@@ -115,10 +115,10 @@ setopt completealiases
 
 
 # autojump
-[ -f /opt/homebrew/etc/profile.d/autojump ] && source /opt/homebrew/etc/profile.d/autojump
+[ -f $HOMEBREW_PREFIX/etc/profile.d/autojump ] && source $HOMEBREW_PREFIX/etc/profile.d/autojump
 
 
-# PATH="/opt/homebrew/opt/php@7.4/bin:$PATH"
+# PATH="$HOMEBREW_PREFIX/opt/php@7.4/bin:$PATH"
 command -v uv >/dev/null 2>&1 && eval "$(uv generate-shell-completion zsh)"
 
 
@@ -127,10 +127,10 @@ command -v uv >/dev/null 2>&1 && eval "$(uv generate-shell-completion zsh)"
 
 
 # To activate the autosuggestions, add the following at the end of your .zshrc:
-source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+source $HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 # To activate zsh-syntax-highlighting, add the following at the end of your .zshrc:
-source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source $HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 
 source $(brew --prefix)/share/zsh-history-substring-search/zsh-history-substring-search.zsh

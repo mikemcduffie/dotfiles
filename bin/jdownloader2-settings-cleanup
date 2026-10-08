@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+JD_CFG_FOLDER=$(fd org.jdownloader.settings.GraphicalUserInterfaceSettings.json -p /Applications -x echo {//})
+
+
+jq --argjson updates -S '{
+    "bannerenabled" : false,
+    "clipboarddisabledwarningflashenabled" : false,
+    "premiumalertspeedcolumnenabled" : false,
+    "premiumalerttaskcolumnenabled" : false,
+    "premiumstatusbardisplay" : "GROUP_BY_ACCOUNT_TYPE",
+    "statusbaraddpremiumbuttonvisible" : false,
+    "updatebuttonflashingenabled" : false
+}' '
+  reduce ($updates | to_entries[]) as $e (.;
+    if has($e.key) then .[$e.key] = $e.value else . end)
+' "/$JD_CFG_Folder/org.jdownloader.settings.GraphicalUserInterfaceSettings.json"
+

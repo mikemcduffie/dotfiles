@@ -3,6 +3,7 @@ sources=(
 "aliases"
 "exports"
 "functions"
+"homebrew"
 )
 
 if [[ $ZSH_VERSION ]]; then

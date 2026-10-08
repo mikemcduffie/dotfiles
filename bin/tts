@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+
+edge-tts () {
+	echo "Processing ${1}..."
+	echo "$(date +%T)    $(cat "$1" | wc -c) bytes"
+	uv run "$SCRIPTS/edge-tts-transcode.py" "$1"
+}
+
+for item in "$@"
+do
+    if [[ "$item" != *".txt" ]]; then
+        echo "Skipping $item: not a TXT file." >&2
+        afplay ~/sounds/Uh-oh.aiff
+        continue
+    elif [ -f "${item/.txt/.mp3}" ]; then
+        afplay ~/sounds/ChuToy.aiff
+        read -s -t 10 -n 1 -p "${item/.txt/.mp3} already exists. Process again? [y/N] " key
+        if [ $? -gt 128 ]; then
+            printf "\nTimed out waiting for input. Skipped $item.\n" >&2
+            continue
+        elif [[ ${key,,} == "y" ]]; then
+            echo 
+            rm "${item/.txt/.mp3}"
+        else
+            echo
+            continue
+        fi
+    fi
+    while true; do
+        if edge-tts "$item"; then
+            afplay ~/sounds/Ping-Modern.aiff
+            break
+        else
+            echo "TTS failed. Retrying..." >&2
+            afplay ~/sounds/Uh-oh.aiff
+            rm "${item/.txt/.mp3}"
+        fi
+    done
+done

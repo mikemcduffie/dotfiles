@@ -1,0 +1,86 @@
+{
+  "apps" : [
+    {
+      "bundleId" : "dev.chang.FinderTwo",
+      "label" : "Rascal",
+      "path" : "/Applications/Rascal.app",
+      "type" : "app"
+    },
+    {
+      "bundleId" : "com.googlecode.iterm2",
+      "label" : "iTerm",
+      "path" : "/Applications/iTerm.app",
+      "type" : "app"
+    },
+    {
+      "bundleId" : "com.brave.Browser",
+      "label" : "Brave Browser",
+      "path" : "/Applications/Brave Browser.app",
+      "type" : "app"
+    },
+    {
+      "bundleId" : "com.barebones.bbedit",
+      "label" : "BBEdit",
+      "path" : "/Applications/BBEdit.app",
+      "type" : "app"
+    },
+    {
+      "bundleId" : "com.coteditor.CotEditor",
+      "label" : "CotEditor",
+      "path" : "/Applications/CotEditor.app",
+      "type" : "app"
+    },
+    {
+      "bundleId" : "com.amvidia.Tag-Editor-FS",
+      "label" : "Tag Editor",
+      "path" : "/Applications/Tag Editor.app",
+      "type" : "app"
+    },
+    {
+      "bundleId" : "com.ToWatchList.SimpleComic",
+      "label" : "Simple Comic",
+      "path" : "/Applications/Simple Comic.app",
+      "type" : "app"
+    },
+    {
+      "bundleId" : "djhan.EdgeView-2",
+      "label" : "EdgeView 2",
+      "path" : "/Applications/EdgeView 2.app",
+      "type" : "app"
+    },
+    {
+      "bundleId" : "com.macitbetter.betterzip",
+      "label" : "BetterZip5",
+      "path" : "/Applications/BetterZip5.app",
+      "type" : "app"
+    },
+    {
+      "bundleId" : "com.aone.keka",
+      "label" : "Keka",
+      "path" : "/Applications/Keka.app",
+      "type" : "app"
+    }
+  ],
+  "generator" : "dockwizard/0.2.0",
+  "name" : "current",
+  "others" : [
+    {
+      "folder" : {
+        "arrangement" : "dateAdded",
+        "displayAs" : "stack",
+        "showAs" : "fan"
+      },
+      "label" : "Downloads",
+      "path" : "~/Downloads",
+      "type" : "folder"
+    }
+  ],
+  "schemaVersion" : 1,
+  "settings" : {
+    "autohide" : true,
+    "largeSize" : 128,
+    "minimizeToApplication" : true,
+    "orientation" : "bottom",
+    "tileSize" : 74
+  }
+}

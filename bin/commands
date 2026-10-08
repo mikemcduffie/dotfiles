@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+
+LIST_USER=false
+LIST_HOMEBREW=false
+
+# Parse options: -b (list homebrew commands), -u (list user commands only), -h (help)
+while getopts ":buh" opt; do
+  case $opt in
+    b) LIST_HOMEBREW=true ;;
+    h) 
+        echo "Usage: $(basename $0) [-l] [-u] [-b]"
+        echo "       -u: list commands in user paths (e.g. ~/.local/bin or /usr/local/bin)"
+        echo "       -b: list homebrew paths (e.g. $HOMEBREW_PREFIX/bin or $HOMEBREW_PREFIX/sbin)"
+        echo "       Either option will exclude system or non-standard path dirs"
+        exit 0
+        ;;
+    u) LIST_USER=true ;;
+    :) echo "Error: Option -$OPTARG requires an argument" >&2; exit 1 ;;
+    \?) echo "Error: Invalid option -$OPTARG" >&2; exit 1 ;;
+  esac
+done
+
+# Remove parsed options from argument list
+shift $((OPTIND - 1))
+
+
+IFS=:
+for d in $PATH
+do
+	case "$d" in
+		"/Users/"*|"/usr/local/bin") 
+			if [[ $LIST_USER == "true" || $LIST_HOMEBREW == "false" ]]; then
+				:
+			else
+				continue
+			fi 
+			;;
+		"$HOMEBREW_PREFIX/"*) 
+			if [[ $LIST_HOMEBREW == "true" || $LIST_USER == "false" ]]; then
+				:
+			else
+				continue
+			fi 
+			;;
+		*)
+			if [[ $LIST_USER == "true" || $LIST_HOMEBREW == "true" ]]; then
+				continue
+			else
+				:
+			fi 
+			;;
+	esac
+	# echo "PROCESSING: $d" >&2
+	gfind "$d" -maxdepth 1 \( -type f -o -type l \) -executable -exec basename {} \; 
+done | sort -u

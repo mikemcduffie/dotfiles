@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+IFS=:
+for d in $PATH
+do
+    printf "\n\n------ %s ------\n" "$d"
+    ls -p --color=auto "$d"
+done
+

@@ -4,7 +4,7 @@ ext="${1##*.}"
 regex='^(https?|ftp|file)://[-A-Za-z0-9\+&@#/%?=~_|!:,.;]*[-A-Za-z0-9\+&@#/%=~_|]\.[-A-Za-z0-9\+&@#/%?=~_|!:,.;]*[-A-Za-z0-9\+&@#/%=~_|]$'
 
 if [[ "$ext" != "webloc" ]]; then
-    url=$(/opt/homebrew/bin/ggrep -oPm1 "(?<=<string>)[^<]+" "$1")
+    url=$($HOMEBREW_PREFIX/bin/ggrep -oPm1 "(?<=<string>)[^<]+" "$1")
     if [[ $url =~ $regex ]]; then 
         # url IS valid
         echo -e "[InternetShortcut]\r\nURL=${url}" > "$filename.url"

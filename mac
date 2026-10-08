@@ -1,6 +1,11 @@
 # https://mywiki.wooledge.org/BashFAQ/109
 [[ $- != *i* ]] && exit 1  # file not sourced
 
+### ENV ####
+# https://github.com/bevanjkay/dockwizard
+export DOCKWIZARD_PRESETS_DIR="$HOME/.dotfiles/dockwizard/presets"
+
+
 app-bundleid() { osascript -e "id of app \"$1\"" ;}
 
 # SMB network shares mount
@@ -35,7 +40,7 @@ scpt2applescript() {
 }
 
 # brew find
-bf() { eza -l /opt/homebrew/bin/*"$1"* ;}
+bf() { /bin/ls -1 $HOMEBREW_PREFIX/bin/*"$1"* | xargs -n1 basename ;}
 
 dns_configuration(){ scutil --dn ;}
 # DNS query IP address from name
@@ -108,12 +113,12 @@ vscodium() { VSCODE_CWD="$PWD" open -n -b "com.vscodium" --args $* ;}
 
 
 alias gdu=gdu-go  # resolve coreutils/gdu conflict
-alias blb='eza /opt/homebrew/bin/'
+alias blb='eza $HOMEBREW_PREFIX/bin/'
 
 alias lscomment=' mdls -name kMDItemFinderComment'
 alias nzb_fix="duti -s com.VortexApps.NZBVortex3 dyn.ah62d4rv4ge8068xc all && duti -x .nzb"
 alias quicklook='qlmanage -p'
-alias sed=/opt/homebrew/opt/gnu-sed/libexec/gnubin/sed
+alias sed=$HOMEBREW_PREFIX/opt/gnu-sed/libexec/gnubin/sed
 
 # Navigation
 alias dotfiles='cd ${HOME}/.dotfiles'
@@ -142,6 +147,7 @@ alias cdm="cd ${HOME}/Music/Music/Media.localized/Music"
 alias pics='cd ${HOME}/Pictures'
 alias cdp='cd ${HOME}/Pictures'
 
+alias taps="cd $HOMEBREW_PREFIX/Library/Taps"
 alias tc='cd ${HOME}/Downloads/Torrents\ \-\ Completed'
 
 

@@ -16,10 +16,14 @@
 bindkey '^[[1;5D' backward-word
 bindkey '^[[1;5C' forward-word
 
+# setup homebrew env varables
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
 [ -f ~/dotfiles/exports.sh ] && source ~/dotfiles/exports.sh
 
+
 # If you receive "highlighters directory not found" error message add to .zshenv:
-#   export ZSH_HIGHLIGHT_HIGHLIGHTERS_DIR=/opt/homebrew/share/zsh-syntax-highlighting/highlighters
+#   export ZSH_HIGHLIGHT_HIGHLIGHTERS_DIR=$HOMEBREW_PREFIX/share/zsh-syntax-highlighting/highlighters
 
 
-# export PATH=/Applications/$(/opt/homebrew/bin/fd -e app mkvtoolnix  /Applications | sort | tail -n1)/Contents/MacOS/:$PATH   
+# export PATH=/Applications/$($HOMEBREW_PREFIX/bin/fd -e app mkvtoolnix  /Applications | sort | tail -n1)/Contents/MacOS/:$PATH   
