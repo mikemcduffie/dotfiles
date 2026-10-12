@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+#  use rsync to mv files 
+
+if [ ! -d "$1" ]; then
+    echo "$1 is not a directory!" >&2
+    exit 1
+fi
+
+if [[ -n "$(fd -e app)" ]]; then
+    while true; do
+        read -r -n 1 -p "Mac app bundles found. Compress before moving? [y/N] " response
+        case $response in
+            [nN]) break;;
+            [yY])
+                fd -e app -x compress_app
+                break;;
+            "")
+                fd -e app -x compress_app
+                break;;
+            *) echo "Invalid input. Please enter 'y', 'n', or press 'Enter'.";;
+        esac
+    done
+fi
+
+/opt/homebrew/bin/rsync \
+    --size-only \
+    --recursive \
+    --progress \
+    --remove-source-files \
+    --human-readable \
+    "$1" "$2"
+if [ $? -eq 0 ];then
+    gfind "$1" -empty -delete
+fi

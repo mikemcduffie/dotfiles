@@ -1,3 +1,4 @@
+# homebrew
 alias balias="alias | grep '=.*brew '"
 alias bcu='brew cu'
 alias bd='brew desc'
@@ -27,64 +28,5 @@ alias bupd='brew update'
 alias buo='brew update && brew outdated'
 alias buses='brew uses --installed'                 # list formula(s) that are used by [formula]
 alias bver='brew list --versions'
-alias bwf='brew which-formula'                      # determine which Homebrew formula installed a specific binary#
-
-
-
-### FUNCTIONS ###
-
-bcdl () {
-	for c in "$@"
-	do
-		curl -s https://raw.githubusercontent.com/Homebrew/homebrew-cask/main/Casks/${c:0:1}/${c}.rb > $c.rb && bat $c.rb
-	done
-}
-
-
-# Search for text in brew formulae descriptions
-bds() { HOMEBREW_EVAL_ALL=1 brew search --formula --desc "$1" | grep -e '\b'"$1"'\b' ;}
-
-# Get info on all installed formulas
-bnf() {
-    brew leaves | while IFS= read -r FORMULA; do
-        brew info --formula $FORMULA | head -n 3
-        echo '================================================================================='
-    done
-}
-
-
-# Get info on all installed casks
-bnc() {
-    brew list --cask | while IFS= read -r CASK; do
-        brew info --cask $CASK | head -n 3
-        echo '================================================================================='
-    done
-}
-
-bfzf() { brew info --json --eval-all | jq -r '.[].name' | fzf --preview 'brew info {}' ;}
-
-bric() { "brew  reinstall --cask $(brew outdated --cask)" ;}
-
-
-bod() { 
-    brew outdated 2>/dev/null | while read line; do 
-        brew desc $line 2>/dev/null
-    done 
-}
-
-
-buex() {
-    if [ "$#" -eq 0 ]; then
-        excluded_apps=('"microsoft-edge"', '"mkvtoolnix-app"')
-    else
-        excluded_apps="$@"
-    fi
-    echo "brew upgrade excluding:" ${excluded_apps}
-    brew outdated --json | jq '.formulae[].name,.casks[].name' | \
-    pyp "x if x not in ${excluded_apps} else None" | \
-    xargs -n1 brew upgrade
-}
-
-
-bnh() { brew info $@ | head -2 ;}
+alias bwf='brew which-formula'                      # determine which Homebrew formula installed a specific binary
 

@@ -149,3 +149,9 @@ fi
 remove_path_dupes
 
 test -e "${HOME}/.iterm2_shell_integration" && source "${HOME}/.iterm2_shell_integration"
+# >>> Photon CLI >>>
+case ":$PATH:" in
+  *:'/Users/mike/.photon/bin':*) ;;
+  *) export PATH="$PATH":'/Users/mike/.photon/bin' ;;
+esac
+# <<< Photon CLI <<<

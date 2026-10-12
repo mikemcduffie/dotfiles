@@ -18,20 +18,20 @@ mac_sources=(
 
 for s in "${sources[@]}"; do
 #   echo Loading $s
-    if [ -f ~/.dotfiles/$s ]; then
-        source ~/.dotfiles/$s || echo "Failed to load ~/.dotfiles/$s" >&2
+    if [ -f $HOME/.dotfiles/$s ]; then
+        source $HOME/.dotfiles/$s || echo "common: Failed to load $HOME/.dotfiles/$s" >&2
     else
-        echo "Not found: ~/.dotfiles/$s" >&2
+        echo "Not found: $HOME/.dotfiles/$s" >&2
     fi
 done
 
 if [[ "$(uname)" == "Darwin" ]]; then
     for s in "${mac_sources[@]}"; do
 #       echo Loading $s
-        if [ -f ~/.dotfiles/$s ]; then
-            source ~/.dotfiles/$s || echo "Failed to load ~/.dotfiles/$s" >&2
+        if [ -f $HOME/.dotfiles/$s ]; then
+            source $HOME/.dotfiles/$s || echo "Failed to load $HOME/.dotfiles/$s" >&2
         else
-            echo "Not found: ~/.dotfiles/$s" >&2
+            echo "Not found: $HOME/.dotfiles/$s" >&2
         fi
     done
 fi

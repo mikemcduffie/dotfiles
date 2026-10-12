@@ -24,3 +24,9 @@ remove_path_dupes
 
 PS1='\[\e[0;35m\]\u\[\e[0;0m\]@\[\e[0;36m\]\h \[\e[0;33m\]\w \[\e[2;32m\]$ \[\e[0;0m\]\[\e]0;\u@\h: \w\a\]'
 [ -f ~/ble.sh/out/ble.sh ] && source ~/ble.sh/out/ble.sh
+# >>> Photon CLI >>>
+case ":$PATH:" in
+  *:'/Users/mike/.photon/bin':*) ;;
+  *) export PATH="$PATH":'/Users/mike/.photon/bin' ;;
+esac
+# <<< Photon CLI <<<
